@@ -1,0 +1,85 @@
+name: Build comma 3 installer for my-crv
+
+on:
+  push:
+    branches: [installer-my-crv]
+    paths: [.github/workflows/build-my-crv-installer.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download and patch comma AGNOS installer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --show-error --silent --retry 3 \
+            --user-agent 'AGNOSSetup-10.0.0' \
+            --header 'X-openpilot-device-type: tici' \
+            'https://installer.comma.ai/dragonpilot-community/pre-build' \
+            --output /tmp/installer-base
+          python3 - <<'PY'
+          import base64
+          import json
+          import os
+          import re
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          data = Path('/tmp/installer-base').read_bytes()
+          assert data[:4] == b'\x7fELF', 'comma endpoint did not return ELF'
+          assert data[18:20] == b'\xb7\x00', 'installer is not ARM64'
+          print(f'Downloaded official ARM64 ELF: {len(data)} bytes')
+
+          def patch(pattern, replacement, label):
+              global data
+              matches = list(re.finditer(pattern, data))
+              if len(matches) != 1:
+                  print('Nearby GitHub URLs:', re.findall(rb'https://github\.com/[^\x00\s]{1,120}', data)[:10])
+                  raise RuntimeError(f'Expected one {label} placeholder; found {len(matches)}')
+              match = matches[0]
+              old = match.group(0)
+              if len(replacement) > len(old):
+                  raise RuntimeError(f'{label} exceeds reserved binary space')
+              new = replacement + b' ' * (len(old) - len(replacement))
+              data = data[:match.start()] + new + data[match.end():]
+
+          patch(rb'https://github\.com/dragonpilot-community/openpilot\.git\? +',
+                b'https://github.com/Acceptork/dragonpilot.git?', 'repository URL')
+          patch(rb'pre-build\? +', b'my-crv?', 'branch')
+          assert data.count(b'https://github.com/Acceptork/dragonpilot.git?') == 1
+          assert data.count(b'my-crv?') == 1
+
+          repository = os.environ['GITHUB_REPOSITORY']
+          api = f'https://api.github.com/repos/{repository}/contents/installer/installer'
+          headers = {
+              'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+              'Accept': 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+          }
+          sha = None
+          try:
+              with urllib.request.urlopen(urllib.request.Request(api + '?ref=installer-my-crv', headers=headers)) as response:
+                  sha = json.load(response)['sha']
+          except urllib.error.HTTPError as error:
+              if error.code != 404:
+                  raise
+          payload = {
+              'message': 'build: publish comma 3 installer for my-crv',
+              'content': base64.b64encode(data).decode(),
+              'branch': 'installer-my-crv',
+          }
+          if sha:
+              payload['sha'] = sha
+          request = urllib.request.Request(api, data=json.dumps(payload).encode(), headers=headers, method='PUT')
+          request.add_header('Content-Type', 'application/json')
+          with urllib.request.urlopen(request) as response:
+              result = json.load(response)
+          print('Published installer commit:', result['commit']['sha'])
+          PY
