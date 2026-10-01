@@ -3,6 +3,7 @@ import operator
 import platform
 
 from cereal import car
+from opendbc.car.honda.values import CAR
 from openpilot.common.params import Params
 from openpilot.system.hardware import PC, TICI
 from openpilot.system.manager.process import PythonProcess, NativeProcess, DaemonProcess
@@ -20,6 +21,11 @@ def notcar(started: bool, params: Params, CP: car.CarParams) -> bool:
 
 def iscar(started: bool, params: Params, CP: car.CarParams) -> bool:
   return started and not CP.notCar
+
+
+def mycrv_long_debug(started: bool, params: Params, CP: car.CarParams) -> bool:
+  return iscar(started, params, CP) and CP.carFingerprint == CAR.HONDA_CRV_5G
+
 
 def logging(started: bool, params: Params, CP: car.CarParams) -> bool:
   run = not params.get_bool("DisableLogging")
@@ -118,6 +124,7 @@ procs = [
   PythonProcess("ubloxd", "system.ubloxd.ubloxd", ublox, enabled=TICI),
   PythonProcess("pigeond", "system.ubloxd.pigeond", ublox, enabled=TICI),
   PythonProcess("plannerd", "selfdrive.controls.plannerd", not_long_maneuver),
+  PythonProcess("longitudinal_debug", "selfdrive.controls.longitudinal_debug", mycrv_long_debug),
   PythonProcess("maneuversd", "tools.longitudinal_maneuvers.maneuversd", long_maneuver),
   PythonProcess("lateral_maneuversd", "tools.lateral_maneuvers.lateral_maneuversd", lat_maneuver),
   PythonProcess("radard", "selfdrive.controls.radard", only_onroad),
