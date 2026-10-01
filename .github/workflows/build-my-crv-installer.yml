@@ -28,6 +28,8 @@ jobs:
           import json
           import os
           import re
+          import hashlib
+          import time
           import urllib.error
           import urllib.request
           from pathlib import Path
@@ -82,4 +84,19 @@ jobs:
           with urllib.request.urlopen(request) as response:
               result = json.load(response)
           print('Published installer commit:', result['commit']['sha'])
+          raw_url = f'https://raw.githubusercontent.com/{repository}/installer-my-crv/installer/installer'
+          for attempt in range(10):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(raw_url, headers={'User-Agent': 'AGNOSSetup-10.0.0'}), timeout=30) as response:
+                      served = response.read()
+                  if served == data:
+                      break
+              except urllib.error.HTTPError as error:
+                  if error.code != 404:
+                      raise
+              time.sleep(3)
+          else:
+              raise RuntimeError('raw GitHub URL did not serve the exact installer binary')
+          print('Raw URL verified:', raw_url)
+          print('SHA256:', hashlib.sha256(data).hexdigest())
           PY
