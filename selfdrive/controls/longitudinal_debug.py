@@ -15,7 +15,7 @@ SAMPLE_INTERVAL = 0.1  # 10 Hz
 
 FIELDS = (
   'timestamp', 'vEgo', 'aEgo', 'vCruise', 'vCruiseCluster', 'aTarget',
-  'actuators.accel', 'longControlState', 'allowThrottle', 'longitudinalPlanSource',
+  'actuators.accel', 'longActive', 'longControlState', 'allowThrottle', 'longitudinalPlanSource',
   'lead_status', 'dRel', 'vRel', 'vLead', 'aLeadK', 'personality',
   'experimentalMode', 'gasPressProb', 'upAccelCmd', 'uiAccelCmd', 'ufAccelCmd',
   'pitch', 'lead2_status', 'lead2_dRel', 'lead2_vRel',
@@ -100,7 +100,8 @@ def sample(sm):
   pitch = car_control.orientationNED[1] if len(car_control.orientationNED) == 3 else ''
   return (
     time.time(), car_state.vEgo, car_state.aEgo, car_state.vCruise, car_state.vCruiseCluster,
-    plan.aTarget, car_control.actuators.accel, enum_name(controls_state.longControlState, LONG_STATE_NAMES),
+    plan.aTarget, car_control.actuators.accel, car_control.longActive,
+    enum_name(controls_state.longControlState, LONG_STATE_NAMES),
     plan.allowThrottle, enum_name(plan.longitudinalPlanSource, PLAN_SOURCE_NAMES), lead.status,
     lead.dRel if lead.status else '', lead.vRel if lead.status else '',
     lead.vLead if lead.status else '', lead.aLeadK if lead.status else '',
@@ -129,7 +130,7 @@ def main():
     while True:
       sm.update(100)
       now = time.monotonic()
-      if not sm['carControl'].longActive or not sm['selfdriveState'].enabled:
+      if not sm['selfdriveState'].enabled:
         writer.close()
         next_sample = now
         continue
