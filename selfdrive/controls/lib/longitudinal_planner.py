@@ -9,8 +9,9 @@ from openpilot.common.filter_simple import FirstOrderFilter
 from openpilot.common.realtime import DT_MDL
 from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
-from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, LongitudinalPlanSource
+from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, LongitudinalPlanSource, COMFORT_BRAKE, STOP_DISTANCE, get_T_FOLLOW
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
+from openpilot.selfdrive.controls.lib.longitudinal_throttle import ThrottleGate, grade_allows_override, model_allows_override, path_clear_for_throttle
 from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, get_accel_from_plan
 from openpilot.selfdrive.car.cruise import V_CRUISE_MAX, V_CRUISE_UNSET
 from openpilot.common.swaglog import cloudlog
@@ -62,6 +63,7 @@ class LongitudinalPlanner:
     self.fcw = False
     self.dt = dt
     self.allow_throttle = True
+    self.throttle_gate = ThrottleGate()
 
     self.a_desired = init_a
     self.v_desired_filter = FirstOrderFilter(init_v, 2.0, self.dt)
@@ -129,9 +131,25 @@ class LongitudinalPlanner:
 
     # Prevent divergence, smooth in current v_ego
     self.v_desired_filter.x = max(0.0, self.v_desired_filter.update(v_ego))
+    personality = sm['selfdriveState'].personality
+    if dp_flags & DPFlags.APM:
+      personality = self.apm.get_personality(v_ego, personality)
+
     _, _, _, _, throttle_prob = self.parse_model(sm['modelV2'])
-    # Don't clip at low speeds since throttle_prob doesn't account for creep
-    self.allow_throttle = throttle_prob > ALLOW_THROTTLE_THRESHOLD or v_ego <= MIN_ALLOW_THROTTLE_SPEED
+    # The model can request coasting despite a large cruise deficit. Permit ACC to
+    # pursue the set speed after a stable clear path; MPC and turn limits still apply.
+    path_clear = path_clear_for_throttle(v_ego, sm['radarState'], get_T_FOLLOW(personality), COMFORT_BRAKE, STOP_DISTANCE)
+    lead_present = sm['radarState'].leadOne.status or sm['radarState'].leadTwo.status
+    cruise_gap = v_cruise - v_ego if v_cruise_initialized and not force_slow_decel else 0.0
+    model_allows = throttle_prob > ALLOW_THROTTLE_THRESHOLD or v_ego <= MIN_ALLOW_THROTTLE_SPEED
+    radar_valid = sm.valid['radarState'] if hasattr(sm, 'valid') else True  # synthetic maneuver tests use a dict
+    model_safe_to_override = model_allows_override(sm['modelV2'].action.desiredAcceleration,
+                                                   sm['modelV2'].action.shouldStop,
+                                                   sm['modelV2'].meta.hardBrakePredicted)
+    self.allow_throttle = self.throttle_gate.update(model_allows, cruise_gap, path_clear,
+                                                    not reset_state and not sm['selfdriveState'].experimentalMode and radar_valid and model_safe_to_override and
+                                                    grade_allows_override(sm['carControl'].orientationNED),
+                                                    self.dt, lead_present)
 
     if not self.allow_throttle:
       clipped_accel_coast = max(accel_coast, accel_clip[0])
@@ -140,10 +158,6 @@ class LongitudinalPlanner:
 
     if force_slow_decel:
       v_cruise = 0.0
-
-    personality = sm['selfdriveState'].personality
-    if dp_flags & DPFlags.APM:
-      personality = self.apm.get_personality(v_ego, personality)
 
     self.mpc.set_weights(prev_accel_constraint, personality=personality)
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
