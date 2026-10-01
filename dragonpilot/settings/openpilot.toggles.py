@@ -15,20 +15,20 @@ duplicates because these have no flags+param_type pair.
 
 Drift detection: see system/tests/test_openpilot_mirror.py.
 """
-from dragonpilot.settings import tr
+from dragonpilot.settings import tr, tr_noop
 
 # Keep this web schema importable without initializing the native Raylib UI.
 _TOGGLES_DESC = {
-  "OpenpilotEnabledToggle": "Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature.",
-  "DisengageOnAccelerator": "When enabled, pressing the accelerator pedal will disengage openpilot.",
-  "LongitudinalPersonality": "Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.",
-  "IsLdwEnabled": "Receive alerts to steer back into the lane when your vehicle drifts over a detected lane line without a turn signal activated while driving over 31 mph (50 km/h).",
-  "AlwaysOnDM": "Enable driver monitoring even when openpilot is not engaged.",
-  "RecordFront": "Upload data from the driver facing camera and help improve the driver monitoring algorithm.",
-  "IsMetric": "Display speed in km/h instead of mph.",
-  "RecordAudio": "Record and store microphone audio while driving. The audio will be included in the dashcam video in comma connect.",
-  "DisableLogging": "Disable logging service",
-  "DisableUpdates": "Disable update service",
+  "OpenpilotEnabledToggle": tr_noop("Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature."),
+  "DisengageOnAccelerator": tr_noop("When enabled, pressing the accelerator pedal will disengage openpilot."),
+  "LongitudinalPersonality": tr_noop("Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button."),
+  "IsLdwEnabled": tr_noop("Receive alerts to steer back into the lane when your vehicle drifts over a detected lane line without a turn signal activated while driving over 31 mph (50 km/h)."),
+  "AlwaysOnDM": tr_noop("Enable driver monitoring even when openpilot is not engaged."),
+  "RecordFront": tr_noop("Upload data from the driver facing camera and help improve the driver monitoring algorithm."),
+  "IsMetric": tr_noop("Display speed in km/h instead of mph."),
+  "RecordAudio": tr_noop("Record and store microphone audio while driving. The audio will be included in the dashcam video in comma connect."),
+  "DisableLogging": tr_noop("Disable logging service"),
+  "DisableUpdates": tr_noop("Disable update service"),
 }
 
 _SEC = "Openpilot"

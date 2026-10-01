@@ -49,7 +49,50 @@ from cereal import messaging
 from openpilot.common.params import Params
 from openpilot.system.hardware import PC, HARDWARE
 from openpilot.system.ui.lib.multilang import multilang as base_multilang
-from dragonpilot.settings import SETTINGS
+from dragonpilot.settings import SETTINGS, tr, tr_noop
+
+# Text owned by dashy's compiled web shell. Translate with the same catalog as
+# the settings schema so the web panel follows the device language setting.
+WEB_UI_STRINGS = (
+    tr_noop("Controls"), tr_noop("Settings"), tr_noop("Files"),
+    tr_noop("Dashy Visual"),
+    tr_noop("Heads-up Display (HUD) Mode"),
+    tr_noop("Mirror the display for windshield projection."),
+    tr_noop("Rainbow Road"),
+    tr_noop("Animated rainbow gradient on the driving path. Scrolls with vehicle speed."),
+    tr_noop("Lead Stats Panel"),
+    tr_noop("Show distance, speed, and TTC for the lead vehicle at the bottom of the HUD."),
+    tr_noop("Confirm"), tr_noop("Cancel"),
+    tr_noop("Search..."), tr_noop("No results found"),
+    tr_noop("(empty)"), tr_noop("Save"), tr_noop("Saving…"),
+    tr_noop("Saved"), tr_noop("Error"), tr_noop("Run"),
+    tr_noop("Running…"), tr_noop("Done"),
+    tr_noop("VEHICLE"), tr_noop("Vehicle"), tr_noop("Vehicle Model"),
+    tr_noop("Select your vehicle or use AUTO for detection."),
+    tr_noop("[AUTO]"), tr_noop("Select Vehicle Model"),
+    tr_noop("No vehicle models available. Set dp_dev_model_list on the device to populate this list."),
+    tr_noop("Reboot Device"), tr_noop("Reboot Device?"),
+    tr_noop("This will reboot the device to apply changes."), tr_noop("Reboot"),
+    tr_noop("DEVICE CONTROLS"), tr_noop("Force Offroad"),
+    tr_noop("Temporarily go offroad to update system."),
+    tr_noop("Off"), tr_noop("On"), tr_noop("Force Offroad?"),
+    tr_noop("This will temporarily disable driving mode. You can update the system while offroad."),
+)
+
+
+def _sync_ui_language(params):
+    current_lang = params.get("LanguageSetting")
+    if current_lang:
+        lang_str = current_lang.decode() if isinstance(current_lang, bytes) else str(current_lang)
+        lang_str = lang_str.removeprefix("main_")
+        if lang_str != base_multilang.language and lang_str in base_multilang.languages.values():
+            base_multilang._language = lang_str
+            base_multilang.setup()
+
+
+def _web_ui_text(params):
+    _sync_ui_language(params)
+    return {label: tr(label) for label in WEB_UI_STRINGS}
 
 try:
     from openpilot.system.version import get_build_metadata as _get_build_metadata
@@ -302,6 +345,7 @@ async def init_api(request):
     return web.json_response({
         'dp_dev_dashy': cache.get_bool_safe("dp_dev_dashy", True),
         'isOffroad': cache.get_bool_safe("IsOffroad", False),
+        'ui_text': _web_ui_text(cache.params),
     })
 
 
@@ -393,13 +437,7 @@ async def get_settings_config_api(request):
     params = cache.params
 
     # Update language if changed
-    current_lang = params.get("LanguageSetting")
-    if current_lang:
-        lang_str = current_lang.decode() if isinstance(current_lang, bytes) else str(current_lang)
-        lang_str = lang_str.removeprefix("main_")
-        if lang_str != base_multilang.language and lang_str in base_multilang.languages.values():
-            base_multilang._language = lang_str
-            base_multilang.setup()
+    _sync_ui_language(params)
 
     context = cache.get_settings_context()
     settings_with_values = []
@@ -409,6 +447,7 @@ async def get_settings_config_api(request):
             continue
 
         section_copy = section.copy()
+        section_copy['title'] = tr(section['title'])
         settings_list = []
 
         for setting in section.get('settings', []):

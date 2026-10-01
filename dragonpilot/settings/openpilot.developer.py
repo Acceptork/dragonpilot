@@ -16,21 +16,21 @@ Notes:
 - "Show Last Errors": text_display of dp_dev_last_log — the device modal is
   also still available via the existing DeveloperLayout button.
 """
-from dragonpilot.settings import tr
+from dragonpilot.settings import tr, tr_noop
 
 # Keep the dashy settings schema independent from the native Raylib UI. Importing
 # DeveloperLayout just for these strings initializes gui_app at module import time,
 # which blocks a headless serverd process on macOS.
 _DEV_DESC = {
-  "enable_adb": (
+  "enable_adb": tr_noop(
     "ADB (Android Debug Bridge) allows connecting to your device over USB or over the network. "
     "See https://docs.comma.ai/how-to/connect-to-comma for more info."
   ),
-  "ssh_key": (
+  "ssh_key": tr_noop(
     "Warning: This grants SSH access to all public keys in your GitHub settings. Never enter a GitHub username "
     "other than your own. A comma employee will NEVER ask you to add their GitHub username."
   ),
-  "alpha_longitudinal": (
+  "alpha_longitudinal": tr_noop(
     "<b>WARNING: openpilot longitudinal control is in alpha for this car and may disable Automatic Emergency "
     "Braking (AEB).</b><br><br>On this car, openpilot defaults to the car's built-in ACC instead of openpilot's "
     "longitudinal control. Enable this to switch to openpilot longitudinal control. Enabling Experimental mode "
