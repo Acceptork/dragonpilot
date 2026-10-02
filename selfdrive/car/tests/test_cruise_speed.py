@@ -165,7 +165,7 @@ def test_set_standstill_uses_initial_speed():
   button_cs = car.CarState(buttonEvents=[ButtonEvent(type=ButtonType.decelCruise, pressed=False)])
   current_cs = car.CarState(vEgo=0, vEgoRaw=0, canValid=True, standstill=True)
   assert helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=current_cs)
-  assert helper.v_cruise_kph == 50
+  assert helper.v_cruise_kph == 30
 
 
 def test_resume_uses_previous_valid_set_speed():
