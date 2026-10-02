@@ -57,4 +57,5 @@ def test_sample_has_requested_fields_without_location_or_media():
   assert data['shouldStopFinal'] is True
   assert data['stopLatchActive'] is True
   assert data['stopIntentReleaseTime'] == 0.2
+  assert data['stopIntentActive'] is True
   assert not any('gps' in field.lower() or 'image' in field.lower() or 'audio' in field.lower() for field in FIELDS)
