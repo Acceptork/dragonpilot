@@ -598,7 +598,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
 
   EventName.laneChangeBlocked: {
     ET.WARNING: Alert(
-      "Car Detected in Blindspot",
+      "Road Edge Detected",
       "",
       AlertStatus.userPrompt, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.prompt, .1),
@@ -1069,7 +1069,7 @@ if HARDWARE.get_device_type() == 'mici':
     },
     EventName.laneChangeBlocked: {
       ET.WARNING: Alert(
-        "Car in Blindspot",
+        "Road Edge Detected",
         "",
         AlertStatus.userPrompt, AlertSize.small,
         Priority.LOW, VisualAlert.none, AudibleAlert.prompt, .1),
