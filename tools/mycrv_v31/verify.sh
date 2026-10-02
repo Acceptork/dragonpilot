@@ -16,5 +16,5 @@ case $(cat /data/params/d/IsOffroad) in
   *) echo 'IsOffroad param has an invalid value' >&2; exit 1 ;;
 esac
 
-python3 tools/mycrv_v31/verify_runtime.py "$MODE"
+PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}" python3 tools/mycrv_v31/verify_runtime.py "$MODE"
 printf 'POST_REBOOT_%s_VERIFIED %s\n' "${MODE^^}" "$EXPECTED_SHA"

@@ -48,6 +48,11 @@ the original v2 branch. An unsuccessful recovery is explicitly reported as
 blocked. It never uses `git clean`, never overwrites a dirty working tree, and
 does not delete routes, SSH keys, Params, or `/persist`.
 
+After a reboot request, an SSH disconnect is not treated as a build failure:
+the script no longer switches branches during shutdown. If the host does not
+observe a changed boot ID, keep the car parked and inspect the saved build and
+deployment log before running the offroad rollback command.
+
 The post-reboot check runs while parked/offroad. It verifies the exact SHA,
 clean tree, fresh manager state and stable UI/pandad process IDs. The repository
 only starts card, controlsd and plannerd when onroad, and clears live

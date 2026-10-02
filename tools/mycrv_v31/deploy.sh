@@ -3,6 +3,7 @@
 set -Eeuo pipefail
 
 BASE_SHA=a1e028371cdfe87471f694c87fc3d17060f969c4
+V3_SHA=a201e6cb75296bb1700dadf9268d857a9a597016
 RELEASE_TAG=my-crv-v3.1-rc1
 OPENPILOT_DIR=/data/openpilot
 BACKUP_ROOT=/data/mycrv_v31_backup
@@ -42,6 +43,17 @@ FETCHED_SHA=$(git rev-parse 'FETCH_HEAD^{commit}')
 [[ $FETCHED_SHA == "$TARGET_SHA" ]] || die "release tag resolves to $FETCHED_SHA, not requested $TARGET_SHA"
 git cat-file -e "$TARGET_SHA^{commit}" || die 'target commit is unavailable'
 git cat-file -e "$TARGET_SHA:tools/mycrv_v31/verify_runtime.py" || die 'release lacks post-reboot verification code'
+
+# This limited RC may add only UI, translation, and deployment files to the
+# reviewed longitudinal v3 source. In particular, no later commit may alter
+# Honda safety-model values, control logic, or any other vehicle code.
+git merge-base --is-ancestor "$V3_SHA" "$TARGET_SHA" || die 'release is not based on the reviewed longitudinal v3 commit'
+git diff --name-only -z "$V3_SHA" "$TARGET_SHA" | while IFS= read -r -d '' changed_file; do
+  case "$changed_file" in
+    selfdrive/ui/*|system/ui/*|tools/mycrv_v31/*|docs/zh_tw_longitudinal_bookmark.md) ;;
+    *) die "release changes an unreviewed path: $changed_file" ;;
+  esac
+done
 
 # No AGNOS, bootloader, partition, panda safety, or vehicle safety-model edits.
 if ! git diff --quiet "$BASE_SHA" "$TARGET_SHA" -- \
@@ -103,4 +115,7 @@ fi
 [[ $(git rev-parse HEAD) == "$TARGET_SHA" ]] || die 'post-build SHA mismatch'
 printf 'DEPLOY_READY %s; backup %s; rebooting\n' "$TARGET_SHA" "$BACKUP_DIR"
 sync
-sudo reboot
+# Once reboot is requested, SSH may close at any moment. Do not let the
+# pre-reboot recovery trap race shutdown and switch source underneath it.
+trap - EXIT
+sudo reboot || die 'REBOOT_REQUEST_FAILED: RC is built and checked out, but reboot was not confirmed; keep parked and verify or roll back manually'
