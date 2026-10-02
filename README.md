@@ -72,3 +72,11 @@
 **最後，再次感謝您的到來。**
 
 **期待與您一同在智慧駕駛的道路上，乘「龍」而行！**
+
+## LCA v2 research candidate
+
+**DRIVER-CONFIRMED LANE CHANGE** — directional blinker plus matching driver steering torque is required.
+
+**NO AUTOMATIC BLIND-SPOT VALIDATION** — the driver must check mirrors and adjacent traffic. Road-edge detection still blocks when enabled.
+
+**CLOSED_COURSE_VALIDATION_REQUIRED** — Honda code expects EPS steering to cut off near standstill and uses a 3 mph (about 4.8 km/h) threshold for steering status. At or below 0.3 m/s, controlsd also disables lateral control for this car. This candidate does not change either condition; a state transition at 1–3 km/h does not prove EPS steering will act. Do not treat synthetic state transitions as proof of vehicle actuation.
