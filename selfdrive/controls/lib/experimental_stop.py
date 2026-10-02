@@ -29,6 +29,12 @@ def get_stop_intent_profile(personality) -> StopIntentProfile:
   raise NotImplementedError("Longitudinal personality not supported")
 
 
+def stop_intent_hold_enabled(mode: str, experimental_mode: bool, openpilot_longitudinal: bool,
+                             reset_state: bool, v_ego: float) -> bool:
+  return (mode == 'blended' and experimental_mode and openpilot_longitudinal and
+          not reset_state and 0.0 <= v_ego < 2.5)
+
+
 @dataclass
 class StopIntentTracker:
   latched: bool = False
