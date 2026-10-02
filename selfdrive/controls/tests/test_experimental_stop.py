@@ -1,4 +1,15 @@
-from openpilot.selfdrive.controls.lib.experimental_stop import StopIntentTracker
+import pytest
+from cereal import log
+from openpilot.selfdrive.controls.lib.experimental_stop import StopIntentTracker, get_stop_intent_profile
+
+
+@pytest.mark.parametrize(('personality', 'release_time'), [
+  (log.LongitudinalPersonality.relaxed, 0.30),
+  (log.LongitudinalPersonality.standard, 0.20),
+  (log.LongitudinalPersonality.aggressive, 0.15),
+])
+def test_personality_stop_release_time(personality, release_time):
+  assert get_stop_intent_profile(personality).release_time == release_time
 
 
 def test_stop_intent_starts_immediately_and_releases_after_stable_false():
