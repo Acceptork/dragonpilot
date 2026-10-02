@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from itertools import chain
 import os
 from openpilot.common.basedir import BASEDIR
 from openpilot.system.ui.lib.multilang import SYSTEM_UI_DIR, UI_DIR, TRANSLATIONS_DIR, multilang
@@ -11,13 +10,14 @@ POT_FILE = os.path.join(str(TRANSLATIONS_DIR), "app.pot")
 
 def update_translations():
   files = []
-  for root, _, filenames in chain(os.walk(SYSTEM_UI_DIR),
-                                  os.walk(os.path.join(UI_DIR, "widgets")),
-                                  os.walk(os.path.join(UI_DIR, "layouts")),
-                                  os.walk(os.path.join(UI_DIR, "onroad"))):
-    for filename in filenames:
-      if filename.endswith(".py"):
-        files.append(os.path.relpath(os.path.join(root, filename), BASEDIR))
+  # Include both device UIs and every settings subdirectory, including mici.
+  # Skipping tests/catalog tooling keeps the extracted keys user-facing.
+  for source_root in (SYSTEM_UI_DIR, UI_DIR):
+    for root, dirs, filenames in os.walk(source_root):
+      dirs[:] = sorted(d for d in dirs if d not in {"tests", "translations", "__pycache__"})
+      for filename in sorted(filenames):
+        if filename.endswith(".py"):
+          files.append(os.path.relpath(os.path.join(root, filename), BASEDIR))
 
   # Extract translatable strings and generate .pot template
   entries = extract_strings(files, BASEDIR)
