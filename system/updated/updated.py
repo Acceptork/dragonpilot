@@ -253,7 +253,7 @@ class Updater:
   @property
   def update_ready(self) -> bool:
     consistent_file = Path(os.path.join(FINALIZED, ".overlay_consistent"))
-    if consistent_file.is_file():
+    if consistent_file.is_file() and self.target_branch in self.branches:
       hash_mismatch = self.get_commit_hash(BASEDIR) != self.branches[self.target_branch]
       branch_mismatch = self.get_branch(BASEDIR) != self.target_branch
       on_target_branch = self.get_branch(FINALIZED) == self.target_branch
@@ -262,7 +262,7 @@ class Updater:
 
   @property
   def update_available(self) -> bool:
-    if os.path.isdir(OVERLAY_MERGED) and len(self.branches) > 0:
+    if os.path.isdir(OVERLAY_MERGED) and self.target_branch in self.branches:
       hash_mismatch = self.get_commit_hash(OVERLAY_MERGED) != self.branches[self.target_branch]
       branch_mismatch = self.get_branch(OVERLAY_MERGED) != self.target_branch
       return hash_mismatch or branch_mismatch
@@ -347,8 +347,6 @@ class Updater:
   def check_for_update(self) -> None:
     cloudlog.info("checking for updates")
 
-    excluded_branches = ('release2', 'release2-staging')
-
     try:
       run(["git", "ls-remote", "origin", "HEAD"], OVERLAY_MERGED)
       self._has_internet = True
@@ -356,32 +354,29 @@ class Updater:
       self._has_internet = False
 
     setup_git_options(OVERLAY_MERGED)
-    output = run(["git", "ls-remote", "--heads"], OVERLAY_MERGED)
+    output = run(["git", "ls-remote", "--heads", "origin"], OVERLAY_MERGED)
 
     self.branches = defaultdict(lambda: None)
-    for line in output.split('\n'):
+    target_branch = self.target_branch
+    for line in output.splitlines():
       ls_remotes_re = r'(?P<commit_sha>\b[0-9a-f]{5,40}\b)(\s+)(refs\/heads\/)(?P<branch_name>.*$)'
       x = re.fullmatch(ls_remotes_re, line.strip())
-      # if x is not None and x.group('branch_name') not in excluded_branches:
-      #   self.branches[x.group('branch_name')] = x.group('commit_sha')
+      if x is None:
+        continue
 
-      # dp logic
-      if x is not None:
-        name = x.group('branch_name')
-
-        # Check for version X.Y.Z at the start (ignores trailing suffixes like -pre-build)
-        m = re.match(r'^(\d+)\.(\d+)\.(\d+)', name)
-
-        # Logic:
-        # 1. Allow exactly 'pre-build'
-        # 2. OR Allow if it parses as a version AND that version is >= 0.9.8
-      if name in ('testing', 'pre-build', 'my-crv') or (m and tuple(map(int, m.groups())) >= (0, 9, 8)):
-          self.branches[name] = x.group('commit_sha')
+      name = x.group('branch_name')
+      # Keep the selected custom branch if it exists on origin, alongside supported release branches.
+      m = re.match(r'^(\d+)\.(\d+)\.(\d+)', name)
+      if name == target_branch or name in ('testing', 'pre-build', 'my-crv') or (m and tuple(map(int, m.groups())) >= (0, 9, 8)):
+        self.branches[name] = x.group('commit_sha')
 
     cur_branch = self.get_branch(OVERLAY_MERGED)
     cur_commit = self.get_commit_hash(OVERLAY_MERGED)
-    new_branch = self.target_branch
-    new_commit = self.branches[new_branch]
+    new_branch = target_branch
+    new_commit = self.branches.get(new_branch)
+    if new_commit is None:
+      cloudlog.info(f"target branch {new_branch} is not on origin; no remote update available")
+      return
     if (cur_branch, cur_commit) != (new_branch, new_commit):
       cloudlog.info(f"update available, {cur_branch} ({str(cur_commit)[:7]}) -> {new_branch} ({str(new_commit)[:7]})")
     else:
@@ -492,7 +487,9 @@ def main() -> None:
         last_fetch = params.get("UpdaterLastFetchTime")
         timed_out = last_fetch is None or (datetime.datetime.now(datetime.UTC).replace(tzinfo=None) - last_fetch > datetime.timedelta(days=3))
         user_requested_fetch = wait_helper.user_request == UserRequest.FETCH
-        if params.get_bool("NetworkMetered") and not timed_out and not user_requested_fetch:
+        if updater.target_branch not in updater.branches:
+          cloudlog.info("skipping fetch, target branch is not on origin")
+        elif params.get_bool("NetworkMetered") and not timed_out and not user_requested_fetch:
           cloudlog.info("skipping fetch, connection metered")
         elif wait_helper.user_request == UserRequest.CHECK:
           cloudlog.info("skipping fetch, only checking")

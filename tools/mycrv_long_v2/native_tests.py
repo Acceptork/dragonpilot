@@ -24,6 +24,8 @@ def main():
   staged = Path(args.staged_dir)
   if (staged / 'cruise.py').exists():
     load('openpilot.selfdrive.car.cruise', staged / 'cruise.py')
+  if (staged / 'updated.py').exists():
+    load('openpilot.system.updated.updated', staged / 'updated.py')
   load('openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc', staged / 'long_mpc.py')
   load('openpilot.selfdrive.controls.lib.longitudinal_throttle', staged / 'longitudinal_throttle.py')
   load('openpilot.selfdrive.controls.lib.longitudinal_planner', staged / 'longitudinal_planner.py')
