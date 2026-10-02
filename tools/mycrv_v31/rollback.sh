@@ -40,7 +40,7 @@ if ! scons -j4 > "$BACKUP_DIR/rollback-build.log" 2>&1; then
   if ! scons -j1 >> "$BACKUP_DIR/rollback-build.log" 2>&1; then
     tail -n 60 "$BACKUP_DIR/rollback-build.log" >&2
     printf 'v2 build failed; attempting to restore the previously built RC\n' >&2
-    if git switch "$CURRENT_BRANCH" && [[ $(git rev-parse HEAD) == "$CURRENT_SHA" ]] &&
+    if git switch -C "$CURRENT_BRANCH" "$CURRENT_SHA" && [[ $(git rev-parse HEAD) == "$CURRENT_SHA" ]] &&
        scons -j1 > "$BACKUP_DIR/rollback-recovery-build.log" 2>&1; then
       die 'ROLLBACK_ABORTED: prior RC source/build restored; no reboot requested'
     fi

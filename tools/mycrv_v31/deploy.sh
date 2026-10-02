@@ -75,7 +75,7 @@ restore_on_exit() {
   trap - EXIT
   if [[ $status -ne 0 && $SWITCHED == 1 ]]; then
     printf 'deploy failed before reboot; restoring and rebuilding %s\n' "$BASE_SHA" >&2
-    if git switch "$CURRENT_BRANCH" && [[ $(git rev-parse HEAD) == "$BASE_SHA" ]]; then
+    if git switch -C "$CURRENT_BRANCH" "$BASE_SHA" && [[ $(git rev-parse HEAD) == "$BASE_SHA" ]]; then
       if scons -j1 > "$BACKUP_DIR/recovery-build.log" 2>&1; then
         printf 'v2 source and build restored; no reboot requested\n' >&2
       else
