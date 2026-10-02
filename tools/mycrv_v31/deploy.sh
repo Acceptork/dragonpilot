@@ -79,12 +79,12 @@ restore_on_exit() {
       if scons -j1 > "$BACKUP_DIR/recovery-build.log" 2>&1; then
         printf 'v2 source and build restored; no reboot requested\n' >&2
       else
-        printf 'v2 source restored but recovery build FAILED; device must remain parked. See %s\n' \
+        printf 'RECOVERY_BLOCKED: v2 source restored but recovery build FAILED; device must remain parked. See %s\n' \
           "$BACKUP_DIR/recovery-build.log" >&2
         status=1
       fi
     else
-      printf 'FAILED to restore v2 checkout; device must remain parked for manual recovery\n' >&2
+      printf 'RECOVERY_BLOCKED: FAILED to restore v2 checkout; device must remain parked for manual recovery\n' >&2
       status=1
     fi
   fi
