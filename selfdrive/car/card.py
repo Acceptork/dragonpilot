@@ -185,6 +185,7 @@ class Car:
     self.params.put("CarParamsPersistent", cp_bytes)
 
     self.v_cruise_helper = VCruiseHelper(self.CP)
+    self.pending_cruise_enable_cs = None
 
     self.is_metric = self.params.get_bool("IsMetric")
     self.experimental_mode = self.params.get_bool("ExperimentalMode")
@@ -216,9 +217,14 @@ class Car:
       self.can_log_mono_time = messaging.log_from_bytes(can_strs[0]).logMonoTime
 
     self.v_cruise_helper.update_v_cruise(CS, self.sm['carControl'].enabled, self.is_metric)
-    if self.sm['carControl'].enabled and not self.CC_prev.enabled:
-      # Use CarState w/ buttons from the step selfdrived enables on
-      self.v_cruise_helper.initialize_v_cruise(self.CS_prev, self.experimental_mode)
+    if self.sm['carControl'].enabled and not self.CC_prev.enabled and self.pending_cruise_enable_cs is None:
+      # Preserve the button frame; use the current speed after CAN parsing.
+      self.pending_cruise_enable_cs = self.CS_prev
+    if self.sm['carControl'].enabled and self.pending_cruise_enable_cs is not None:
+      if self.v_cruise_helper.initialize_v_cruise(self.pending_cruise_enable_cs, self.experimental_mode, current_CS=CS):
+        self.pending_cruise_enable_cs = None
+    elif not self.sm['carControl'].enabled:
+      self.pending_cruise_enable_cs = None
 
     # TODO: mirror the carState.cruiseState struct?
     CS.vCruise = float(self.v_cruise_helper.v_cruise_kph)

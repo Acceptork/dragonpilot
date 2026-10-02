@@ -18,6 +18,8 @@ IMPERIAL_INCREMENT = round(CV.MPH_TO_KPH, 1)  # round here to avoid rounding err
 ButtonEvent = car.CarState.ButtonEvent
 ButtonType = car.CarState.ButtonEvent.Type
 CRUISE_LONG_PRESS = 50
+MIN_MOVING_SET_SPEED_KPH = 5.0
+MAX_RECENT_SPEED_FRAMES = 20  # card runs at 100 Hz; at most 0.2 s old
 CRUISE_NEAREST_FUNC = {
   ButtonType.accelCruise: math.ceil,
   ButtonType.decelCruise: math.floor,
@@ -36,12 +38,22 @@ class VCruiseHelper:
     self.v_cruise_kph_last = 0
     self.button_timers = {ButtonType.decelCruise: 0, ButtonType.accelCruise: 0}
     self.button_change_states = {btn: {"standstill": False, "enabled": False} for btn in self.button_timers}
+    self.speed_frame = 0
+    self.last_moving_speed_kph = None
+    self.last_moving_speed_frame = -MAX_RECENT_SPEED_FRAMES - 1
 
   @property
   def v_cruise_initialized(self):
     return self.v_cruise_kph != V_CRUISE_UNSET
 
   def update_v_cruise(self, CS, enabled, is_metric):
+    self.speed_frame += 1
+    speed_kph = CS.vEgo * CV.MS_TO_KPH
+    raw_kph = CS.vEgoRaw * CV.MS_TO_KPH
+    if (CS.canValid and not CS.standstill and math.isfinite(speed_kph) and math.isfinite(raw_kph) and
+        speed_kph >= MIN_MOVING_SET_SPEED_KPH and raw_kph >= MIN_MOVING_SET_SPEED_KPH):
+      self.last_moving_speed_kph = speed_kph
+      self.last_moving_speed_frame = self.speed_frame
     self.v_cruise_kph_last = self.v_cruise_kph
 
     if CS.cruiseState.available:
@@ -123,16 +135,35 @@ class VCruiseHelper:
         self.button_timers[b.type.raw] = 1 if b.pressed else 0
         self.button_change_states[b.type.raw] = {"standstill": CS.cruiseState.standstill, "enabled": enabled}
 
-  def initialize_v_cruise(self, CS, experimental_mode: bool) -> None:
+  def initialize_v_cruise(self, CS, experimental_mode: bool, current_CS=None) -> bool:
     # initializing is handled by the PCM
     if self.CP.pcmCruise:
-      return
+      return True
 
     initial = V_CRUISE_INITIAL_EXPERIMENTAL_MODE if experimental_mode else V_CRUISE_INITIAL
 
-    if any(b.type in (ButtonType.accelCruise, ButtonType.resumeCruise) for b in CS.buttonEvents) and self.v_cruise_initialized:
+    if (any(b.type in (ButtonType.accelCruise, ButtonType.resumeCruise) for b in CS.buttonEvents) and
+        V_CRUISE_MIN <= self.v_cruise_kph_last <= V_CRUISE_MAX):
       self.v_cruise_kph = self.v_cruise_kph_last
     else:
-      self.v_cruise_kph = int(round(np.clip(CS.vEgo * CV.MS_TO_KPH, initial, V_CRUISE_MAX)))
+      speed_state = current_CS if current_CS is not None else CS
+      speed_kph = speed_state.vEgo * CV.MS_TO_KPH
+      raw_kph = speed_state.vEgoRaw * CV.MS_TO_KPH
+      speed_valid = (math.isfinite(speed_kph) and speed_kph >= MIN_MOVING_SET_SPEED_KPH and
+                     (current_CS is None or (speed_state.canValid and math.isfinite(raw_kph) and raw_kph >= MIN_MOVING_SET_SPEED_KPH)))
+      if not speed_valid and (self.last_moving_speed_kph is not None and
+                              self.speed_frame - self.last_moving_speed_frame <= MAX_RECENT_SPEED_FRAMES and
+                              not speed_state.standstill):
+        speed_kph = self.last_moving_speed_kph
+        speed_valid = True
+      if speed_valid:
+        self.v_cruise_kph = int(round(np.clip(speed_kph, V_CRUISE_MIN, V_CRUISE_MAX)))
+      elif (speed_state.standstill or (current_CS is None and speed_kph < MIN_MOVING_SET_SPEED_KPH) or
+            (math.isfinite(speed_kph) and 0 < speed_kph < MIN_MOVING_SET_SPEED_KPH and
+             speed_state.canValid and math.isfinite(raw_kph) and raw_kph > 0)):
+        self.v_cruise_kph = initial
+      else:
+        return False  # wait for a valid speed rather than guessing the initial set speed
 
     self.v_cruise_cluster_kph = self.v_cruise_kph
+    return True

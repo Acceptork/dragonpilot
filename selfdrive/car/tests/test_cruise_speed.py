@@ -147,5 +147,56 @@ class TestVCruiseHelper:
         assert not self.v_cruise_helper.v_cruise_initialized
 
         self.enable(float(v_ego), experimental_mode)
-        assert V_CRUISE_INITIAL <= self.v_cruise_helper.v_cruise_kph <= V_CRUISE_MAX
+        assert V_CRUISE_MIN <= self.v_cruise_helper.v_cruise_kph <= V_CRUISE_MAX
         assert self.v_cruise_helper.v_cruise_initialized
+
+
+@pytest.mark.parametrize('speed_kph', [30, 50, 73, 90, 120])
+def test_set_uses_current_moving_speed(speed_kph):
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  button_cs = car.CarState(vEgo=0, buttonEvents=[ButtonEvent(type=ButtonType.decelCruise, pressed=False)])
+  current_cs = car.CarState(vEgo=speed_kph * CV.KPH_TO_MS, vEgoRaw=speed_kph * CV.KPH_TO_MS, canValid=True)
+  assert helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=current_cs)
+  assert helper.v_cruise_kph == speed_kph
+
+
+def test_set_standstill_uses_initial_speed():
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  button_cs = car.CarState(buttonEvents=[ButtonEvent(type=ButtonType.decelCruise, pressed=False)])
+  current_cs = car.CarState(vEgo=0, vEgoRaw=0, canValid=True, standstill=True)
+  assert helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=current_cs)
+  assert helper.v_cruise_kph == 50
+
+
+def test_resume_uses_previous_valid_set_speed():
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  helper.v_cruise_kph_last = 87
+  button_cs = car.CarState(buttonEvents=[ButtonEvent(type=ButtonType.resumeCruise, pressed=False)])
+  current_cs = car.CarState(vEgo=0, vEgoRaw=0, canValid=False)
+  assert helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=current_cs)
+  assert helper.v_cruise_kph == 87
+
+
+def test_set_zero_speed_glitch_uses_recent_valid_speed():
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  moving_cs = car.CarState(vEgo=83 * CV.KPH_TO_MS, vEgoRaw=83 * CV.KPH_TO_MS, canValid=True)
+  helper.update_v_cruise(moving_cs, enabled=False, is_metric=True)
+  button_cs = car.CarState(buttonEvents=[ButtonEvent(type=ButtonType.decelCruise, pressed=False)])
+  glitch_cs = car.CarState(vEgo=0, vEgoRaw=0, canValid=False, standstill=False)
+  assert helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=glitch_cs)
+  assert helper.v_cruise_kph == 83
+
+
+def test_set_rejects_stale_or_missing_speed():
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  moving_cs = car.CarState(vEgo=83 * CV.KPH_TO_MS, vEgoRaw=83 * CV.KPH_TO_MS, canValid=True)
+  helper.update_v_cruise(moving_cs, enabled=False, is_metric=True)
+  for _ in range(21):
+    helper.update_v_cruise(car.CarState(canValid=False), enabled=False, is_metric=True)
+  button_cs = car.CarState(buttonEvents=[ButtonEvent(type=ButtonType.decelCruise, pressed=False)])
+  invalid_cs = car.CarState(vEgo=0, vEgoRaw=0, canValid=False, standstill=False)
+  assert not helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=invalid_cs)
+  assert not helper.v_cruise_initialized
+  fresh_cs = car.CarState(vEgo=84 * CV.KPH_TO_MS, vEgoRaw=84 * CV.KPH_TO_MS, canValid=True)
+  assert helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=fresh_cs)
+  assert helper.v_cruise_kph == 84
