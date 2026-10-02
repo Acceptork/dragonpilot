@@ -12,6 +12,7 @@ from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, LongitudinalPlanSource, COMFORT_BRAKE, STOP_DISTANCE, get_T_FOLLOW
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
 from openpilot.selfdrive.controls.lib.longitudinal_throttle import ThrottleGate, grade_allows_override, model_allows_override, path_clear_for_throttle
+from openpilot.selfdrive.controls.lib.experimental_stop import StopIntentTracker, get_stop_intent_profile
 from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, get_accel_from_plan
 from openpilot.selfdrive.car.cruise import V_CRUISE_MAX, V_CRUISE_UNSET
 from openpilot.common.swaglog import cloudlog
@@ -64,6 +65,7 @@ class LongitudinalPlanner:
     self.dt = dt
     self.allow_throttle = True
     self.throttle_gate = ThrottleGate()
+    self.stop_intent_tracker = StopIntentTracker()
 
     self.a_desired = init_a
     self.v_desired_filter = FirstOrderFilter(init_v, 2.0, self.dt)
@@ -193,9 +195,15 @@ class LongitudinalPlanner:
       self.aem.update_states(model_msg=sm['modelV2'], radar_msg=sm['radarState'], v_ego=sm['carState'].vEgo)
       mode = self.aem.get_mode(mode)
 
+    stop_intent_active = (mode == 'blended' and sm['selfdriveState'].experimentalMode and
+                          self.CP.openpilotLongitudinalControl and not reset_state)
+    release_time = get_stop_intent_profile(personality).release_time if stop_intent_active else 0.0
+    stable_e2e_stop = self.stop_intent_tracker.update(output_should_stop_e2e, stop_intent_active,
+                                                      self.dt, release_time)
+
     if mode == 'blended':
       output_a_target = min(output_a_target_e2e, output_a_target_mpc)
-      self.output_should_stop = output_should_stop_e2e or output_should_stop_mpc
+      self.output_should_stop = (stable_e2e_stop if stop_intent_active else output_should_stop_e2e) or output_should_stop_mpc
       if output_a_target < output_a_target_mpc:
         self.mpc.source = LongitudinalPlanSource.e2e
     else:
