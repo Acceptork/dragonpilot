@@ -7,6 +7,9 @@ import os
 from pathlib import Path
 import time
 
+from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import COMFORT_BRAKE, STOP_DISTANCE, get_T_FOLLOW, get_jerk_factor
+from openpilot.selfdrive.controls.lib.longitudinal_throttle import get_recovery_policy, lead_desired_distance
+
 
 LOG_DIR = Path('/data/mycrv_long_debug')
 MAX_FILE_BYTES = 20_000_000
@@ -19,6 +22,11 @@ FIELDS = (
   'lead_status', 'dRel', 'vRel', 'vLead', 'aLeadK', 'personality',
   'experimentalMode', 'gasPressProb', 'upAccelCmd', 'uiAccelCmd', 'ufAccelCmd',
   'pitch', 'lead2_status', 'lead2_dRel', 'lead2_vRel',
+  'selectedPersonality', 'tFollow', 'jerkFactor', 'throttleOverrideActive',
+  'cruiseSpeedError', 'leadDesiredDistance', 'personalityRecoveryState',
+  'vEgoRaw', 'vEgoCluster', 'enabled', 'buttonEvents', 'buttonEnable',
+  'buttonVEgo', 'buttonVEgoRaw', 'buttonVEgoCluster', 'vCruiseBefore', 'vCruiseAfter',
+  'pcmCruise', 'openpilotLongitudinalControl',
 )
 LONG_STATE_NAMES = {'0': 'off', '1': 'pid', '2': 'stopping', '3': 'starting'}
 PLAN_SOURCE_NAMES = {'0': 'cruise', '1': 'lead0', '2': 'lead1', '3': 'lead2', '4': 'e2e'}
@@ -88,7 +96,7 @@ class RotatingLongCsv:
         pass
 
 
-def sample(sm):
+def sample(sm, cp=None, button_events='', button_enable=False, button_speeds=None, cruise_before=''):
   car_state = sm['carState']
   car_control = sm['carControl']
   controls_state = sm['controlsState']
@@ -97,7 +105,26 @@ def sample(sm):
   lead2 = sm['radarState'].leadTwo
   selfdrive_state = sm['selfdriveState']
   gas_probs = sm['modelV2'].meta.disengagePredictions.gasPressProbs
+  gas_prob = gas_probs[1] if len(gas_probs) > 1 else ''
   pitch = car_control.orientationNED[1] if len(car_control.orientationNED) == 3 else ''
+  personality = selfdrive_state.personality
+  t_follow = get_T_FOLLOW(personality)
+  jerk_factor = get_jerk_factor(personality)
+  cruise_error = car_state.vCruise - car_state.vEgo * 3.6 if car_state.vCruise < 250 else ''
+  override_active = bool(plan.allowThrottle and gas_prob != '' and gas_prob <= 0.4 and car_state.vEgo > 2.5)
+  if not car_control.longActive:
+    recovery_state = 'stock_or_inactive'
+  elif override_active:
+    recovery_state = 'override'
+  elif plan.allowThrottle:
+    recovery_state = 'model_allowed'
+  elif cruise_error != '' and cruise_error >= get_recovery_policy(personality).enter_gap * 3.6:
+    recovery_state = 'waiting_or_blocked'
+  else:
+    recovery_state = 'coast'
+  desired_distance = (lead_desired_distance(car_state.vEgo, lead.vLead, t_follow, COMFORT_BRAKE, STOP_DISTANCE)
+                      if lead.status else '')
+  button_speeds = button_speeds or ('', '', '')
   return (
     time.time(), car_state.vEgo, car_state.aEgo, car_state.vCruise, car_state.vCruiseCluster,
     plan.aTarget, car_control.actuators.accel, car_control.longActive,
@@ -106,14 +133,21 @@ def sample(sm):
     lead.dRel if lead.status else '', lead.vRel if lead.status else '',
     lead.vLead if lead.status else '', lead.aLeadK if lead.status else '',
     enum_name(selfdrive_state.personality, PERSONALITY_NAMES), selfdrive_state.experimentalMode,
-    gas_probs[1] if len(gas_probs) > 1 else '',
+    gas_prob,
     controls_state.upAccelCmd, controls_state.uiAccelCmd, controls_state.ufAccelCmd, pitch,
     lead2.status, lead2.dRel if lead2.status else '', lead2.vRel if lead2.status else '',
+    enum_name(personality, PERSONALITY_NAMES), t_follow, jerk_factor, override_active,
+    cruise_error, desired_distance, recovery_state,
+    getattr(car_state, 'vEgoRaw', ''), getattr(car_state, 'vEgoCluster', ''), selfdrive_state.enabled,
+    button_events, button_enable, *button_speeds, cruise_before, car_state.vCruise,
+    getattr(cp, 'pcmCruise', ''), getattr(cp, 'openpilotLongitudinalControl', ''),
   )
 
 
 def main():
   import cereal.messaging as messaging
+  from cereal import car
+  from openpilot.common.params import Params
   from openpilot.common.swaglog import cloudlog
 
   try:
@@ -121,24 +155,54 @@ def main():
   except OSError:
     pass
 
+  cp_bytes = Params().get('CarParams')
+  cp = messaging.log_from_bytes(cp_bytes, car.CarParams) if cp_bytes is not None else None
   sm = messaging.SubMaster(['carState', 'carControl', 'controlsState', 'longitudinalPlan',
-                            'radarState', 'selfdriveState', 'modelV2'], poll='carControl')
+                            'radarState', 'selfdriveState', 'modelV2', 'onroadEvents'], poll='carControl')
   writer = RotatingLongCsv()
   next_sample = 0.0
   retry_at = 0.0
+  capture_until = 0.0
+  last_cruise = ''
+  last_enabled = False
+  pending_buttons = ''
+  pending_enable = False
+  pending_speeds = None
+  pending_cruise_before = ''
   try:
     while True:
       sm.update(100)
       now = time.monotonic()
-      if not sm['selfdriveState'].enabled:
+      if sm.updated['carState']:
+        cs = sm['carState']
+        if cs.buttonEvents:
+          frame_buttons = ';'.join(f'{event.type}:{"down" if event.pressed else "up"}' for event in cs.buttonEvents)
+          pending_buttons = f'{pending_buttons};{frame_buttons}' if pending_buttons else frame_buttons
+          pending_speeds = (cs.vEgo, cs.vEgoRaw, cs.vEgoCluster)
+          pending_cruise_before = last_cruise
+          capture_until = now + 2.0
+        last_cruise = cs.vCruise
+      if sm.updated['onroadEvents'] and any(str(event.name) == 'buttonEnable' for event in sm['onroadEvents']):
+        pending_enable = True
+        capture_until = now + 2.0
+      enabled = sm['selfdriveState'].enabled
+      if enabled and not last_enabled:
+        capture_until = now + 2.0
+      last_enabled = enabled
+      if not enabled and now >= capture_until:
         writer.close()
         next_sample = now
         continue
-      if now < next_sample or now < retry_at or not sm.all_checks():
+      if now < next_sample or now < retry_at or not sm.all_checks(['carState', 'carControl', 'controlsState',
+                                                                  'longitudinalPlan', 'radarState', 'selfdriveState', 'modelV2']):
         continue
       next_sample = now + SAMPLE_INTERVAL
       try:
-        writer.write(sample(sm))
+        writer.write(sample(sm, cp, pending_buttons, pending_enable, pending_speeds, pending_cruise_before))
+        pending_buttons = ''
+        pending_enable = False
+        pending_speeds = None
+        pending_cruise_before = ''
       except OSError as e:
         cloudlog.warning(f'longitudinal_debug write failed: {e}')
         try:
