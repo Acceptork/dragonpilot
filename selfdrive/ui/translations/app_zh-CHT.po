@@ -206,6 +206,10 @@ msgstr "繼續"
 msgid "Continue without Wi-Fi"
 msgstr "不使用 Wi-Fi 繼續"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Cruise"
+msgstr "定速"
+
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "Current Version"
 msgstr "目前版本"
@@ -364,6 +368,10 @@ msgstr "啟用 openpilot"
 msgid "Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode."
 msgstr "啟用 openpilot 縱向控制（alpha）切換，以使用實驗模式。"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "End-to-end model"
+msgstr "端到端模型"
+
 #: system/ui/tici_setup.py
 msgid "Ensure the entered URL is valid, and the device's internet connection is good."
 msgstr "請確認輸入的網址有效，且裝置網路連線正常。"
@@ -504,6 +512,18 @@ msgstr "橫向機動模式"
 msgid "Lead"
 msgstr "前車"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Lead 1"
+msgstr "前車 1"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Lead 2"
+msgstr "前車 2"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Lead 3"
+msgstr "前車 3"
+
 #: system/ui/tici_updater.py
 msgid "Loading..."
 msgstr "載入中…"
@@ -582,6 +602,10 @@ msgstr "確定"
 msgid "ONLINE"
 msgstr "線上"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Off"
+msgstr "關閉"
+
 #: selfdrive/ui/layouts/settings/device.py
 msgid "On/Off Road"
 msgstr "行車／停車模式"
@@ -597,6 +621,10 @@ msgstr "配對"
 #: openpilot/selfdrive/ui/layouts/sidebar.py
 msgid "PANDA"
 msgstr "PANDA"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "PID control"
+msgstr "PID 控制"
 
 #: openpilot/selfdrive/ui/layouts/settings/device.py
 msgid "PREVIEW"
@@ -832,12 +860,20 @@ msgid "Start over"
 msgstr "重新開始"
 
 #: selfdrive/ui/onroad/long_debug.py
+msgid "Starting"
+msgstr "起步中"
+
+#: selfdrive/ui/onroad/long_debug.py
 msgid "State"
 msgstr "狀態"
 
 #: selfdrive/ui/onroad/long_debug.py
 msgid "Stop intent"
 msgstr "停止意圖"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Stopping"
+msgstr "停止中"
 
 #: system/ui/tici_reset.py
 msgid "System Reset"
