@@ -169,6 +169,10 @@ msgstr "點選「新增裝置」，掃描右側 QR 碼"
 msgid "Close"
 msgstr "關閉"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Command"
+msgstr "指令"
+
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "Current Version"
 msgstr "目前版本"
@@ -434,9 +438,25 @@ msgstr "LTE"
 msgid "Lateral Maneuver Mode"
 msgstr "橫向機動模式"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Lead"
+msgstr "前車"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Long active"
+msgstr "縱向啟用"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Longitudinal Debug"
+msgstr "縱向診斷"
+
 #: openpilot/selfdrive/ui/layouts/settings/developer.py
 msgid "Longitudinal Maneuver Mode"
 msgstr "縱向操作模式"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Longitudinal data unavailable"
+msgstr "縱向資料暫不可用"
 
 #: openpilot/selfdrive/ui/onroad/hud_renderer.py
 msgid "MAX"
@@ -461,6 +481,10 @@ msgstr "網路"
 #: openpilot/selfdrive/ui/widgets/ssh_key.py
 msgid "No SSH keys found for user '{}'"
 msgstr "找不到使用者 '{}' 的 SSH 金鑰"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "No lead"
+msgstr "無前車"
 
 #: openpilot/selfdrive/ui/widgets/offroad_alerts.py
 msgid "No release notes available."
@@ -601,6 +625,10 @@ msgstr "行車時錄製並儲存麥克風音訊。音訊將包含在 comma conne
 msgid "Regulatory"
 msgstr "法規"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Relative"
+msgstr "相對速度"
+
 #: openpilot/selfdrive/ui/layouts/settings/toggles.py
 msgid "Relaxed"
 msgstr "從容"
@@ -669,6 +697,10 @@ msgstr "選取語言"
 msgid "Serial"
 msgstr "序號"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Set"
+msgstr "設定"
+
 #: selfdrive/ui/layouts/settings/developer.py
 msgid "Show"
 msgstr "顯示"
@@ -685,9 +717,25 @@ msgstr "延後更新"
 msgid "Software"
 msgstr "軟體"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Source"
+msgstr "來源"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Speed"
+msgstr "車速"
+
 #: openpilot/selfdrive/ui/layouts/settings/toggles.py
 msgid "Standard"
 msgstr "標準"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "State"
+msgstr "狀態"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Stop intent"
+msgstr "停止意圖"
 
 #: openpilot/selfdrive/ui/onroad/alert_renderer.py
 msgid "System Unresponsive"
@@ -701,6 +749,10 @@ msgstr "請立刻接手控制"
 msgid "TEMP"
 msgstr "溫度"
 
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Target"
+msgstr "目標"
+
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "Target Branch"
 msgstr "目標分支"
@@ -708,6 +760,10 @@ msgstr "目標分支"
 #: system/ui/widgets/network.py
 msgid "Tethering Password"
 msgstr "網路共享密碼"
+
+#: selfdrive/ui/onroad/long_debug.py
+msgid "Throttle allowed"
+msgstr "油門許可"
 
 #: openpilot/selfdrive/ui/layouts/settings/settings.py
 msgid "Toggles"

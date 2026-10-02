@@ -78,6 +78,7 @@ class UIState:
     self.is_release = self.params.get_bool("IsReleaseBranch")
     self.always_on_dm: bool = self.params.get_bool("AlwaysOnDM")
     self.experimental_mode: bool = self.params.get_bool("ExperimentalMode")
+    self.show_debug_info: bool = self.params.get_bool("ShowDebugInfo")
     self.usbgpu: bool = self.params.get_bool("UsbGpuPresent")
     self.usbgpu_compiled: bool = self.params.get_bool("UsbGpuCompiled")
     self.started: bool = False
@@ -246,6 +247,7 @@ class UIState:
     self.is_metric = self.params.get_bool("IsMetric")
     self.always_on_dm = self.params.get_bool("AlwaysOnDM")
     self.experimental_mode = self.params.get_bool("ExperimentalMode")
+    self.show_debug_info = self.params.get_bool("ShowDebugInfo")
     self.usbgpu = self.params.get_bool("UsbGpuPresent")
     self.usbgpu_compiled = self.params.get_bool("UsbGpuCompiled")
 
