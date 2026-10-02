@@ -12,7 +12,7 @@ from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, LongitudinalPlanSource, COMFORT_BRAKE, STOP_DISTANCE, get_T_FOLLOW
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
 from openpilot.selfdrive.controls.lib.longitudinal_throttle import ThrottleGate, grade_allows_override, model_allows_override, path_clear_for_throttle
-from openpilot.selfdrive.controls.lib.experimental_stop import StopIntentTracker, get_stop_intent_profile
+from openpilot.selfdrive.controls.lib.experimental_stop import StopIntentTracker, get_stop_intent_profile, stop_intent_hold_enabled
 from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, get_accel_from_plan
 from openpilot.selfdrive.car.cruise import V_CRUISE_MAX, V_CRUISE_UNSET
 from openpilot.common.swaglog import cloudlog
@@ -195,8 +195,8 @@ class LongitudinalPlanner:
       self.aem.update_states(model_msg=sm['modelV2'], radar_msg=sm['radarState'], v_ego=sm['carState'].vEgo)
       mode = self.aem.get_mode(mode)
 
-    stop_intent_active = (mode == 'blended' and sm['selfdriveState'].experimentalMode and
-                          self.CP.openpilotLongitudinalControl and not reset_state)
+    stop_intent_active = stop_intent_hold_enabled(mode, sm['selfdriveState'].experimentalMode,
+                                                  self.CP.openpilotLongitudinalControl, reset_state, v_ego)
     release_time = get_stop_intent_profile(personality).release_time if stop_intent_active else 0.0
     stable_e2e_stop = self.stop_intent_tracker.update(output_should_stop_e2e, stop_intent_active,
                                                       self.dt, release_time)
