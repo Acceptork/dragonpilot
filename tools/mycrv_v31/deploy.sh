@@ -41,6 +41,7 @@ git fetch --no-tags origin "refs/tags/$RELEASE_TAG" || die 'release tag could no
 FETCHED_SHA=$(git rev-parse 'FETCH_HEAD^{commit}')
 [[ $FETCHED_SHA == "$TARGET_SHA" ]] || die "release tag resolves to $FETCHED_SHA, not requested $TARGET_SHA"
 git cat-file -e "$TARGET_SHA^{commit}" || die 'target commit is unavailable'
+git cat-file -e "$TARGET_SHA:tools/mycrv_v31/verify_runtime.py" || die 'release lacks post-reboot verification code'
 
 # No AGNOS, bootloader, partition, panda safety, or vehicle safety-model edits.
 if ! git diff --quiet "$BASE_SHA" "$TARGET_SHA" -- \
@@ -73,8 +74,19 @@ restore_on_exit() {
   local status=$?
   trap - EXIT
   if [[ $status -ne 0 && $SWITCHED == 1 ]]; then
-    printf 'deploy failed before reboot; restoring %s\n' "$BASE_SHA" >&2
-    git switch "$CURRENT_BRANCH" || true
+    printf 'deploy failed before reboot; restoring and rebuilding %s\n' "$BASE_SHA" >&2
+    if git switch "$CURRENT_BRANCH" && [[ $(git rev-parse HEAD) == "$BASE_SHA" ]]; then
+      if scons -j1 > "$BACKUP_DIR/recovery-build.log" 2>&1; then
+        printf 'v2 source and build restored; no reboot requested\n' >&2
+      else
+        printf 'v2 source restored but recovery build FAILED; device must remain parked. See %s\n' \
+          "$BACKUP_DIR/recovery-build.log" >&2
+        status=1
+      fi
+    else
+      printf 'FAILED to restore v2 checkout; device must remain parked for manual recovery\n' >&2
+      status=1
+    fi
   fi
   exit "$status"
 }
