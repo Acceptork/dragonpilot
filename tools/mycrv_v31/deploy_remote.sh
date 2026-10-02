@@ -19,7 +19,7 @@ PRE_BOOT_ID=$(ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_TARGET" 'cat /proc
 [[ $PRE_BOOT_ID =~ ^[0-9a-f-]{36}$ ]] || { echo 'could not read a valid pre-deploy boot ID' >&2; exit 1; }
 printf 'pre_boot_id=%s\n' "$PRE_BOOT_ID" >> "$LOG"
 set +e
-ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_TARGET" "bash -s -- $TARGET_SHA" < "$SCRIPT_DIR/deploy.sh" 2>&1 | tee "$LOG"
+ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_TARGET" "bash -s -- $TARGET_SHA" < "$SCRIPT_DIR/deploy.sh" 2>&1 | tee -a "$LOG"
 DEPLOY_STATUS=${PIPESTATUS[0]}
 set -e
 if ! grep -Fq "DEPLOY_READY $TARGET_SHA" "$LOG"; then
