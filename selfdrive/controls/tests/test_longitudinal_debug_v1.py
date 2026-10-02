@@ -26,7 +26,10 @@ def test_sample_has_requested_fields_without_location_or_media():
     'carState': Msg(vEgo=20.0, vEgoRaw=20.1, vEgoCluster=20.2, aEgo=0.1, vCruise=90.0, vCruiseCluster=90.0),
     'carControl': Msg(actuators=Msg(accel=0.4), longActive=False, orientationNED=[0.0, 0.02, 0.0]),
     'controlsState': Msg(longControlState='pid', upAccelCmd=0.0, uiAccelCmd=0.0, ufAccelCmd=0.4),
-    'longitudinalPlan': Msg(aTarget=0.4, allowThrottle=True, longitudinalPlanSource='cruise'),
+    'longitudinalPlan': Msg(aTarget=0.4, allowThrottle=True, longitudinalPlanSource='cruise',
+                            rawShouldStopE2E=True, filteredShouldStopE2E=True, shouldStopMPC=False,
+                            shouldStop=True, aTargetE2E=-0.5, aTargetMPC=0.4,
+                            experimentalStopIntentActive=True, stopReleaseTime=0.2),
     'radarState': Msg(leadOne=Msg(status=False), leadTwo=Msg(status=False)),
     'selfdriveState': Msg(personality=log.LongitudinalPersonality.standard, experimentalMode=False, enabled=True),
     'modelV2': Msg(meta=Msg(disengagePredictions=Msg(gasPressProbs=[0.2, 0.1]))),
@@ -47,4 +50,11 @@ def test_sample_has_requested_fields_without_location_or_media():
   assert data['buttonVEgoRaw'] == 20.1
   assert data['buttonEnable'] is True
   assert data['vCruiseBefore'] == 80.0
+  assert data['stopPointAvailable'] is False
+  assert data['rawStopDistance'] == ''
+  assert data['shouldStopE2E'] is True
+  assert data['shouldStopMPC'] is False
+  assert data['shouldStopFinal'] is True
+  assert data['stopLatchActive'] is True
+  assert data['stopIntentReleaseTime'] == 0.2
   assert not any('gps' in field.lower() or 'image' in field.lower() or 'audio' in field.lower() for field in FIELDS)
