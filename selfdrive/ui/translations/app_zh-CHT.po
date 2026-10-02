@@ -80,6 +80,10 @@ msgstr "同意"
 msgid "Always-On Driver Monitoring"
 msgstr "持續啟用駕駛監控"
 
+#: system/ui/tici_updater.py
+msgid "An operating system update is required. Connect your device to Wi-Fi for the fastest update experience. The download size is approximately 1GB."
+msgstr "需要更新作業系統。請將裝置連接 Wi-Fi，以最快速度完成更新。下載容量約為 1 GB。"
+
 #: selfdrive/ui/mici/layouts/settings/firehose.py
 msgid "Any fast phone or laptop charger should be fine."
 msgstr "支援快充的手機或筆電充電器都可以。"
@@ -95,6 +99,10 @@ msgstr "確定要重新啟動嗎？"
 #: openpilot/selfdrive/ui/layouts/settings/device.py
 msgid "Are you sure you want to reset calibration?"
 msgstr "確定要重設校正嗎？"
+
+#: system/ui/tici_reset.py
+msgid "Are you sure you want to reset your device?"
+msgstr "確定要重設裝置嗎？"
 
 #: selfdrive/ui/layouts/settings/device.py
 msgid "Are you sure you want to switch?"
@@ -112,6 +120,10 @@ msgstr "返回"
 #: openpilot/selfdrive/ui/widgets/prime.py
 msgid "Become a comma prime member at connect.comma.ai"
 msgstr "前往 connect.comma.ai 成為 comma prime 會員"
+
+#: system/ui/tici_setup.py
+msgid "Before we get on the road, let's finish installation and cover some details."
+msgstr "上路前，請先完成安裝及必要設定。"
 
 #: openpilot/selfdrive/ui/widgets/pairing_dialog.py
 msgid "Bookmark connect.comma.ai to your home screen to use it like an app"
@@ -161,6 +173,10 @@ msgstr "變更語言"
 msgid "Changing this setting will restart openpilot if the car is powered on."
 msgstr "若車輛通電，變更此設定將重新啟動 openpilot。"
 
+#: system/ui/tici_setup.py
+msgid "Choose Software to Use"
+msgstr "選擇使用的軟體"
+
 #: openpilot/selfdrive/ui/widgets/pairing_dialog.py
 msgid "Click \"add new device\" and scan the QR code on the right"
 msgstr "點選「新增裝置」，掃描右側 QR 碼"
@@ -173,9 +189,30 @@ msgstr "關閉"
 msgid "Command"
 msgstr "指令"
 
+#: system/ui/tici_reset.py
+msgid "Confirm"
+msgstr "確認"
+
+#: system/ui/tici_setup.py
+#: system/ui/tici_updater.py
+msgid "Connect to Wi-Fi"
+msgstr "連接 Wi-Fi"
+
+#: system/ui/tici_setup.py
+msgid "Continue"
+msgstr "繼續"
+
+#: system/ui/tici_setup.py
+msgid "Continue without Wi-Fi"
+msgstr "不使用 Wi-Fi 繼續"
+
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "Current Version"
 msgstr "目前版本"
+
+#: system/ui/tici_setup.py
+msgid "Custom Software"
+msgstr "自訂軟體"
 
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "DOWNLOAD"
@@ -257,6 +294,15 @@ msgstr "裝置 ID"
 msgid "Download"
 msgstr "下載"
 
+#: system/ui/tici_setup.py
+msgid "Download Failed"
+msgstr "下載失敗"
+
+#: system/ui/tici_setup.py
+#: system/ui/tici_updater.py
+msgid "Downloading..."
+msgstr "下載中…"
+
 #: openpilot/selfdrive/ui/layouts/settings/device.py
 msgid "Driver Camera"
 msgstr "車內鏡頭"
@@ -318,6 +364,10 @@ msgstr "啟用 openpilot"
 msgid "Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode."
 msgstr "啟用 openpilot 縱向控制（alpha）切換，以使用實驗模式。"
 
+#: system/ui/tici_setup.py
+msgid "Ensure the entered URL is valid, and the device's internet connection is good."
+msgstr "請確認輸入的網址有效，且裝置網路連線正常。"
+
 #: system/ui/widgets/network.py
 msgid "Enter APN"
 msgstr "輸入 APN"
@@ -325,6 +375,10 @@ msgstr "輸入 APN"
 #: system/ui/widgets/network.py
 msgid "Enter SSID"
 msgstr "輸入 SSID"
+
+#: system/ui/tici_setup.py
+msgid "Enter URL"
+msgstr "輸入網址"
 
 #: system/ui/widgets/network.py
 msgid "Enter new tethering password"
@@ -386,6 +440,10 @@ msgstr "常見問題"
 msgid "GOOD"
 msgstr "良好"
 
+#: system/ui/tici_setup.py
+msgid "Getting Started"
+msgstr "開始使用"
+
 #: selfdrive/ui/layouts/settings/device.py
 msgid "Go Offroad"
 msgstr "切換至停車模式"
@@ -418,6 +476,10 @@ msgstr "安裝"
 msgid "IP Address"
 msgstr "IP 位址"
 
+#: system/ui/tici_updater.py
+msgid "Install"
+msgstr "安裝"
+
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "Install Update"
 msgstr "安裝更新"
@@ -441,6 +503,10 @@ msgstr "橫向機動模式"
 #: selfdrive/ui/onroad/long_debug.py
 msgid "Lead"
 msgstr "前車"
+
+#: system/ui/tici_updater.py
+msgid "Loading..."
+msgstr "載入中…"
 
 #: selfdrive/ui/onroad/long_debug.py
 msgid "Long active"
@@ -481,6 +547,10 @@ msgstr "網路"
 #: openpilot/selfdrive/ui/widgets/ssh_key.py
 msgid "No SSH keys found for user '{}'"
 msgstr "找不到使用者 '{}' 的 SSH 金鑰"
+
+#: system/ui/tici_setup.py
+msgid "No custom software found at this URL."
+msgstr "此網址找不到自訂軟體。"
 
 #: selfdrive/ui/onroad/long_debug.py
 msgid "No lead"
@@ -569,6 +639,10 @@ msgstr "請連接 Wi-Fi 以進行更新。"
 msgid "Power Off"
 msgstr "關機"
 
+#: system/ui/tici_setup.py
+msgid "Power your device in a car with a harness or proceed at your own risk."
+msgstr "請在車內透過線束為裝置供電；若繼續操作，相關風險需自行承擔。"
+
 #: system/ui/widgets/network.py
 msgid "Prevent large data uploads when on a metered Wi-Fi connection"
 msgstr "在計量制 Wi‑Fi 連線時避免大量上傳"
@@ -608,6 +682,10 @@ msgstr "重新啟動裝置"
 #: openpilot/selfdrive/ui/widgets/offroad_alerts.py
 msgid "Reboot and Update"
 msgstr "重新啟動並更新"
+
+#: system/ui/tici_setup.py
+msgid "Reboot device"
+msgstr "重新啟動裝置"
 
 #: openpilot/selfdrive/ui/layouts/settings/toggles.py
 msgid "Record and Upload Driver Camera"
@@ -653,6 +731,18 @@ msgstr "重設"
 msgid "Reset Calibration"
 msgstr "重設校正"
 
+#: system/ui/tici_reset.py
+msgid "Reset failed. Reboot to try again."
+msgstr "重設失敗。請重新啟動後再試。"
+
+#: system/ui/tici_reset.py
+msgid ""
+"Resetting device...\n"
+"This may take up to a minute."
+msgstr ""
+"正在重設裝置…\n"
+"這可能需要最多一分鐘。"
+
 #: openpilot/selfdrive/ui/layouts/settings/device.py
 msgid "Review Training Guide"
 msgstr "檢視訓練指南"
@@ -672,6 +762,10 @@ msgstr "SSH 金鑰"
 #: system/ui/widgets/network.py
 msgid "Scanning Wi-Fi networks..."
 msgstr "正在掃描 Wi‑Fi 網路…"
+
+#: system/ui/tici_setup.py
+msgid "Scroll to continue"
+msgstr "捲動後繼續"
 
 #: system/ui/widgets/option_dialog.py
 msgid "Select"
@@ -701,6 +795,10 @@ msgstr "序號"
 msgid "Set"
 msgstr "設定"
 
+#: system/ui/tici_setup.py
+msgid "Setup"
+msgstr "初始設定"
+
 #: selfdrive/ui/layouts/settings/developer.py
 msgid "Show"
 msgstr "顯示"
@@ -729,6 +827,10 @@ msgstr "車速"
 msgid "Standard"
 msgstr "標準"
 
+#: system/ui/tici_setup.py
+msgid "Start over"
+msgstr "重新開始"
+
 #: selfdrive/ui/onroad/long_debug.py
 msgid "State"
 msgstr "狀態"
@@ -737,9 +839,21 @@ msgstr "狀態"
 msgid "Stop intent"
 msgstr "停止意圖"
 
+#: system/ui/tici_reset.py
+msgid "System Reset"
+msgstr "系統重設"
+
 #: openpilot/selfdrive/ui/onroad/alert_renderer.py
 msgid "System Unresponsive"
 msgstr "系統無回應"
+
+#: system/ui/tici_updater.py
+msgid "System Update"
+msgstr "系統更新"
+
+#: system/ui/tici_reset.py
+msgid "System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot."
+msgstr "已啟動系統重設。按「確認」清除所有內容與設定；按「取消」繼續開機。"
 
 #: openpilot/selfdrive/ui/onroad/alert_renderer.py
 msgid "TAKE CONTROL IMMEDIATELY"
@@ -781,6 +895,10 @@ msgstr "解除安裝"
 msgid "UPDATE"
 msgstr "更新"
 
+#: system/ui/tici_reset.py
+msgid "Unable to mount data partition. Partition may be corrupted. Press confirm to erase and reset your device."
+msgstr "無法掛載資料分割區，該分割區可能已損毀。按「確認」清除資料並重設裝置。"
+
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "Uninstall"
 msgstr "解除安裝"
@@ -788,6 +906,14 @@ msgstr "解除安裝"
 #: openpilot/selfdrive/ui/layouts/sidebar.py
 msgid "Unknown"
 msgstr "未知"
+
+#: system/ui/tici_updater.py
+msgid "Update Required"
+msgstr "需要更新"
+
+#: system/ui/tici_updater.py
+msgid "Update failed"
+msgstr "更新失敗"
 
 #: openpilot/selfdrive/ui/layouts/settings/software.py
 msgid "Updates are only downloaded while the car is off."
@@ -804,6 +930,28 @@ msgstr "上傳車內鏡頭資料，協助改善駕駛監控演算法。"
 #: openpilot/selfdrive/ui/layouts/settings/toggles.py
 msgid "Use Metric System"
 msgstr "使用公制"
+
+#: system/ui/tici_setup.py
+msgid ""
+"Use caution when installing third-party software.\n"
+"\n"
+"⚠️ It has not been tested by comma.\n"
+"\n"
+"⚠️ It may not comply with relevant safety standards.\n"
+"\n"
+"⚠️ It may cause damage to your device and/or vehicle.\n"
+"\n"
+"If you'd like to proceed, use https://flash.comma.ai to restore your device to a factory state later."
+msgstr ""
+"安裝第三方軟體時請謹慎。\n"
+"\n"
+"⚠️ comma 未測試此軟體。\n"
+"\n"
+"⚠️ 此軟體可能不符合相關安全標準。\n"
+"\n"
+"⚠️ 此軟體可能損壞裝置及／或車輛。\n"
+"\n"
+"若日後需要恢復原廠狀態，請使用 https://flash.comma.ai 還原裝置。"
 
 #: openpilot/selfdrive/ui/layouts/sidebar.py
 msgid "VEHICLE"
@@ -824,6 +972,18 @@ msgstr "車型清單格式無效。"
 #: selfdrive/ui/layouts/settings/device.py
 msgid "Vehicle Model list not found."
 msgstr "找不到車型清單。"
+
+#: system/ui/tici_setup.py
+msgid "WARNING: Custom Software"
+msgstr "警告：自訂軟體"
+
+#: system/ui/tici_setup.py
+msgid "WARNING: Low Voltage"
+msgstr "警告：電壓過低"
+
+#: system/ui/tici_setup.py
+msgid "Waiting for internet"
+msgstr "等待網路連線"
 
 #: openpilot/selfdrive/ui/onroad/alert_renderer.py
 msgid "Waiting to start"
@@ -904,6 +1064,10 @@ msgstr "正在完成更新..."
 #: system/ui/widgets/network.py
 msgid "for \"{}\""
 msgstr "適用於「{}」"
+
+#: system/ui/tici_setup.py
+msgid "for Custom Software"
+msgstr "供自訂軟體使用"
 
 #: openpilot/selfdrive/ui/onroad/hud_renderer.py
 msgid "km/h"
