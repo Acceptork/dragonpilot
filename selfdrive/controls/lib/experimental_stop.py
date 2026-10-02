@@ -5,6 +5,28 @@ must not turn its trajectory endpoint into an assumed road marking location.
 """
 
 from dataclasses import dataclass
+from cereal import log
+
+
+@dataclass(frozen=True)
+class StopIntentProfile:
+  release_time: float
+
+
+# These only govern how long a transient model shouldStop=False is ignored.
+# Braking strength, distance, and Honda limits remain owned by the existing path.
+STOP_INTENT_PROFILES = {
+  log.LongitudinalPersonality.relaxed: StopIntentProfile(0.30),
+  log.LongitudinalPersonality.standard: StopIntentProfile(0.20),
+  log.LongitudinalPersonality.aggressive: StopIntentProfile(0.15),
+}
+
+
+def get_stop_intent_profile(personality) -> StopIntentProfile:
+  for key, profile in STOP_INTENT_PROFILES.items():
+    if personality == key:
+      return profile
+  raise NotImplementedError("Longitudinal personality not supported")
 
 
 @dataclass
