@@ -149,7 +149,7 @@ class LongitudinalPlanner:
     self.allow_throttle = self.throttle_gate.update(model_allows, cruise_gap, path_clear,
                                                     not reset_state and not sm['selfdriveState'].experimentalMode and radar_valid and model_safe_to_override and
                                                     grade_allows_override(sm['carControl'].orientationNED),
-                                                    self.dt, lead_present)
+                                                    self.dt, lead_present, personality)
 
     if not self.allow_throttle:
       clipped_accel_coast = max(accel_coast, accel_clip[0])

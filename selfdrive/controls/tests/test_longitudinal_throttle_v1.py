@@ -35,7 +35,9 @@ def test_cruise_gap_hysteresis_holds_throttle_until_near_set_speed():
   for _ in range(10):
     gate.update(False, 20 / 3.6, True, True, 0.05)
   assert gate.update(False, 5 / 3.6, True, True, 0.05)
-  assert not gate.update(False, 2 / 3.6, True, True, 0.05)
+  assert gate.update(False, 2 / 3.6, True, True, 0.05)
+  assert gate.update(False, 0.0, True, True, 0.05)
+  assert not gate.update(False, -2 / 3.6, True, True, 0.05)
 
 
 def test_pullaway_requires_a_safe_gap_and_sustained_positive_relative_speed():
