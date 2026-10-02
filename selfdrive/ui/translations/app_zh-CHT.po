@@ -1215,3 +1215,584 @@ msgstr "✓ 已訂閱"
 msgid "🔥 Firehose Mode 🔥"
 msgstr "🔥 Firehose 模式 🔥"
 
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "1. openpilot is a driver assistance system."
+msgstr "1. openpilot 是駕駛輔助系統。"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "2. You must pay attention at all times."
+msgstr "2. 您必須隨時注意路況。"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "3. You must be ready to take over at any time."
+msgstr "3. 您必須隨時準備接管。"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "4. You are fully responsible for driving the car."
+msgstr "4. 您須對駕駛車輛負全部責任。"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "accept\nterms"
+msgstr "接受\n條款"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "aggressive"
+msgstr "積極"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "allow data uploading"
+msgstr "允許上傳資料"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "alpha longitudinal"
+msgstr "Alpha 縱向控制"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "always-on driver monitor"
+msgstr "持續啟用駕駛監控"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "apn settings"
+msgstr "APN 設定"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "back"
+msgstr "返回"
+
+#: system/ui/mici_reset.py
+msgid "cancel"
+msgstr "取消"
+
+#: system/ui/mici_setup.py
+msgid "caution: installing\n3rd party software"
+msgstr "注意：安裝\n第三方軟體"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "cellular metered"
+msgstr "行動網路計量"
+
+#: system/ui/mici_setup.py
+msgid "choose software"
+msgstr "選擇軟體"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "connect"
+msgstr "連線"
+
+#: system/ui/mici_setup.py
+msgid "connect to\ncontinue"
+msgstr "連接網路\n以繼續"
+
+#: system/ui/mici_setup.py
+msgid "connect to\ninternet"
+msgstr "連接\n網際網路"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "connected"
+msgstr "已連線"
+
+#: selfdrive/ui/mici/layouts/settings/network/__init__.py
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "connecting..."
+msgstr "連線中…"
+
+#: system/ui/mici_setup.py
+msgid "custom software URL..."
+msgstr "自訂軟體網址…"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "decline &\nuninstall"
+msgstr "拒絕並\n解除安裝"
+
+#: selfdrive/ui/mici/layouts/settings/settings.py
+msgid "developer"
+msgstr "開發者"
+
+#: selfdrive/ui/mici/layouts/settings/settings.py
+msgid "device"
+msgstr "裝置"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "device ID"
+msgstr "裝置 ID"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "Disengage to {}"
+msgstr "請先解除控制再{}"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "do you want to share video data for training?"
+msgstr "是否分享影片資料用於訓練？"
+
+#: system/ui/mici_updater.py
+msgid "download\n& install"
+msgstr "下載並\n安裝"
+
+#: system/ui/mici_setup.py
+msgid "download failed"
+msgstr "下載失敗"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "download update"
+msgstr "下載更新"
+
+#: system/ui/mici_updater.py
+msgid "downloading"
+msgstr "下載中"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "driver\ncamera preview"
+msgstr "駕駛攝影機\n預覽"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "driver camera data"
+msgstr "駕駛攝影機資料"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "driver monitoring\ncheck"
+msgstr "駕駛監控\n檢查"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "driving personality"
+msgstr "駕駛風格"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "edit"
+msgstr "編輯"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "enable alpha\nlongitudinal"
+msgstr "啟用 Alpha\n縱向控制"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "enable openpilot"
+msgstr "啟用 openpilot"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "enable roaming"
+msgstr "啟用漫遊"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "enable tethering"
+msgstr "啟用網路分享"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "enabling alpha longitudinal"
+msgstr "啟用 Alpha 縱向控制"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "Enabling this will switch to openpilot longitudinal control."
+msgstr "啟用後將改用 openpilot 縱向控制。"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "enter APN..."
+msgstr "輸入 APN…"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "enter GitHub username..."
+msgstr "輸入 GitHub 使用者名稱…"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "enter password..."
+msgstr "輸入密碼…"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "experimental mode"
+msgstr "實驗模式"
+
+#: system/ui/mici_reset.py
+msgid "factory reset"
+msgstr "恢復原廠設定"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "failed to update"
+msgstr "更新失敗"
+
+#: selfdrive/ui/mici/layouts/settings/settings.py
+msgid "firehose"
+msgstr "Firehose"
+
+#: system/ui/mici_reset.py
+msgid "For a deeper reset, go to\nhttps://flash.comma.ai"
+msgstr "如需更徹底重設，請前往\nhttps://flash.comma.ai"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "forgetting..."
+msgstr "正在忘記…"
+
+#: system/ui/mici_setup.py
+msgid "how to restore to a\nfactory state later"
+msgstr "日後如何恢復\n原廠狀態"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "If it does not have a clear view of the driver, unplug and remount before continuing."
+msgstr "若無法清楚看見駕駛，請拔除裝置並重新安裝後再繼續。"
+
+#: system/ui/mici_setup.py
+msgid "install openpilot"
+msgstr "安裝 openpilot"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "joystick debug mode"
+msgstr "搖桿除錯模式"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "lane departure warnings"
+msgstr "車道偏離警示"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "lateral maneuver mode"
+msgstr "橫向操控模式"
+
+#: system/ui/mici_updater.py
+msgid "loading"
+msgstr "載入中"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "longitudinal maneuver mode"
+msgstr "縱向操控模式"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "looking for driver"
+msgstr "尋找駕駛中"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "make sure comma\nfour can see your face"
+msgstr "確認 comma four\n能看見您的臉部"
+
+#: selfdrive/ui/mici/layouts/settings/settings.py
+msgid "network"
+msgstr "網路"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "network usage"
+msgstr "網路用量"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+#: system/ui/mici_setup.py
+#: system/ui/mici_updater.py
+msgid "next"
+msgstr "下一步"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "Next, we'll check if comma four can detect the driver properly."
+msgstr "接下來將確認 comma four 能否正確偵測駕駛。"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "no, don't upload"
+msgstr "否，不上傳"
+
+#: selfdrive/ui/mici/layouts/settings/network/__init__.py
+msgid "not connected"
+msgstr "未連線"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "not in range"
+msgstr "超出範圍"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "Not set"
+msgstr "未設定"
+
+#: selfdrive/ui/mici/layouts/settings/network/__init__.py
+msgid "obtaining IP..."
+msgstr "正在取得 IP…"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "On this car, openpilot defaults to the stock system's built-in ACC."
+msgstr "此車預設使用原廠系統內建的 ACC。"
+
+#: selfdrive/ui/mici/onroad/augmented_road_view.py
+msgid "openpilot can't start\ncheck alerts"
+msgstr "openpilot 無法啟動\n請檢查警示"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "openpilot uses the cabin camera to check if the driver is distracted."
+msgstr "openpilot 透過車內攝影機檢查駕駛是否分心。"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "or go to https://comma.ai/terms"
+msgstr "或前往 https://comma.ai/terms"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "pair"
+msgstr "配對"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "paired"
+msgstr "已配對"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "Please connect to Wi-Fi to fetch your key."
+msgstr "請連接 Wi-Fi 以取得金鑰。"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "power off"
+msgstr "關機"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "reboot"
+msgstr "重新啟動"
+
+#: system/ui/mici_reset.py
+msgid "reboot\ndevice"
+msgstr "重新啟動\n裝置"
+
+#: system/ui/mici_reset.py
+msgid "reboot to try again"
+msgstr "重新啟動後再試"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "record & upload driver camera"
+msgstr "錄製並上傳駕駛攝影機"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "record & upload mic audio"
+msgstr "錄製並上傳麥克風音訊"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "regulatory info"
+msgstr "法規資訊"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "relaxed"
+msgstr "舒適"
+
+#: selfdrive/ui/mici/layouts/home.py
+msgid "release"
+msgstr "正式版"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "Remount if your face is blocked, or driver monitoring has difficulty tracking your face."
+msgstr "若臉部受遮擋或駕駛監控難以追蹤臉部，請重新安裝裝置。"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "reset"
+msgstr "重設"
+
+#: system/ui/mici_reset.py
+msgid "reset &\nerase"
+msgstr "重設並\n清除"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "reset calibration"
+msgstr "重設校準"
+
+#: system/ui/mici_reset.py
+msgid "reset failed"
+msgstr "重設失敗"
+
+#: system/ui/mici_reset.py
+msgid "reset triggered by\ntapping the screen"
+msgstr "點按畫面觸發重設"
+
+#: system/ui/mici_reset.py
+msgid "resetting device"
+msgstr "正在重設裝置"
+
+#: system/ui/mici_reset.py
+msgid "resetting erases\nall user content & data"
+msgstr "重設將清除\n所有使用者內容與資料"
+
+#: system/ui/mici_reset.py
+msgid "Resetting erases all user content & data."
+msgstr "重設將清除所有使用者內容與資料。"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "review\ntraining guide"
+msgstr "重看\n教學指南"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "scroll to continue"
+msgstr "捲動以繼續"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "serial"
+msgstr "序號"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "Sharing your data with comma helps improve openpilot for everyone."
+msgstr "與 comma 分享資料有助改善所有人的 openpilot 體驗。"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "slide to\n{}"
+msgstr "滑動以\n{}"
+
+#: system/ui/mici_setup.py
+msgid "slide to install\ncustom software"
+msgstr "滑動以安裝\n自訂軟體"
+
+#: system/ui/mici_setup.py
+msgid "slide to install\nopenpilot"
+msgstr "滑動以安裝\nopenpilot"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "SSH keys"
+msgstr "SSH 金鑰"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "standard"
+msgstr "標準"
+
+#: system/ui/mici_setup.py
+msgid "start"
+msgstr "開始"
+
+#: selfdrive/ui/mici/onroad/augmented_road_view.py
+msgid "start the car to\nuse openpilot"
+msgstr "發動車輛以\n使用 openpilot"
+
+#: selfdrive/ui/mici/layouts/settings/network/__init__.py
+msgid "starting"
+msgstr "啟動中"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "starting..."
+msgstr "啟動中…"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "subscribed"
+msgstr "已訂閱"
+
+#: system/ui/mici_setup.py
+msgid "swipe down to go\nback and try again"
+msgstr "向下滑動返回\n並重試"
+
+#: system/ui/mici_setup.py
+msgid "swipe down to go back"
+msgstr "向下滑動返回"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "swipe for QR code"
+msgstr "滑動查看 QR Code"
+
+#: selfdrive/ui/mici/onroad/augmented_road_view.py
+msgid "system booting"
+msgstr "系統啟動中"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "terms &\nconditions"
+msgstr "服務\n條款"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "terms and\nconditions"
+msgstr "服務條款"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "tethering"
+msgstr "網路分享中"
+
+#: selfdrive/ui/mici/layouts/settings/network/network_layout.py
+msgid "tethering password"
+msgstr "網路分享密碼"
+
+#: system/ui/mici_updater.py
+msgid "the download size\nis approximately 1 GB"
+msgstr "下載大小\n約為 1 GB"
+
+#: system/ui/mici_reset.py
+msgid "this may take up to\na minute..."
+msgstr "最多可能需要\n一分鐘…"
+
+#: system/ui/mici_reset.py
+msgid "this may take up to\na minute{}"
+msgstr "最多可能需要\n一分鐘{}"
+
+#: selfdrive/ui/mici/layouts/settings/settings.py
+msgid "toggles"
+msgstr "功能開關"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "ui debug mode"
+msgstr "UI 除錯模式"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "uninstall"
+msgstr "解除安裝"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "uninstall openpilot"
+msgstr "解除安裝 openpilot"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "unsupported"
+msgstr "不支援"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "up to date"
+msgstr "已是最新版本"
+
+#: system/ui/mici_updater.py
+msgid "update failed"
+msgstr "更新失敗"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "update now"
+msgstr "立即更新"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "update openpilot"
+msgstr "更新 openpilot"
+
+#: system/ui/mici_updater.py
+msgid "update required"
+msgstr "需要更新"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "updater failed\nto respond"
+msgstr "更新程式\n無回應"
+
+#: selfdrive/ui/mici/layouts/settings/device.py
+msgid "upgrade to prime"
+msgstr "升級至 prime"
+
+#: selfdrive/ui/mici/layouts/settings/toggles.py
+msgid "use metric units"
+msgstr "使用公制單位"
+
+#: system/ui/mici_reset.py
+msgid "user data partition\ncould not be mounted"
+msgstr "無法掛載\n使用者資料分割區"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "Using Experimental mode is recommended with openpilot longitudinal control alpha."
+msgstr "使用 openpilot Alpha 縱向控制時，建議啟用實驗模式。"
+
+#: system/ui/mici_setup.py
+msgid "waiting for\ninternet..."
+msgstr "等待\n網際網路…"
+
+#: selfdrive/ui/mici/layouts/settings/developer.py
+msgid "WARNING: alpha longitudinal control may disable Automatic Emergency Braking (AEB)"
+msgstr "警告：Alpha 縱向控制可能停用自動緊急煞車（AEB）"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "what is openpilot?"
+msgstr "什麼是 openpilot？"
+
+#: selfdrive/ui/mici/layouts/settings/network/__init__.py
+msgid "wi-fi"
+msgstr "Wi-Fi"
+
+#: selfdrive/ui/mici/layouts/settings/network/wifi_ui.py
+msgid "wrong password"
+msgstr "密碼錯誤"
+
+#: selfdrive/ui/mici/layouts/onboarding.py
+msgid "You must accept the Terms & Conditions to use openpilot."
+msgstr "必須接受服務條款才能使用 openpilot。"
+
+#: system/ui/mici_setup.py
+msgid "• It has not been tested by comma."
+msgstr "• 未經 comma 測試。"
+
+#: system/ui/mici_setup.py
+msgid "• It may damage your device and/or vehicle."
+msgstr "• 可能損壞裝置或車輛。"
+
+#: system/ui/mici_setup.py
+msgid "• It may not comply with safety standards."
+msgstr "• 可能不符合安全標準。"
+

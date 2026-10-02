@@ -9,6 +9,7 @@ from openpilot.system.ui.widgets.layouts import HBoxLayout
 from openpilot.system.ui.widgets.icon_widget import IconWidget
 from openpilot.system.ui.widgets.label import UnifiedLabel, gui_label
 from openpilot.system.ui.lib.application import gui_app, FontWeight, MousePos
+from openpilot.system.ui.lib.multilang import tr
 from openpilot.selfdrive.ui.ui_state import ui_state
 from openpilot.system.version import RELEASE_BRANCHES
 
@@ -236,7 +237,7 @@ class MiciHomeLayout(Widget):
       self._date_label.render()
 
       self._branch_label.set_max_width(gui_app.width - self._version_label.text_width - self._date_label.text_width - 32)
-      self._branch_label.set_text(" " + ("release" if release_branch else self._version_text[1]))
+      self._branch_label.set_text(" " + (tr("release") if release_branch else self._version_text[1]))
       self._branch_label.set_position(version_pos.x + self._version_label.text_width + self._date_label.text_width + 20, version_pos.y)
       self._branch_label.render()
 
