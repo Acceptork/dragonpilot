@@ -1157,6 +1157,13 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
   shouldStop @37: Bool;
   allowThrottle @38: Bool;
   allowBrake @39: Bool;
+  experimentalStopIntentActive @40 :Bool;
+  rawShouldStopE2E @41 :Bool;
+  filteredShouldStopE2E @42 :Bool;
+  shouldStopMPC @43 :Bool;
+  aTargetE2E @44 :Float32;
+  aTargetMPC @45 :Float32;
+  stopReleaseTime @46 :Float32;
 
 
   solverExecutionTime @35 :Float32;

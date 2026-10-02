@@ -27,6 +27,11 @@ FIELDS = (
   'vEgoRaw', 'vEgoCluster', 'enabled', 'buttonEvents', 'buttonEnable',
   'buttonVEgo', 'buttonVEgoRaw', 'buttonVEgoCluster', 'vCruiseBefore', 'vCruiseAfter',
   'pcmCruise', 'openpilotLongitudinalControl',
+  'stopPointAvailable', 'stopControllerActive', 'rawStopDistance', 'filteredStopDistance',
+  'targetStopDistance', 'remainingStopDistance', 'stopOffset', 'shouldStopE2E',
+  'shouldStopMPC', 'shouldStopFinal', 'desiredAccelerationE2E', 'aTargetMPC',
+  'aTargetFinal', 'stopState', 'maxComfortDecel', 'jerkLimit', 'stopLatchActive',
+  'stopIntentReleaseTime',
 )
 LONG_STATE_NAMES = {'0': 'off', '1': 'pid', '2': 'stopping', '3': 'starting'}
 PLAN_SOURCE_NAMES = {'0': 'cruise', '1': 'lead0', '2': 'lead1', '3': 'lead2', '4': 'e2e'}
@@ -141,6 +146,10 @@ def sample(sm, cp=None, button_events='', button_enable=False, button_speeds=Non
     getattr(car_state, 'vEgoRaw', ''), getattr(car_state, 'vEgoCluster', ''), selfdrive_state.enabled,
     button_events, button_enable, *button_speeds, cruise_before, car_state.vCruise,
     getattr(cp, 'pcmCruise', ''), getattr(cp, 'openpilotLongitudinalControl', ''),
+    False, False, '', '', '', '', '', plan.rawShouldStopE2E,
+    plan.shouldStopMPC, plan.shouldStop, plan.aTargetE2E, plan.aTargetMPC,
+    plan.aTarget, enum_name(controls_state.longControlState, LONG_STATE_NAMES), '', '',
+    bool(plan.experimentalStopIntentActive and plan.filteredShouldStopE2E), plan.stopReleaseTime,
   )
 
 

@@ -200,10 +200,17 @@ class LongitudinalPlanner:
     release_time = get_stop_intent_profile(personality).release_time if stop_intent_active else 0.0
     stable_e2e_stop = self.stop_intent_tracker.update(output_should_stop_e2e, stop_intent_active,
                                                       self.dt, release_time)
+    self.experimental_stop_intent_active = stop_intent_active
+    self.raw_should_stop_e2e = output_should_stop_e2e
+    self.filtered_should_stop_e2e = stable_e2e_stop if stop_intent_active else output_should_stop_e2e
+    self.should_stop_mpc = output_should_stop_mpc
+    self.a_target_e2e = output_a_target_e2e
+    self.a_target_mpc = output_a_target_mpc
+    self.stop_release_time = release_time
 
     if mode == 'blended':
       output_a_target = min(output_a_target_e2e, output_a_target_mpc)
-      self.output_should_stop = (stable_e2e_stop if stop_intent_active else output_should_stop_e2e) or output_should_stop_mpc
+      self.output_should_stop = self.filtered_should_stop_e2e or output_should_stop_mpc
       if output_a_target < output_a_target_mpc:
         self.mpc.source = LongitudinalPlanSource.e2e
     else:
@@ -235,6 +242,13 @@ class LongitudinalPlanner:
 
     longitudinalPlan.aTarget = float(self.output_a_target)
     longitudinalPlan.shouldStop = bool(self.output_should_stop)
+    longitudinalPlan.experimentalStopIntentActive = bool(self.experimental_stop_intent_active)
+    longitudinalPlan.rawShouldStopE2E = bool(self.raw_should_stop_e2e)
+    longitudinalPlan.filteredShouldStopE2E = bool(self.filtered_should_stop_e2e)
+    longitudinalPlan.shouldStopMPC = bool(self.should_stop_mpc)
+    longitudinalPlan.aTargetE2E = float(self.a_target_e2e)
+    longitudinalPlan.aTargetMPC = float(self.a_target_mpc)
+    longitudinalPlan.stopReleaseTime = float(self.stop_release_time)
     longitudinalPlan.allowBrake = True
     longitudinalPlan.allowThrottle = bool(self.allow_throttle)
 
