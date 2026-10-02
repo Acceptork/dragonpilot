@@ -7,6 +7,7 @@ from openpilot.system.ui.widgets import Widget
 from openpilot.system.ui.widgets.label import UnifiedLabel
 from openpilot.system.ui.widgets.scroller import DO_ZOOM
 from openpilot.system.ui.lib.application import gui_app, FontWeight, MousePos
+from openpilot.system.ui.lib.multilang import tr
 from openpilot.common.filter_simple import BounceFilter
 
 try:
@@ -309,6 +310,11 @@ class BigMultiToggle(BigToggle):
     self._select_callback = select_callback
 
     self.set_value(self._options[0])
+
+  def set_value(self, value: str):
+    # Keep canonical option values for Params and callbacks; translate display only.
+    super().set_value(value)
+    self._sub_label.set_text(tr(value))
 
   def _width_hint(self) -> int:
     return int(self._rect.width - self.LABEL_HORIZONTAL_PADDING * 2 - self._txt_enabled_toggle.width)
