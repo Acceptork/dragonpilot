@@ -1,11 +1,11 @@
 import time
 import pyray as rl
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from cereal import messaging, log
 from openpilot.selfdrive.ui.ui_state import ui_state
+from openpilot.selfdrive.ui.onroad.alert_text_translations import translate_alert_text
 from openpilot.system.hardware import TICI
 from openpilot.system.ui.lib.application import gui_app, FontWeight
-from openpilot.system.ui.lib.multilang import tr
 from openpilot.system.ui.lib.text_measure import measure_text_cached
 from openpilot.system.ui.widgets import Widget
 from openpilot.system.ui.widgets.label import Label
@@ -48,25 +48,30 @@ class Alert:
 
 # Pre-defined alert instances
 ALERT_STARTUP_PENDING = Alert(
-  text1=tr("openpilot Unavailable"),
-  text2=tr("Waiting to start"),
+  text1="openpilot Unavailable",
+  text2="Waiting to start",
   size=AlertSize.mid,
   status=AlertStatus.normal,
 )
 
 ALERT_CRITICAL_TIMEOUT = Alert(
-  text1=tr("TAKE CONTROL IMMEDIATELY"),
-  text2=tr("System Unresponsive"),
+  text1="TAKE CONTROL IMMEDIATELY",
+  text2="System Unresponsive",
   size=AlertSize.full,
   status=AlertStatus.critical,
 )
 
 ALERT_CRITICAL_REBOOT = Alert(
-  text1=tr("System Unresponsive"),
-  text2=tr("Reboot Device"),
+  text1="System Unresponsive",
+  text2="Reboot Device",
   size=AlertSize.mid,
   status=AlertStatus.normal,
 )
+
+
+def localize_predefined_alert(alert: Alert) -> Alert:
+  # Resolve the active language when displayed; the UI can switch languages after module import.
+  return replace(alert, text1=translate_alert_text(alert.text1), text2=translate_alert_text(alert.text2))
 
 
 class AlertRenderer(Widget):
@@ -93,15 +98,15 @@ class AlertRenderer(Widget):
       # 1. Never received selfdriveState since going onroad
       waiting_for_startup = recv_frame < ui_state.started_frame
       if waiting_for_startup and time_since_onroad > 5:
-        return ALERT_STARTUP_PENDING
+        return localize_predefined_alert(ALERT_STARTUP_PENDING)
 
       # 2. Lost communication with selfdriveState after receiving it
       if TICI and not waiting_for_startup:
         ss_missing = time.monotonic() - sm.recv_time['selfdriveState']
         if ss_missing > SELFDRIVE_STATE_TIMEOUT:
           if ss.enabled and (ss_missing - SELFDRIVE_STATE_TIMEOUT) < SELFDRIVE_UNRESPONSIVE_TIMEOUT:
-            return ALERT_CRITICAL_TIMEOUT
-          return ALERT_CRITICAL_REBOOT
+            return localize_predefined_alert(ALERT_CRITICAL_TIMEOUT)
+          return localize_predefined_alert(ALERT_CRITICAL_REBOOT)
 
     # No alert if size is none
     if ss.alertSize == 0:
@@ -112,7 +117,7 @@ class AlertRenderer(Widget):
       return None
 
     # Return current alert
-    return Alert(text1=ss.alertText1, text2=ss.alertText2, size=ss.alertSize.raw, status=ss.alertStatus.raw)
+    return Alert(text1=translate_alert_text(ss.alertText1), text2=translate_alert_text(ss.alertText2), size=ss.alertSize.raw, status=ss.alertStatus.raw)
 
   def _render(self, rect: rl.Rectangle):
     alert = self.get_alert(ui_state.sm)

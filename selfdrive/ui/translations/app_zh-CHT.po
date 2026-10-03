@@ -1796,3 +1796,515 @@ msgstr "• 可能損壞裝置或車輛。"
 msgid "• It may not comply with safety standards."
 msgstr "• 可能不符合安全標準。"
 
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "AEB: Risk of Collision"
+msgstr "AEB：有碰撞風險"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Abnormal tire stiffness"
+msgstr "輪胎剛性異常"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Adaptive Cruise Disabled"
+msgstr "主動式定速巡航已停用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Always keep hands on wheel and eyes on road"
+msgstr "請將雙手放在方向盤上並注意前方道路"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "BRAKE!"
+msgstr "立刻煞車！"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Be ready to take over at any time"
+msgstr "請隨時準備接管駕駛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Bookmark Saved"
+msgstr "已標記事件"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "CAN Bus Disconnected"
+msgstr "CAN 匯流排連線中斷"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "CAN Bus Disconnected: Check Connections"
+msgstr "CAN 匯流排連線中斷：請檢查接線"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "CAN Bus Disconnected: Likely Faulty Cable"
+msgstr "CAN 匯流排連線中斷：可能是線材故障"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Calibrating"
+msgstr "校正中"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Calibration Invalid"
+msgstr "校正無效"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Calibration Invalid: Remount Device & Recalibrate"
+msgstr "校正無效：請重新固定裝置並校正"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Calibration in Progress"
+msgstr "正在校正"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Camera Frame Rate Low"
+msgstr "攝影機影格率過低"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Camera Frame Rate Low: Reboot Your Device"
+msgstr "攝影機影格率過低：請重新啟動裝置"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Camera Malfunction"
+msgstr "攝影機故障"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Camera Malfunction: Reboot Your Device"
+msgstr "攝影機故障：請重新啟動裝置"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Cancel Pressed"
+msgstr "已按下取消鍵"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Car Detected in Blindspot"
+msgstr "盲點偵測到車輛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Car Unrecognized"
+msgstr "無法辨識車輛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Car in Blindspot"
+msgstr "盲點有車輛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Changing Lanes"
+msgstr "正在變換車道"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Check Hardware"
+msgstr "請檢查硬體"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Communication Issue Between Processes"
+msgstr "程序間通訊異常"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Confirm Lane Change"
+msgstr "請確認變換車道"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Controls Mismatch"
+msgstr "控制狀態不一致"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Cruise Fault: Restart the Car"
+msgstr "定速巡航故障：請重新啟動車輛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Cruise Fault: Restart the car to engage"
+msgstr "定速巡航故障：重新啟動車輛後才能啟用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Cruise Is Off"
+msgstr "定速巡航已關閉"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "DISENGAGE IMMEDIATELY"
+msgstr "立即接管駕駛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Dashcam Mode"
+msgstr "行車記錄模式"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Dashcam mode"
+msgstr "行車記錄模式"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Dashcam mode for unsupported car"
+msgstr "不支援的車輛：行車記錄模式"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Device Fell Off Mount"
+msgstr "裝置從固定座脫落"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Disable your car's stock LKAS to engage"
+msgstr "請停用原車 LKAS 後再啟動"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Distraction Level Too High"
+msgstr "駕駛分心程度過高"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Door Open"
+msgstr "車門未關"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Drive to Calibrate"
+msgstr "請行駛以完成校正"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Driver Distracted"
+msgstr "駕駛分心"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Driver Unresponsive"
+msgstr "駕駛沒有回應"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Driving Model Lagging"
+msgstr "駕駛模型運算延遲"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Electronic Stability Control Active"
+msgstr "車身動態穩定系統介入中"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Electronic Stability Control Disabled"
+msgstr "車身動態穩定系統已停用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Emergency Braking: Risk of Collision"
+msgstr "緊急煞車：有碰撞風險"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Enable Adaptive Cruise to Engage"
+msgstr "請啟用主動式定速巡航以啟動"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Enable Main Switch to Engage"
+msgstr "請開啟主開關以啟動"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Enable your car's LKAS to engage"
+msgstr "請啟用原車 LKAS 後再啟動"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Ensure road ahead is clear"
+msgstr "請確認前方道路淨空"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Excessive Actuation"
+msgstr "控制輸出過大"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Fan Malfunction"
+msgstr "散熱風扇故障"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Gear not D"
+msgstr "排檔未在 D 檔"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Harness Relay Malfunction"
+msgstr "線束繼電器故障"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "High CPU Usage"
+msgstr "CPU 使用率過高"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Invalid LKAS setting"
+msgstr "LKAS 設定無效"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Joystick Mode"
+msgstr "搖桿模式"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "LKAS Fault: Restart the Car"
+msgstr "LKAS 故障：請重新啟動車輛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "LKAS Fault: Restart the car to engage"
+msgstr "LKAS 故障：重新啟動車輛後才能啟用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Lane Departure Detected"
+msgstr "偵測到車道偏離"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Likely Hardware Issue"
+msgstr "可能是硬體故障"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Low Battery"
+msgstr "電量過低"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Low Communication Rate Between Processes"
+msgstr "程序間通訊頻率過低"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Low Memory"
+msgstr "記憶體不足"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Low Memory: Reboot Your Device"
+msgstr "記憶體不足：請重新啟動裝置"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Model uncertain at this speed"
+msgstr "模型在此車速下預測不確定"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Out of Storage"
+msgstr "儲存空間不足"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Parking Brake Engaged"
+msgstr "駐車煞車已啟用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Pay Attention"
+msgstr "請注意前方"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Pedal Pressed"
+msgstr "踏板已踩下"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Posenet Speed Invalid"
+msgstr "Posenet 車速資料無效"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Possible Hardware Issue"
+msgstr "可能是硬體問題"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Press Resume"
+msgstr "請按 RES"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Press Resume to Exit Brake Hold"
+msgstr "請按 RES 解除煞車保持"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Press Resume to Exit Standstill"
+msgstr "請按 RES 從停車狀態起步"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Press Set to Engage"
+msgstr "請按 SET 啟用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Process Not Running"
+msgstr "程序未執行"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Radar Error: Restart the Car"
+msgstr "雷達異常：請重新啟動車輛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Radar Temporarily Unavailable"
+msgstr "雷達暫時無法使用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Reboot your Device"
+msgstr "請重新啟動裝置"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Recording Audio Feedback"
+msgstr "正在錄製語音回饋"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Release Brake to Engage"
+msgstr "放開煞車踏板以啟用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Remount Detected: Recalibrating"
+msgstr "偵測到裝置重新固定：正在重新校正"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Resume Driving Manually"
+msgstr "請自行駕駛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Reverse"
+msgstr "倒車"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Reverse\nGear"
+msgstr "倒車\n檔"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Reverse Gear"
+msgstr "倒車檔"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Risk of Collision"
+msgstr "有碰撞風險"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Seatbelt Unlatched"
+msgstr "安全帶未繫妥"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Security Key Not Available"
+msgstr "安全金鑰無法使用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Selfdrive Process Lagging: Reboot Your Device"
+msgstr "自動駕駛程序延遲：請重新啟動裝置"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Sensor Data Invalid"
+msgstr "感測器資料無效"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Slow down to engage"
+msgstr "請減速後再啟用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Speed Too High"
+msgstr "車速過高"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Speed too low"
+msgstr "車速過低"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steer Left"
+msgstr "向左操作方向盤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steer Left to Start Lane Change Once Safe"
+msgstr "確認安全後，向左操作方向盤變換車道"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steer Right"
+msgstr "向右操作方向盤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steer Right to Start Lane Change Once Safe"
+msgstr "確認安全後，向右操作方向盤變換車道"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steer ratio mismatch"
+msgstr "轉向比不一致"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steering Assist Temporarily Unavailable"
+msgstr "轉向輔助暫時無法使用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steering Pressed"
+msgstr "駕駛正在操作方向盤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steering Temporarily Unavailable"
+msgstr "轉向暫時無法使用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Steering misalignment detected"
+msgstr "偵測到轉向校準偏差"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Stock AEB: Risk of Collision"
+msgstr "原車 AEB：有碰撞風險"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Stock LKAS: Lane Departure Detected"
+msgstr "原車 LKAS：偵測到車道偏離"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Switch to Traffic-Aware Cruise Control to engage"
+msgstr "切換至智慧型定速巡航後再啟動"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "System Initializing"
+msgstr "系統啟動中"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "System Overheated"
+msgstr "系統過熱"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "TAKE CONTROL"
+msgstr "立即接管"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Take Control"
+msgstr "請接管駕駛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Toggle stock LKAS on or off to engage"
+msgstr "切換原車 LKAS 開關後再啟動"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Touch Steering Wheel"
+msgstr "請握住方向盤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Touch Steering Wheel: No Face Detected"
+msgstr "請握住方向盤：未偵測到駕駛臉部"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Turn Exceeds Steering Limit"
+msgstr "彎道超出轉向能力"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "USB Error: Reboot Your Device"
+msgstr "USB 異常：請重新啟動裝置"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Unknown Vehicle Variant"
+msgstr "無法辨識的車型版本"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Vehicle Sensors Calibrating"
+msgstr "車輛感測器校正中"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Vehicle Sensors Invalid"
+msgstr "車輛感測器資料無效"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "Vehicle Steering Time Limit"
+msgstr "已達車輛轉向時間限制"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "WARNING: This branch is not tested"
+msgstr "警告：此分支尚未經過測試"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "locationd Permanent Error"
+msgstr "locationd 持續性錯誤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "locationd Temporary Error"
+msgstr "locationd 暫時性錯誤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "openpilot Canceled"
+msgstr "openpilot 已取消"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "openpilot will disengage"
+msgstr "openpilot 即將停用"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "paramsd Permanent Error"
+msgstr "paramsd 持續性錯誤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "paramsd Temporary Error"
+msgstr "paramsd 暫時性錯誤"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "take control"
+msgstr "請接管駕駛"
+
+#: selfdrive/ui/onroad/alert_text_translations.py
+msgid "turn exceeds limit"
+msgstr "彎道超出轉向限制"
+
