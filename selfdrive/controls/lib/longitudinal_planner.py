@@ -480,7 +480,12 @@ class LongitudinalPlanner:
         self.output_a_target = min(0., self.output_a_target)
     else:
       self.v33_memory_mpc = None
-    memory_row.pop('memory', None)
+    # Preserve prediction diagnostics before removing the private MPC payload.
+    memory_payload = memory_row.pop('memory', None)
+    memory_prior = self.v33_memory.last
+    memory_row['predicted_dRel'] = (float(memory_prior['d'] + (memory_prior['v_abs'] - v_ego) *
+      (trace_time - memory_prior['t'])) if memory_prior is not None else self.v33_memory.unknown_bound)
+    memory_row['conservative_dRel'] = float(memory_payload['d']) if memory_payload is not None else None
     memory_row.update(feature='lead_memory', t=trace_time, enabled=enabled_memory,
       shadow=not enabled_memory, vEgo=float(v_ego), vCruise=float(v_cruise_kph),
       aTarget_before=before_memory, aTarget_after=float(self.output_a_target), lead=self.diagnostic_trace['lead1'],
