@@ -107,7 +107,7 @@ class VCruiseHelper:
         break
     else:
       for k, timer in self.button_timers.items():
-        if timer and timer % CRUISE_LONG_PRESS == 0:
+        if timer and (timer == CRUISE_LONG_PRESS if is_metric else timer % CRUISE_LONG_PRESS == 0):
           button_type = k
           long_press = True
           break
@@ -124,7 +124,7 @@ class VCruiseHelper:
     if not self.button_change_states[button_type]["enabled"]:
       return
 
-    v_cruise_delta = v_cruise_delta * (5 if long_press else 1)
+    v_cruise_delta = v_cruise_delta * ((10 if is_metric else 5) if long_press else 1)
     if long_press and self.v_cruise_kph % v_cruise_delta != 0:  # partial interval
       self.v_cruise_kph = CRUISE_NEAREST_FUNC[button_type](self.v_cruise_kph / v_cruise_delta) * v_cruise_delta
     else:
