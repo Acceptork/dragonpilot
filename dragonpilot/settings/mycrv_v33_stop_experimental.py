@@ -1,0 +1,1 @@
+ITEMS = [{'key': 'dp_exp_early_stop', 'type': 'toggle_item', 'title': '提前減速實驗', 'description': '預設關閉。僅供可控場地逐項驗證；可能因非停車減速而提早煞車。駕駛隨時接管。', 'category': 'Longitudinal', 'flags': 'PERSISTENT', 'param_type': 'BOOL', 'default': '0'}]
