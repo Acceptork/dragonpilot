@@ -1,5 +1,5 @@
-# stop v3.2 RESEARCH / NOT_FOR_DEPLOYMENT
+# RESEARCH / NOT_FOR_DEPLOYMENT
 
-Offline sidecar only. No production imports, aTarget, shouldStop, radarState or CAN changes. Synthetic path-clear / margin inputs are not sensor facts.
+SHADOW_ONLY: 42-segment parameter sweep; scene labels and false-positive validation incomplete.
 
-Includes separate stop taper, restart and ramp plant research primitives, never production actuation.
+See [README](README.md) for tested commit and scope.
