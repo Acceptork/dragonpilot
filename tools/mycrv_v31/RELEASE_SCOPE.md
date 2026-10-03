@@ -7,8 +7,9 @@ not be installed automatically.
 The RC starts from longitudinal v3 commit
 `a201e6cb75296bb1700dadf9268d857a9a597016`. Its new changes are limited
 to Traditional Chinese UI text, an opt-in read-only longitudinal debug HUD,
-and guarded deploy/rollback tools. The UI reads control state but does not
-change planner, controller, Honda CAN, steering, panda safety, or AGNOS logic.
+guarded deploy/rollback tools, and loggerd bookmark retention across a route
+segment boundary. These changes do not alter planner, controller, Honda CAN,
+steering, panda safety, or AGNOS logic.
 
 The following independent candidates are **not in this RC**:
 
@@ -27,8 +28,8 @@ The following independent candidates are **not in this RC**:
 The existing v3 low-speed Honda gas candidate is inherited from the base. Its
 real vehicle stop, creep, hill, and restart behavior still needs closed-course
 measurement. Event_041 and motorcycle/cut-in perception limitations remain
-open. The existing bookmark mechanism does not guarantee a preserved full
-10 seconds after a mark near a route-segment boundary.
+open. A user bookmark retains the current and two preceding full segments;
+the logger also marks segments entered during the following ten seconds.
 
 Only consider deployment after this exact RC commit passes native build,
 Honda/longitudinal/panda tests, 42/42 continuous process replay, generated CAN

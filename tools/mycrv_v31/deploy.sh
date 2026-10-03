@@ -44,13 +44,13 @@ FETCHED_SHA=$(git rev-parse 'FETCH_HEAD^{commit}')
 git cat-file -e "$TARGET_SHA^{commit}" || die 'target commit is unavailable'
 git cat-file -e "$TARGET_SHA:tools/mycrv_v31/verify_runtime.py" || die 'release lacks post-reboot verification code'
 
-# This limited RC may add only UI, translation, and deployment files to the
-# reviewed longitudinal v3 source. In particular, no later commit may alter
-# Honda safety-model values, control logic, or any other vehicle code.
+# This limited RC may add UI, deployment, and the individually reviewed
+# bookmark retention files to longitudinal v3. Never allow broad loggerd or
+# vehicle-code wildcards: each new non-UI path needs separate review.
 git merge-base --is-ancestor "$V3_SHA" "$TARGET_SHA" || die 'release is not based on the reviewed longitudinal v3 commit'
-git diff --name-only -z "$V3_SHA" "$TARGET_SHA" | while IFS= read -r -d '' changed_file; do
+git diff --no-renames --name-only -z "$V3_SHA" "$TARGET_SHA" | while IFS= read -r -d '' changed_file; do
   case "$changed_file" in
-    selfdrive/ui/*|system/ui/*|tools/mycrv_v31/*|docs/zh_tw_longitudinal_bookmark.md) ;;
+    selfdrive/ui/*|system/ui/*|tools/mycrv_v31/*|docs/zh_tw_longitudinal_bookmark.md|system/loggerd/loggerd.cc|system/loggerd/loggerd.h|system/loggerd/deleter.py|system/loggerd/tests/test_bookmark_followup.py|system/loggerd/tests/test_loggerd.py) ;;
     *) die "release changes an unreviewed path: $changed_file" ;;
   esac
 done
