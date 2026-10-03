@@ -5,6 +5,11 @@
       "feature": "stop",
       "source_branch": "my-crv-stop-intent-v33-experimental",
       "source_head": "992fe80bd619c31adbdc416bde27db5f740c7d41"
+    },
+    {
+      "feature": "restart",
+      "source_branch": "my-crv-auto-restart-v33-experimental",
+      "source_head": "42bc09f4b7b9d551100f13652fefbb716943e401"
     }
   ]
 }
