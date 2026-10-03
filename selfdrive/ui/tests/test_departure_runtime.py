@@ -1,4 +1,5 @@
 import json
+import pytest
 from cereal import car, log
 from openpilot.selfdrive.ui.departure_runtime import DepartureRuntime, current_cue, CUE_KEY
 
@@ -98,3 +99,45 @@ def test_visible_cue_is_cleared_when_driver_moves_or_data_stales():
       sm['modelV2'].meta.hardBrakePredicted=True
     assert runtime.update(sm,11.) is None
     assert current_cue(params,11.,True) is None
+
+
+@pytest.mark.parametrize('kind', ['lead_departure','possible_proceed'])
+@pytest.mark.parametrize('condition', ['gas','moving','stale','gear','closer','stop','disabled','lead_stopped','offroad'])
+def test_pending_invalidates_between_model_frames(kind, condition):
+  params=Params()
+  runtime=DepartureRuntime(params)
+  runtime.was_onroad=True
+  runtime.machine.pending_kind=kind
+  runtime.machine.pending_since=8.
+  runtime.machine.pending_speed=0.
+  runtime.machine.state='WAITING_FOR_DRIVER_RESPONSE'
+  runtime.machine.lead_previous=dict(d=12.,vr=1.,y=0.,prob=.95)
+  sm=NativeSM(10.)
+  sm.updated['modelV2']=False
+  sm['modelV2'].velocity.x=[5.]*33
+  sm['modelV2'].action.desiredAcceleration=.3
+  if kind=='lead_departure':
+    lead=sm['radarState'].leadOne
+    lead.status=True;lead.dRel=12.;lead.vRel=1.;lead.modelProb=.95
+  if condition=='gas': sm['carState'].gasPressed=True
+  elif condition=='moving': sm['carState'].vEgo=.15
+  elif condition=='stale': sm.recv_time['modelV2']=9.
+  elif condition=='gear': sm['carState'].gearShifter='neutral'
+  elif condition=='closer': sm['radarState'].leadTwo.status=True;sm['radarState'].leadTwo.dRel=4.
+  elif condition=='stop': sm['modelV2'].action.shouldStop=True
+  elif condition=='disabled': params.values['dp_departure_lead_alert']=False;params.values['dp_departure_signal_alert']=False
+  elif condition=='lead_stopped':
+    sm['radarState'].leadOne.status=True;sm['radarState'].leadOne.dRel=12.;sm['radarState'].leadOne.vRel=0.
+  else: sm['deviceState'].started=False
+  assert runtime.update(sm,10.) is None
+  assert runtime.machine.pending_since is None
+  assert runtime.machine.latched
+
+
+def test_missing_model_frame_does_not_advance_confirmation_or_timer():
+  params=Params();runtime=DepartureRuntime(params)
+  for i in range(50):
+    sm=NativeSM(i*.05);sm.updated['modelV2']=False
+    assert runtime.update(sm,i*.05) is None
+  assert runtime.machine.pending_since is None
+  assert runtime.machine.slow_since is None

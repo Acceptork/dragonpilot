@@ -1,5 +1,6 @@
 """Sound/UI-only adapter. Never publishes vehicle or planner messages."""
 import json
+import math
 from openpilot.selfdrive.ui.departure_alert import DepartureAlerts, Observation
 from openpilot.common.swaglog import cloudlog
 
@@ -18,14 +19,14 @@ class DepartureRuntime:
                   and 0 <= now-sm.recv_time['deviceState'] < 2.)
     if not onroad:
       if self.was_onroad:
-        self.machine = DepartureAlerts()
+        # An offroad/freshness interruption must not re-arm the same stop.
+        self.machine.reset_tracking()
+        self.machine.moving_since = None
         self.params.put_nonblocking(CUE_KEY, '')
       self.was_onroad = False
       self.cue_expires_at = 0.
       return None
     self.was_onroad = True
-    if not sm.updated['modelV2']:
-      return None
     cs, md, radar = sm['carState'], sm['modelV2'], sm['radarState']
     valid = cs.canValid and all(sm.valid[k] and 0<=now-sm.recv_time[k]<=.25 for k in ('carState','modelV2','radarState'))
     lead = dict(d=float(radar.leadOne.dRel),vr=float(radar.leadOne.vRel),y=float(radar.leadOne.yRel),
@@ -42,8 +43,32 @@ class DepartureRuntime:
       self.params.put_nonblocking(CUE_KEY, '')
       self.cue_expires_at = 0.
     previous_state = self.machine.state
-    event = self.machine.update(observation, self.params.get_bool('dp_departure_lead_alert'),
-                                self.params.get_bool('dp_departure_signal_alert'))
+    lead_enabled = self.params.get_bool('dp_departure_lead_alert')
+    signal_enabled = self.params.get_bool('dp_departure_signal_alert')
+    if not sm.updated['modelV2']:
+      # Revalidate pending cues on every caller frame, but never advance evidence on a reused model frame.
+      pending = self.machine.pending_kind
+      invalid = (not valid or observation.gear != 'drive' or observation.speed > .2
+                 or observation.gas or observation.hazard or observation.closer_obstacle
+                 or not all(math.isfinite(v) for v in (observation.speed, observation.endpoint, observation.desired_accel)))
+      if pending:
+        invalid = invalid or observation.model_stop or observation.speed-self.machine.pending_speed >= .1
+        if pending == 'lead_departure':
+          previous = self.machine.lead_previous
+          invalid = invalid or not lead_enabled or lead is None or previous is None
+          if lead is not None and previous is not None:
+            invalid = invalid or (not all(math.isfinite(v) for v in lead.values()) or not .8 <= lead['prob'] <= 1.
+              or not 2. <= lead['d'] <= 45. or abs(lead['y']) >= 1.
+              or not .3 < lead['vr']+observation.speed < 8.
+              or abs(lead['d']-previous['d']) > .6 or abs(lead['y']-previous['y']) >= .4)
+        else:
+          invalid = invalid or not signal_enabled or lead is not None or observation.endpoint <= 3. or observation.desired_accel <= .15
+      if invalid:
+        self.machine.reset_tracking()
+        self.machine.moving_since = None
+      event = None
+    else:
+      event = self.machine.update(observation, lead_enabled, signal_enabled)
     if self.machine.state != previous_state:
       cloudlog.event('MYCRV_DEPARTURE_STATE', previous=previous_state, state=self.machine.state,
                      pending_kind=self.machine.pending_kind, confirmed_at=self.machine.pending_since,
