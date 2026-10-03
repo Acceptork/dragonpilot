@@ -245,6 +245,8 @@ class LongitudinalPlanner:
       cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
     enabled_personality = self.v33_params.get_bool('dp_exp_personality')
     valid_personality = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState', 'carControl')))
+    personality_path = list(sm['modelV2'].position.x) + list(sm['modelV2'].position.y)
+    valid_personality = valid_personality and len(personality_path) == ModelConstants.IDX_N * 2 and all(math.isfinite(x) for x in personality_path)
     personality_name = {0: 'aggressive', 1: 'standard', 2: 'relaxed'}.get(personality.raw if hasattr(personality, 'raw') else int(personality), 'standard')
     personality_row = self.v33_personality.update(t=trace_time, enabled=enabled_personality,
       personality=personality_name, base=float(self.output_a_target), raw_mpc=float(output_a_target_mpc),
