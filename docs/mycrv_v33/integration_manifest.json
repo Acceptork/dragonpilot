@@ -30,6 +30,11 @@
       "feature": "memory",
       "source_branch": "my-crv-lead-memory-v33-experimental",
       "source_head": "f034a4a3dd1f1199f3bfe5476e46b15368707363"
+    },
+    {
+      "feature": "taper",
+      "source_branch": "my-crv-stop-taper-v33-experimental",
+      "source_head": "92a797a0f4d31d490583f9c7af8520a07d93eda4"
     }
   ]
 }

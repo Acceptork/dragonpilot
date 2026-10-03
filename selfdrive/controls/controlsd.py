@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import math
+from openpilot.selfdrive.controls.lib.taper_v33 import StopTaper
 from numbers import Number
 
 from cereal import car, log
@@ -49,6 +50,9 @@ class Controls:
     self.pose_calibrator = PoseCalibrator()
     self.calibrated_pose: Pose | None = None
 
+    self.v33_taper = StopTaper()
+    self.v33_taper_frame = 0
+    self.v33_taper_previous = None
     self.LoC = LongControl(self.CP)
     self.VM = VehicleModel(self.CP)
     self.LaC: LatControl
@@ -126,6 +130,34 @@ class Controls:
     # accel PID loop
     pid_accel_limits = self.CI.get_pid_accel_limits(self.CP, CS.vEgo, CS.vCruise * CV.KPH_TO_MS)
     actuators.accel = float(self.LoC.update(CC.longActive, CS, long_plan.aTarget, long_plan.shouldStop, pid_accel_limits))
+    enabled_taper = self.params.get_bool('dp_exp_taper')
+    taper_time = self.sm.logMonoTime['carState'] / 1e9
+    grade_age = (self.sm.logMonoTime['carState'] - self.sm.logMonoTime['livePose']) / 1e9
+    pitch = float(self.calibrated_pose.orientation.xyz[1]) if self.calibrated_pose is not None else None
+    measured_reserve = None
+    for lead in model_v2.leadsV3:
+      if lead.prob > .8 and len(lead.x) and len(lead.y) and abs(lead.y[0]) < 1.:
+        distance = float(lead.x[0]) - 6.
+        measured_reserve = distance if measured_reserve is None else min(measured_reserve, distance)
+    taper_row = self.v33_taper.update(speed=float(CS.vEgo), base=float(actuators.accel),
+      pitch=pitch, grade_fresh=bool(self.sm.valid['livePose'] and 0 <= grade_age <= .2),
+      stop=bool(long_plan.shouldStop), enabled=enabled_taper, active=bool(CC.longActive and CS.vEgo < 2.),
+      danger=bool(long_plan.fcw or model_v2.meta.hardBrakePredicted or long_plan.aTarget < -1.5),
+      driver_override=bool(CS.brakePressed or CS.gasPressed), remaining=measured_reserve,
+      dt=DT_CTRL, lower=float(pid_accel_limits[0]))
+    actuators.accel = float(taper_row['after'])
+    taper_row.update(feature='taper', t=taper_time, enabled=enabled_taper,
+      vEgo=float(CS.vEgo), vCruise=float(CS.vCruise), aTarget_before=float(long_plan.aTarget),
+      aTarget_after=float(long_plan.aTarget), actuator_before=taper_row['before'], actuator_after=taper_row['after'],
+      lead_reserve=measured_reserve, stop_intent=bool(long_plan.shouldStop), FCW=bool(long_plan.fcw),
+      personality=str(self.sm['selfdriveState'].personality), pitch=pitch, grade_age=grade_age,
+      lateral_state=str(model_v2.meta.laneChangeState), signed_speed_available=False)
+    self.v33_taper_frame += 1
+    transition = (enabled_taper, taper_row['state'], taper_row['reason'])
+    if transition != self.v33_taper_previous or (enabled_taper and self.v33_taper_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', **taper_row)
+    self.v33_taper_previous = transition
+
 
     # Steering PID loop and lateral MPC
     # Reset desired curvature to current to avoid violating the limits on engage

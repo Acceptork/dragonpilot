@@ -169,4 +169,5 @@ inline static std::unordered_map<std::string, ParamKeyAttributes> keys = {
     {"dp_exp_ramp", {PERSISTENT, BOOL, "0"}},
     {"dp_exp_restart", {PERSISTENT, BOOL, "0"}},
     {"dp_exp_early_stop", {PERSISTENT, BOOL, "0"}},
+    {"dp_exp_taper", {PERSISTENT, BOOL, "0"}},
 };
