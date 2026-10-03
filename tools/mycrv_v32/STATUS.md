@@ -1,3 +1,5 @@
-# Planner diagnostics
+# RESEARCH / NOT_FOR_DEPLOYMENT
 
-NOT_FOR_DEPLOYMENT until gates pass. Trace is read-only; overshoot event records a bookmark, never changes acceleration. Honda sendcan is joined by replay timestamp, not invented in planner.
+READY_FOR_INTEGRATION_REVIEW: 42-segment command identity; diagnostics only.
+
+See [README](README.md) for tested commit and scope.
