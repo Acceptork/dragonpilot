@@ -171,4 +171,7 @@ inline static std::unordered_map<std::string, ParamKeyAttributes> keys = {
     {"dp_exp_restart", {PERSISTENT, BOOL, "0"}},
     {"dp_exp_early_stop", {PERSISTENT, BOOL, "0"}},
     {"dp_exp_taper", {PERSISTENT, BOOL, "0"}},
+    {"dp_departure_lead_alert", {PERSISTENT, BOOL, "1"}},
+    {"dp_departure_signal_alert", {PERSISTENT, BOOL, "1"}},
+    {"dp_departure_alert_cue", {CLEAR_ON_MANAGER_START, STRING}},
 };

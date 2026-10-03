@@ -11,6 +11,7 @@ from openpilot.common.realtime import Ratekeeper
 from openpilot.common.utils import retry
 from openpilot.common.swaglog import cloudlog
 from openpilot.common.params import Params
+from openpilot.selfdrive.ui.departure_runtime import DepartureRuntime
 
 from openpilot.system import micd
 from openpilot.system.hardware import HARDWARE
@@ -68,6 +69,7 @@ def check_selfdrive_timeout_alert(sm):
 class Soundd:
   def __init__(self):
     self.load_sounds()
+    self.departure_runtime = DepartureRuntime(Params())
 
     self.current_alert = AudibleAlert.none
     self.current_volume = MIN_VOLUME
@@ -150,6 +152,13 @@ class Soundd:
       self.update_alert(AudibleAlert.none)
       self.selfdrive_timeout_alert = False
 
+  def get_departure_alert(self, sm):
+    departure = self.departure_runtime.update(sm, time.monotonic())
+    # Existing alerts, including timeout warnings, always have priority. No delayed cue queue.
+    if (departure is not None and self.current_alert == AudibleAlert.none
+        and sm['selfdriveState'].alertSound == AudibleAlert.none and not self.selfdrive_timeout_alert):
+      self.update_alert(AudibleAlert.prompt)
+
   def calculate_volume(self, weighted_db):
     volume = ((weighted_db - AMBIENT_DB) / DB_SCALE) * (MAX_VOLUME - MIN_VOLUME) + MIN_VOLUME
     return math.pow(VOLUME_BASE, (np.clip(volume, MIN_VOLUME, MAX_VOLUME) - 1))
@@ -165,7 +174,7 @@ class Soundd:
     # sounddevice must be imported after forking processes
     import sounddevice as sd
 
-    sm = messaging.SubMaster(['selfdriveState', 'soundPressure'])
+    sm = messaging.SubMaster(['selfdriveState', 'soundPressure', 'deviceState', 'carState', 'modelV2', 'radarState'])
 
     with self.get_stream(sd) as stream:
       rk = Ratekeeper(20)
@@ -180,6 +189,7 @@ class Soundd:
           self.current_volume = self.calculate_volume(float(self.spl_filter_weighted.x))
 
         self.get_audible_alert(sm)
+        self.get_departure_alert(sm)
 
         # Ramp up immediate warning sound over 4s
         if self.current_alert == AudibleAlert.warningImmediate:

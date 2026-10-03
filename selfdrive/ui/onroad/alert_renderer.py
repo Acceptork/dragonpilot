@@ -1,3 +1,4 @@
+from openpilot.selfdrive.ui.departure_runtime import current_cue
 import time
 import pyray as rl
 from dataclasses import dataclass, replace
@@ -110,6 +111,9 @@ class AlertRenderer(Widget):
 
     # No alert if size is none
     if ss.alertSize == 0:
+      cue = current_cue(ui_state.params, time.monotonic(), ui_state.started)
+      if cue:
+        return Alert(text1=cue, text2="請自行確認路況", size=AlertSize.small, status=AlertStatus.normal)
       return None
 
     # Don't get old alert
