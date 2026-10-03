@@ -7,14 +7,19 @@ not be installed automatically.
 The RC starts from longitudinal v3 commit
 `a201e6cb75296bb1700dadf9268d857a9a597016`. Its new changes are limited
 to Traditional Chinese UI text, an opt-in read-only longitudinal debug HUD,
-guarded deploy/rollback tools, and loggerd bookmark retention across a route
-segment boundary. These changes do not alter planner, controller, Honda CAN,
-steering, panda safety, or AGNOS logic.
+guarded deploy/rollback tools, loggerd bookmark retention across a route
+segment boundary, and a separately tested explicit RESUME set-speed restore
+after a MAIN cycle. RESUME changes only the cruise helper on the driver's
+button release; the route has no such episode, so closed-course validation
+is required. Planner, Honda CAN mapping, steering, panda safety, and AGNOS
+logic are unchanged by the new RC commits.
 
 The following independent candidates are **not in this RC**:
 
-- First-SET 30 km/h and long-press 10 km/h cruise changes: the independent
-  cruise branch lost generated Honda brake requests in a full-route replay.
+- First-SET 30 km/h and long-press 10 km/h cruise changes: their isolated
+  full-route replays lost generated Honda brake requests. The separately
+  tested RESUME fix is included, but actual MAIN-to-RESUME behavior was not
+  present in the archived route.
 - Experimental stop hold and low-speed brake shaping: event_041 stopping
   remains unresolved; the independent stop branch changed stationary commands.
 - Low-speed driver-confirmed lane change: physical low-speed EPS behavior and
