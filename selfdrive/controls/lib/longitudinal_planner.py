@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import math
+from openpilot.common.params import Params
+from openpilot.selfdrive.controls.lib.restart_v33 import AutoRestart
 import numpy as np
 
 import cereal.messaging as messaging
@@ -61,6 +63,10 @@ from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent, emi
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
+    self.v33_restart = AutoRestart()
+    self.v33_params = Params()
+    self.v33_frame = 0
+    self.v33_previous = None
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
     self.overshoot_event = OvershootEvent()
@@ -237,6 +243,39 @@ class LongitudinalPlanner:
     if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
       self.diagnostic_trace['event_type']='OVERSHOOT_EVENT'
       cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
+    enabled_restart = self.v33_params.get_bool('dp_exp_restart')
+    lead = sm['radarState'].leadOne
+    second = sm['radarState'].leadTwo
+    restart_lead = dict(d=float(lead.dRel), vr=float(lead.vRel), y=float(lead.yRel), prob=float(lead.modelProb)) if lead.status else None
+    valid_restart = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState')))
+    path = list(sm['modelV2'].position.y)
+    personality_name = {0: 'aggressive', 1: 'standard', 2: 'relaxed'}.get(int(personality), 'relaxed')
+    restart_row = self.v33_restart.update(t=trace_time, enabled=enabled_restart,
+      active=not reset_state, speed=float(v_ego), base_stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
+      lead=restart_lead, path_valid=bool(valid_restart and len(path) == ModelConstants.IDX_N and all(math.isfinite(x) for x in path)),
+      fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
+      driver_brake=bool(sm['carState'].brakePressed or sm['carState'].gasPressed),
+      new_closer=bool(second.status and (not lead.status or second.dRel < lead.dRel - .5)),
+      personality=personality_name)
+    # Interlock may add HOLD. It never clears the existing stop request or forces throttle.
+    before_restart = float(self.output_a_target)
+    if enabled_restart:
+      self.output_should_stop = self.output_should_stop or restart_row['should_stop']
+      if restart_row['active']:
+        self.output_a_target = min(0., self.output_a_target)
+    restart_row.update(feature='restart', t=trace_time, enabled=enabled_restart,
+      vEgo=float(v_ego), vCruise=float(v_cruise_kph), aTarget_before=before_restart,
+      aTarget_after=float(self.output_a_target), lead=restart_lead, stop_intent=bool(self.output_should_stop),
+      FCW=bool(self.fcw), personality=personality_name, pitch=pitch,
+      lateral_state=self.diagnostic_trace['lane_change_state'])
+    self.diagnostic_trace['experimental'] = restart_row
+    self.diagnostic_trace['post_clip'] = float(self.output_a_target)
+    self.diagnostic_trace['shouldStop'] = bool(self.output_should_stop)
+    self.v33_frame += 1
+    transition = (enabled_restart, restart_row['state'], restart_row['reason'])
+    if transition != self.v33_previous or (enabled_restart and self.v33_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', **restart_row)
+    self.v33_previous = transition
     emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):

@@ -1,0 +1,1 @@
+ITEMS = [{'key': 'dp_exp_restart', 'type': 'toggle_item', 'title': '自動跟車起步', 'description': '預設關閉。可靠同一前車持續移動且通過共同安全條件後，才允許原控制器起步；不以十公分微動起步。', 'category': 'Longitudinal', 'flags': 'PERSISTENT', 'param_type': 'BOOL', 'default': '0'}]
