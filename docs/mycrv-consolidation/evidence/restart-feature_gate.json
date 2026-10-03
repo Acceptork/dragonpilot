@@ -1,0 +1,25 @@
+{
+  "feature": "restart",
+  "commit": "14e68d667021ddc7f9aadd1647a201a298d00074",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_CONTROL_GATES; FINAL_INTEGRATION_PENDING",
+  "default": "OFF",
+  "replay": {
+    "off": 42,
+    "on": 42
+  },
+  "native_cases": 18,
+  "limitations": [
+    "Fixed-input replay does not prove physical restart, stop distance or lead identity.",
+    "Three raw step residuals are exact driver handoffs with replayed longitudinal authority off; strict failure evidence retained.",
+    "Command slew is not a physical jerk guarantee."
+  ],
+  "remaining": [
+    "Final integrated controls and profile interaction tests",
+    "Final all-OFF identity",
+    "Closed-course micro-motion, false restart, grade and takeover validation"
+  ],
+  "abort": "Unexpected movement, obstacle release or abrupt command: driver takeover, stop safely, disable \u81ea\u52d5\u8ddf\u8eca\u8d77\u6b65 or ALL_OFF.",
+  "rollback": "Individual toggle OFF or ALL_OFF; full rollback using saved backup manifest.",
+  "device_deployment": "NOT_RUN"
+}

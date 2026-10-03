@@ -1,0 +1,57 @@
+{
+  "commit": "9469a5ce68ed4a5636c77151491d37e42235d296",
+  "status": "PASS_INTEGRATED_SOFTWARE_GATES",
+  "all_off_identity": {
+    "base_sha": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+    "candidate_sha": "9469a5ce68ed4a5636c77151491d37e42235d296",
+    "segments": 42,
+    "rows": {
+      "carState": 246949,
+      "carControl": 246819,
+      "controlsState": 246819,
+      "radarState": 49305,
+      "longitudinalPlan": 49305,
+      "sendcan": 123145
+    },
+    "alignment_mismatches": 0,
+    "changes": {},
+    "first_difference_s": null,
+    "last_difference_s": null,
+    "lost_brake_requests": 0,
+    "gas_increases": 0,
+    "lost_flags": {},
+    "longActive_changed": 0,
+    "engagement_changes": 0,
+    "decision": "PASS_IDENTITY",
+    "physical_outcomes": "NOT_EVALUABLE_FROM_FIXED_INPUT_REPLAY"
+  },
+  "features": {
+    "stop": "992fe80bd619c31adbdc416bde27db5f740c7d41",
+    "taper": "ca99092397bfefdfe1e75c268caf05e8e9bb3607",
+    "restart": "14e68d667021ddc7f9aadd1647a201a298d00074",
+    "lca": "bddb3dac462c481873ec7ecd14bb115f45a47c0c",
+    "overtake": "278e1909588cedc551fdc4a06b5eb5871ebfd070",
+    "ramp": "9b64f1d0247a61ad946d52c9c2e6b31d5ebc160b",
+    "memory": "e2358e49bd632ca50b875b9a66579fdf1bc9f420",
+    "eps": "435565ee144931eed43804b932beb3ade4a22ef9",
+    "personality": "bf9db122f6e05f5405475e2b840bf4fcfd5a368f"
+  },
+  "ledgers": [
+    "native_build",
+    "unit",
+    "honda_long_mpc",
+    "panda_safety",
+    "ui",
+    "integration_native",
+    "combined_stop_controlsd",
+    "native_lca_context",
+    "native_memory_integration"
+  ],
+  "remaining": [
+    "Finalize exact-commit profile delivery manifest and report consistency",
+    "GitHub publication and branch consolidation subject to pending explicit authorization/dependency confirmation",
+    "Physical closed-course validation by driver"
+  ],
+  "device_deployment": "NOT_RUN",
+  "production_approval": "NOT_CLAIMED"
+}

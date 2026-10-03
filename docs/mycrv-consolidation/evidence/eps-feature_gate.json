@@ -1,0 +1,21 @@
+{
+  "feature": "eps_and_steering_return_shadow",
+  "commit": "435565ee144931eed43804b932beb3ade4a22ef9",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "READ_ONLY_INSTRUMENTATION; FINAL_INTEGRATION_PENDING",
+  "control_effect": "NONE",
+  "native_replay_segments": 42,
+  "evidence": [
+    "current_identity.json",
+    "dataset_audit.json",
+    "full_active_final_eps/EPS_CAPACITY_DATASET.csv"
+  ],
+  "remaining_physical": [
+    "actual EPS saturation",
+    "curvature return lag vs driver intervention",
+    "lateral error unavailable in current contract"
+  ],
+  "abort": "If instrumentation causes workload/storage problems, revert experimental build; it never authorizes stronger steering or acceleration",
+  "device_deployment": "NOT_RUN",
+  "road_use_approval": "NOT_CLAIMED"
+}

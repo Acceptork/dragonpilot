@@ -1,0 +1,22 @@
+{
+  "feature": "lca",
+  "commit": "bddb3dac462c481873ec7ecd14bb115f45a47c0c",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_ONLY; FINAL_INTEGRATION_PENDING",
+  "default": "OFF",
+  "native_replay": {
+    "off": 42,
+    "on": 42,
+    "helper_frames": 49305
+  },
+  "limitation": "Recorded model probabilities remain fixed. No modeld re-inference or physical lateral/EPS outcome is claimed.",
+  "control_replay_effect": "IDENTITY_WITH_RECORDED_MODELD; NOT_PROOF_OF_REAL_LANE_CHANGE",
+  "remaining": [
+    "Honda low-speed lateralActive/EPS capability",
+    "Physical path and fade behavior",
+    "Driver-confirmed closed-course maneuvers"
+  ],
+  "abort": "Unconfirmed/repeated lane change, road-edge intervention, lateral disengagement or unexpected steering: take over and disable LCA",
+  "blindspot": "此車型無可靠盲點資料，變換車道前請自行確認後方安全。",
+  "device_deployment": "NOT_RUN"
+}

@@ -1,0 +1,32 @@
+{
+  "feature": "taper",
+  "commit": "ca99092397bfefdfe1e75c268caf05e8e9bb3607",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_SOFTWARE_ONLY; FINAL_INTEGRATION_PENDING",
+  "default": "OFF",
+  "native_replay": {
+    "off": 42,
+    "on": 42
+  },
+  "plant_status": "PARTIAL_FAILURE_RETAINED: 4 downhill overrun cases; not a physical safety pass",
+  "restrictions": [
+    "Initial flat closed-course only, measured stopping reserve and immediate driver takeover boundary",
+    "No downhill approval from this gate; measure actual brake gain, delay and grade before expanding",
+    "No lead-derived measured reserve means no TAPER release, BRAKING/HOLD only",
+    "No physical jerk, stopping distance, creep or rollback guarantee from fixed-input replay"
+  ],
+  "remaining": [
+    "Final integration and all-OFF identity",
+    "Physical stop distance and hold/creep/rollback/jerk measurements"
+  ],
+  "abort": "Any creep, rollback, overrun or unexpected brake: driver brake takeover, disable dp_exp_taper, restore ALL_OFF",
+  "evidence": [
+    "release_fixed_off_identity.json",
+    "release_fixed_active_audit.json",
+    "release_fixed_step_audit.json",
+    "release_fixed_raw_context.json",
+    "plant_sweep.json",
+    "PLANT_FAILURE_ANALYSIS.md"
+  ],
+  "device_deployment": "NOT_RUN"
+}

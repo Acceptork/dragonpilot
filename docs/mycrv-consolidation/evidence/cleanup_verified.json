@@ -1,0 +1,270 @@
+{
+  "final_branches": {
+    "my-crv-experimental": "9469a5ce68ed4a5636c77151491d37e42235d296",
+    "my-crv-latest": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+    "my-crv-v2-baseline": "a1e028371cdfe87471f694c87fc3d17060f969c4",
+    "my-crv-v3.2-rc-candidate": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c"
+  },
+  "entries": [
+    {
+      "head": "8cca12d56b4c835bce284292b23a24385934c9d8",
+      "branch": "installer-my-crv",
+      "tag": "archive/installer-my-crv-8cca12d56b4c",
+      "peeled": "8cca12d56b4c835bce284292b23a24385934c9d8",
+      "tag_object": "77b2ec3642b5fbfc2c593357d6c5fb8f8022c0ae",
+      "delete": true
+    },
+    {
+      "head": "418216c4f8b87403aa22177a998af8c7b5c77a8c",
+      "branch": "my-crv",
+      "tag": "archive/my-crv-418216c4f8b8",
+      "peeled": "418216c4f8b87403aa22177a998af8c7b5c77a8c",
+      "tag_object": "14555fdc14f5eb4c83360716892d5ee96e119fde",
+      "delete": true
+    },
+    {
+      "head": "ca36a14e32ec4eb90a46712c5c87082faf2921d4",
+      "branch": "my-crv-alerts-zh-tw-candidate",
+      "tag": "archive/alerts-zh-tw-ca36a14e32ec",
+      "peeled": "ca36a14e32ec4eb90a46712c5c87082faf2921d4",
+      "tag_object": "bd5f85a22cbddd3f21cc065bdfa6d57a9bcceeee",
+      "delete": true
+    },
+    {
+      "head": "4b7c7b4b43bf9b873dab0f47d00152eb9c381c7b",
+      "branch": "my-crv-bookmark-v1-candidate",
+      "tag": "archive/bookmark-v1-4b7c7b4b43bf",
+      "peeled": "4b7c7b4b43bf9b873dab0f47d00152eb9c381c7b",
+      "tag_object": "2d612aaaa6cf0452e7e509463f143286bd04e21e",
+      "delete": true
+    },
+    {
+      "head": "d5fc787f067a8f49452e7d9ee2421dab18635945",
+      "branch": "my-crv-buttons10-isolation-candidate",
+      "tag": "failed/buttons10-isolation-d5fc787f067a",
+      "peeled": "d5fc787f067a8f49452e7d9ee2421dab18635945",
+      "tag_object": "df64b39b2706a6ad80dc7530047ca674daa1030a",
+      "delete": true
+    },
+    {
+      "head": "c568e2782d00f96d79d38e4f91e942309b6e152e",
+      "branch": "my-crv-buttons10-single-v1-candidate",
+      "tag": "archive/buttons10-single-v1-c568e2782d00",
+      "peeled": "c568e2782d00f96d79d38e4f91e942309b6e152e",
+      "tag_object": "40395ebc9ccac3291853534e2814ab961554d76a",
+      "delete": true
+    },
+    {
+      "head": "ed015216129ed430e8f6216a33fd1ab16a001216",
+      "branch": "my-crv-buttons10-v32-candidate",
+      "tag": "archive/buttons10-v32-ed015216129e",
+      "peeled": "ed015216129ed430e8f6216a33fd1ab16a001216",
+      "tag_object": "599b4ea961cf6969b2413b4e2258cfd9da649825",
+      "delete": true
+    },
+    {
+      "head": "b97e7e24f5318163e277936465fe8019ec53ceea",
+      "branch": "my-crv-deploy-hardening-v1-candidate",
+      "tag": "archive/deploy-hardening-v1-b97e7e24f531",
+      "peeled": "b97e7e24f5318163e277936465fe8019ec53ceea",
+      "tag_object": "7f08b6f6150056f3d23e613e3f6bc7915ce0f6e1",
+      "delete": true
+    },
+    {
+      "head": "1a849d5a311781a0d9527da7ffe72ed28d06580d",
+      "branch": "my-crv-dynamic-alerts-zh-tw-candidate",
+      "tag": "archive/dynamic-alerts-zh-tw-1a849d5a3117",
+      "peeled": "1a849d5a311781a0d9527da7ffe72ed28d06580d",
+      "tag_object": "4415e2f20c60bc155210224eccd71c127fa89123",
+      "delete": true
+    },
+    {
+      "head": "539fcad41075ee322ce9ac7c89620a40d92a1810",
+      "branch": "my-crv-lateral-return-v1-candidate",
+      "tag": "archive/lateral-return-v1-539fcad41075",
+      "peeled": "539fcad41075ee322ce9ac7c89620a40d92a1810",
+      "tag_object": "03ef2dcc24c541852f2bc87e26f001a72b744e50",
+      "delete": true
+    },
+    {
+      "head": "1a81fb776e5b389ce0aa9be15361e490f753b006",
+      "branch": "my-crv-lca-v1-candidate",
+      "tag": "archive/lca-v1-1a81fb776e5b",
+      "peeled": "1a81fb776e5b389ce0aa9be15361e490f753b006",
+      "tag_object": "4d6f60d8d33c3ee8bc0ef51191492f1253796f14",
+      "delete": true
+    },
+    {
+      "head": "2eef6f2eb41a3c7e42cd09d15fba556896a9af29",
+      "branch": "my-crv-lca-v2-candidate",
+      "tag": "archive/lca-v2-2eef6f2eb41a",
+      "peeled": "2eef6f2eb41a3c7e42cd09d15fba556896a9af29",
+      "tag_object": "7c7ed34c12339f1610d4369195794ad35bac486c",
+      "delete": true
+    },
+    {
+      "head": "ee63696ff09768948762d0dded4508ffb41876d1",
+      "branch": "my-crv-lca-v32-candidate",
+      "tag": "archive/lca-v32-ee63696ff097",
+      "peeled": "ee63696ff09768948762d0dded4508ffb41876d1",
+      "tag_object": "9805552d230f5043b0cd945075f5541bdd4a2dc0",
+      "delete": true
+    },
+    {
+      "head": "c836c6d731e15e30ba2d406f6e4baa1c03e7e21b",
+      "branch": "my-crv-lead-memory-v32-shadow",
+      "tag": "archive/lead-memory-v32-shadow-c836c6d731e1",
+      "peeled": "c836c6d731e15e30ba2d406f6e4baa1c03e7e21b",
+      "tag_object": "680b784c5afbc785a8db17ace900f69eacbeb3d6",
+      "delete": true
+    },
+    {
+      "head": "a1e028371cdfe87471f694c87fc3d17060f969c4",
+      "branch": "my-crv-long-tune-v2",
+      "tag": "archive/long-tune-v2-a1e028371cdf",
+      "peeled": "a1e028371cdfe87471f694c87fc3d17060f969c4",
+      "tag_object": "dc3e6ce61a6df7aa5491ccbe568ac4c487106002",
+      "delete": true
+    },
+    {
+      "head": "a201e6cb75296bb1700dadf9268d857a9a597016",
+      "branch": "my-crv-long-tune-v3-candidate",
+      "tag": "archive/long-tune-v3-a201e6cb7529",
+      "peeled": "a201e6cb75296bb1700dadf9268d857a9a597016",
+      "tag_object": "3fa30307449f0f6035c1f67db5cecd56996ea5ed",
+      "delete": true
+    },
+    {
+      "head": "01772318a8ced599f90a3ea0b0cbec8cc25b2a1d",
+      "branch": "my-crv-long-v3.1-candidate",
+      "tag": "archive/long-v3.1-01772318a8ce",
+      "peeled": "01772318a8ced599f90a3ea0b0cbec8cc25b2a1d",
+      "tag_object": "15827d4772c10b8376bc8bd458c8a3028bf45bab",
+      "delete": true
+    },
+    {
+      "head": "68094e06c4029005e1ea01b4395bbb759216ff15",
+      "branch": "my-crv-overtake-preaccel-v1-candidate",
+      "tag": "archive/overtake-preaccel-v1-68094e06c402",
+      "peeled": "68094e06c4029005e1ea01b4395bbb759216ff15",
+      "tag_object": "39a6e78a6773a231cd50f7097eeeeead98ffce03",
+      "delete": true
+    },
+    {
+      "head": "c4ee2073d055e00caa860a76d1ccb125fe5300bc",
+      "branch": "my-crv-overtake-v32-research",
+      "tag": "archive/overtake-v32-research-c4ee2073d055",
+      "peeled": "c4ee2073d055e00caa860a76d1ccb125fe5300bc",
+      "tag_object": "cb1b5afba81b39c6da2bfa206755eab485c35bb4",
+      "delete": true
+    },
+    {
+      "head": "b84f559815fd8dadcab4e448b39d2fcdf0cd443a",
+      "branch": "my-crv-personality-v32-candidate",
+      "tag": "failed/personality-v32-b84f559815fd",
+      "peeled": "b84f559815fd8dadcab4e448b39d2fcdf0cd443a",
+      "tag_object": "b387049fe20f5ca035960b231915c0e1cb91bd9c",
+      "delete": true
+    },
+    {
+      "head": "e845f70ee3270d327097360aa943894401699d92",
+      "branch": "my-crv-planner-trace-v32",
+      "tag": "archive/planner-trace-v32-e845f70ee327",
+      "peeled": "e845f70ee3270d327097360aa943894401699d92",
+      "tag_object": "9449a15a8a44b90aa0ec07c4319aa05b9078c08f",
+      "delete": true
+    },
+    {
+      "head": "a14b0a4f707a6d32588d13832d844f2351c6e56c",
+      "branch": "my-crv-resume-v31-candidate",
+      "tag": "archive/resume-v31-a14b0a4f707a",
+      "peeled": "a14b0a4f707a6d32588d13832d844f2351c6e56c",
+      "tag_object": "b3cdd9cea2f182bf29a75fff8fd95ef845131373",
+      "delete": true
+    },
+    {
+      "head": "177d55b52508a65fda8700f4216ffad55a18ab37",
+      "branch": "my-crv-set30-isolation-candidate",
+      "tag": "failed/set30-isolation-177d55b52508",
+      "peeled": "177d55b52508a65fda8700f4216ffad55a18ab37",
+      "tag_object": "caeadc694ecf7a5bebacc165f8f7dbf4fe7eabfe",
+      "delete": true
+    },
+    {
+      "head": "de4ae3f962281939297fee430d16c8a49845b15c",
+      "branch": "my-crv-set30-v32-candidate",
+      "tag": "archive/set30-v32-de4ae3f96228",
+      "peeled": "de4ae3f962281939297fee430d16c8a49845b15c",
+      "tag_object": "c0c65feb674751aaef6028eb597d12c5b25233a3",
+      "delete": true
+    },
+    {
+      "head": "8a692943afd62d8593e845e6abbfd0f0159065b5",
+      "branch": "my-crv-stop-intent-v32-shadow",
+      "tag": "archive/stop-intent-v32-shadow-8a692943afd6",
+      "peeled": "8a692943afd62d8593e845e6abbfd0f0159065b5",
+      "tag_object": "d1199786e4cd98247e14a8ccc4900c761b0b9eb3",
+      "delete": true
+    },
+    {
+      "head": "e488f0fbd8013df0f6bd053807381f1ba7f889a6",
+      "branch": "my-crv-stop-v2-candidate",
+      "tag": "archive/stop-v2-e488f0fbd801",
+      "peeled": "e488f0fbd8013df0f6bd053807381f1ba7f889a6",
+      "tag_object": "96204db08d726f4eb5a91cc7020b5bbe460338d2",
+      "delete": true
+    },
+    {
+      "head": "efaad26731712cd4dfd13746ffdf97fb9164a9cf",
+      "branch": "my-crv-v3.1-deploy-tools-candidate",
+      "tag": "archive/v3.1-deploy-tools-efaad2673171",
+      "peeled": "efaad26731712cd4dfd13746ffdf97fb9164a9cf",
+      "tag_object": "02ed40b8284dfa6fb786b0f3bab05c0742269bb0",
+      "delete": true
+    },
+    {
+      "head": "c791595652c2b7e24bbdf7165f65d4b217b08c4e",
+      "branch": "my-crv-v3.1-rc1",
+      "tag": "archive/v3.1-rc1-c791595652c2",
+      "peeled": "c791595652c2b7e24bbdf7165f65d4b217b08c4e",
+      "tag_object": "1fc11896ad8b7824274bbe099145efebb27a67d4",
+      "delete": true
+    },
+    {
+      "head": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+      "branch": "my-crv-v3.2-candidate",
+      "tag": "archive/v3.2-80e190108b86",
+      "peeled": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+      "tag_object": "b53fa12f7dd927f18ca3fcada387ad4e994fbc2a",
+      "delete": true
+    },
+    {
+      "head": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+      "branch": "my-crv-v3.2-rc-candidate",
+      "tag": "archive/v3.2-rc-80e190108b86",
+      "peeled": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+      "tag_object": "cd359078eaa4c517f588a96436db91da90511bd3",
+      "delete": false
+    },
+    {
+      "head": "a422934c1576b84ea90e29223546e9fd42850c4b",
+      "branch": "my-crv-zh-tw-complete",
+      "tag": "archive/zh-tw-complete-a422934c1576",
+      "peeled": "a422934c1576b84ea90e29223546e9fd42850c4b",
+      "tag_object": "a5af48c5abe0000f353e82f7882fe5e61455b8d4",
+      "delete": true
+    },
+    {
+      "head": "94ad85cfda64773a960d048dc11cac02d4aa86a5",
+      "branch": "pre-build",
+      "tag": "archive/pre-build-94ad85cfda64",
+      "peeled": "94ad85cfda64773a960d048dc11cac02d4aa86a5",
+      "tag_object": "e9536f834a5d676282ef422f2c3d678c1ef47035",
+      "delete": true
+    }
+  ],
+  "device_access": "NOT_RUN",
+  "deleted_count": 31,
+  "original_count": 32,
+  "verified_utc": "2026-10-03T18:11:38.3223716Z"
+}

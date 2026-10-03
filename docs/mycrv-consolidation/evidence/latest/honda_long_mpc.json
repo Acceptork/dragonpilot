@@ -1,0 +1,25 @@
+{
+  "commit": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+  "root": "/root/comma_linux_replay/v33_latest",
+  "command": [
+    ".venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-n",
+    "0",
+    "-q",
+    "opendbc_repo/opendbc/car/honda/tests/test_honda.py",
+    "opendbc_repo/opendbc/car/honda/tests/test_low_speed_gas.py",
+    "selfdrive/controls/tests/test_longcontrol.py",
+    "selfdrive/controls/tests/test_longitudinal_throttle_v1.py",
+    "selfdrive/controls/tests/test_longitudinal_personality_v2.py",
+    "selfdrive/controls/tests/test_longitudinal_debug_v1.py",
+    "selfdrive/controls/tests/test_following_distance.py",
+    "selfdrive/controls/tests/test_leads.py",
+    "selfdrive/test/longitudinal_maneuvers/test_longitudinal.py"
+  ],
+  "exit_code": 0,
+  "started_utc": "2026-10-03T09:00:31.840121+00:00",
+  "duration_s": 138.94419121742249
+}

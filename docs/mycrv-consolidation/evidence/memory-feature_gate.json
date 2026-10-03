@@ -1,0 +1,25 @@
+{
+  "feature": "memory",
+  "commit": "e2358e49bd632ca50b875b9a66579fdf1bc9f420",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_CONTROL_GATES; FINAL_INTEGRATION_AND_LOGGING_GATE_PENDING",
+  "default": "OFF",
+  "replay": {
+    "off": 42,
+    "on": 42
+  },
+  "native_cases": 12,
+  "limitations": [
+    "Unknown state lasted up to 143.4 s in recorded inputs; no automatic positive recovery until reliable takeover or driver disable.",
+    "Discrete planner recovery is not a physical jerk guarantee; immediate conservative braking can still be abrupt.",
+    "Integration adds predicted distance and enter/exit logging; final exact-SHA validation is required before profile publication.",
+    "Never-seen motorcycles remain a perception limitation."
+  ],
+  "remaining": [
+    "Final integration tests and all-OFF identity",
+    "Closed-course association, false-braking and comfort sampling"
+  ],
+  "abort": "Unexpected braking, blocked intended recovery, wrong lead association or command jump: driver takeover, stop safely, disable \u524d\u8eca\u77ed\u66ab\u8a18\u61b6 or ALL_OFF; retain logs.",
+  "rollback": "Disable individual flag/ALL_OFF; full version rollback uses saved deployment backup manifest.",
+  "device_deployment": "NOT_RUN"
+}

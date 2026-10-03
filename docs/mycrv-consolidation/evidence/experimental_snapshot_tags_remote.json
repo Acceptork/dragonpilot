@@ -1,0 +1,84 @@
+{
+  "status": "REMOTE_ARCHIVE_VERIFIED_NOT_FOR_DEPLOYMENT",
+  "records": [
+    {
+      "feature": "stop",
+      "commit": "992fe80bd619c31adbdc416bde27db5f740c7d41",
+      "tag": "archive/experimental-stop-992fe80bd619",
+      "tag_object": "bccd6641715b28021f22217670aff6eb5816765d",
+      "bundle": "snapshot_stop_992fe80bd619.bundle"
+    },
+    {
+      "feature": "taper",
+      "commit": "ca99092397bfefdfe1e75c268caf05e8e9bb3607",
+      "tag": "archive/experimental-taper-ca99092397bf",
+      "tag_object": "961a8016523c6abacf77df6e20437ea6e980948c",
+      "bundle": "snapshot_taper_ca99092397bf.bundle"
+    },
+    {
+      "feature": "restart",
+      "commit": "14e68d667021ddc7f9aadd1647a201a298d00074",
+      "tag": "archive/experimental-restart-14e68d667021",
+      "tag_object": "9b6cb377f23c709320b21c287c9853ddf77d6331",
+      "bundle": "snapshot_restart_14e68d667021.bundle"
+    },
+    {
+      "feature": "lca",
+      "commit": "bddb3dac462c481873ec7ecd14bb115f45a47c0c",
+      "tag": "archive/experimental-lca-bddb3dac462c",
+      "tag_object": "6118725dd61aa538a7dbee8ad9734ceda03dc0ef",
+      "bundle": "snapshot_lca_bddb3dac462c.bundle"
+    },
+    {
+      "feature": "overtake",
+      "commit": "278e1909588cedc551fdc4a06b5eb5871ebfd070",
+      "tag": "archive/experimental-overtake-278e1909588c",
+      "tag_object": "cb23db55afcce7dafc44b912c82367d19ed008ed",
+      "bundle": "snapshot_overtake_278e1909588c.bundle"
+    },
+    {
+      "feature": "ramp",
+      "commit": "9b64f1d0247a61ad946d52c9c2e6b31d5ebc160b",
+      "tag": "archive/experimental-ramp-9b64f1d0247a",
+      "tag_object": "9ec75395b6a904a6b6d1640c55bf4c9226568d11",
+      "bundle": "snapshot_ramp_9b64f1d0247a.bundle"
+    },
+    {
+      "feature": "memory",
+      "commit": "e2358e49bd632ca50b875b9a66579fdf1bc9f420",
+      "tag": "archive/experimental-memory-e2358e49bd63",
+      "tag_object": "f8274a4fd949b2a45d8e3b471905c10761566868",
+      "bundle": "snapshot_memory_e2358e49bd63.bundle"
+    },
+    {
+      "feature": "eps",
+      "commit": "435565ee144931eed43804b932beb3ade4a22ef9",
+      "tag": "archive/experimental-eps-435565ee1449",
+      "tag_object": "771afd1261807b03616570c5447d952fbf491437",
+      "bundle": "snapshot_eps_435565ee1449.bundle"
+    },
+    {
+      "feature": "personality",
+      "commit": "bf9db122f6e05f5405475e2b840bf4fcfd5a368f",
+      "tag": "archive/experimental-personality-bf9db122f6e0",
+      "tag_object": "9e2c76e159b0ef7b163728dc0750054b217d9740",
+      "bundle": "snapshot_personality_bf9db122f6e0.bundle"
+    },
+    {
+      "feature": "departure",
+      "commit": "bf60a309aaa1daf71ef5c0f341515dfea4152a33",
+      "tag": "archive/experimental-departure-bf60a309aaa1",
+      "tag_object": "5b776bb8c376396c4188a5b39cb267570f3bb8c7",
+      "bundle": "snapshot_departure_bf60a309aaa1.bundle"
+    },
+    {
+      "feature": "experimental",
+      "commit": "9469a5ce68ed4a5636c77151491d37e42235d296",
+      "tag": "archive/experimental-experimental-9469a5ce68ed",
+      "tag_object": "d0aed3b2aa5f58a58b7c01c119b4625449ca7478",
+      "bundle": "snapshot_experimental_9469a5ce68ed.bundle"
+    }
+  ],
+  "branches_changed": 0,
+  "branches_deleted": 0
+}

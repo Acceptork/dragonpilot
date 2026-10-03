@@ -1,0 +1,27 @@
+{
+  "feature": "overtake",
+  "commit": "278e1909588cedc551fdc4a06b5eb5871ebfd070",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_ONLY; FINAL_INTEGRATION_PENDING",
+  "default": "OFF",
+  "native_replay": {
+    "off": 42,
+    "on": 42
+  },
+  "native_synthetic_cases": 14,
+  "historical_activation": false,
+  "stage2": "BLOCKED_NO_VALIDATED_PATH_EXIT_PROVIDER",
+  "limitation": "Historical observations contain no eligible Stage 1 frame. Activation and veto coverage is from native synthetic MPC; physical response and adjacent-lane safety are unproven.",
+  "remaining": [
+    "Final integration gates",
+    "Driver-confirmed closed-course Stage 1 response and cancellation"
+  ],
+  "abort": "Unexpected acceleration, missing fresh driver confirmation, weaker braking or Stage 2 activation: driver takeover and disable dp_exp_overtake / ALL_OFF",
+  "evidence": [
+    "envelope_fixed_off_identity.json",
+    "envelope_fixed_active_audit.json",
+    "envelope_fixed_trace_diagnostic.json",
+    "native_overtake_scenario_results.json"
+  ],
+  "device_deployment": "NOT_RUN"
+}

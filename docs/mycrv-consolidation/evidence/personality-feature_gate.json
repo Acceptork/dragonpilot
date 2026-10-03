@@ -1,0 +1,28 @@
+{
+  "feature": "personality",
+  "commit": "bf9db122f6e05f5405475e2b840bf4fcfd5a368f",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_ONLY; FINAL_INTEGRATION_PENDING",
+  "default": "OFF",
+  "replay": {
+    "off": 42,
+    "on": 42,
+    "active_frames": 32,
+    "explained_gas_increases": 79
+  },
+  "response_order": {
+    "relaxed": 11.15,
+    "standard": 7.8500000000000005,
+    "aggressive": 6.8500000000000005
+  },
+  "preserved_failure": "failed_trace_audit_schema_v1.json",
+  "audit_correction": "Preserved failed_trace_audit_schema_v1.json: throttle override latch is not driver override; baseline cruise cap is not physical cap. No numeric tolerance changed.",
+  "remaining": [
+    "Physical Honda delay/overshoot measurement",
+    "Personality comfort on closed course",
+    "Final integrated feature interaction and all-OFF replay"
+  ],
+  "limitations": "Observable trace checks and temporal command association only. Driver override, hardBrake, and input validity require native tests; no physical outcome proof.",
+  "abort": "Unexpected acceleration, weaker braking, overshoot or driver intervention: take over, safely stop and disable personality experiment",
+  "device_deployment": "NOT_RUN"
+}

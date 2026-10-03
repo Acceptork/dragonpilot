@@ -1,0 +1,522 @@
+{
+  "status": "REMOTE_ANNOTATED_TAG_AND_PEELED_COMMIT_VERIFIED",
+  "records": [
+    {
+      "commit": "0067cb534dfae1feadc7205269d4edb3ed58cba5",
+      "tag": "archive/recovered-local-0067cb534dfae1feadc7205269d4edb3ed58cba5",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "e630ea9bb3aa1782f1e784111a359daad3858a3c"
+    },
+    {
+      "commit": "04b0805ba57e1f4ed69e3542791b617f69b7ddf7",
+      "tag": "archive/recovered-local-04b0805ba57e1f4ed69e3542791b617f69b7ddf7",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "fe61bbbf39e865fa60bd1d4f055fd9c2cb1497f5"
+    },
+    {
+      "commit": "06b8ddeec29a11ef073e935adce822ff932583c4",
+      "tag": "archive/recovered-local-06b8ddeec29a11ef073e935adce822ff932583c4",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "0ba7f3ff4fb9ee3fc40adfc2a9c1e4706a9b3b84"
+    },
+    {
+      "commit": "07e19eb185723abea17c1caf1ca0ac4f2389ddcb",
+      "tag": "archive/recovered-local-07e19eb185723abea17c1caf1ca0ac4f2389ddcb",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "eaf94c9ab8b4d93e7ead40c3fdda412fb2eeac86"
+    },
+    {
+      "commit": "08401e9fe78cc35625d88c8bc244d564e8d5a5e2",
+      "tag": "archive/recovered-local-08401e9fe78cc35625d88c8bc244d564e8d5a5e2",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "203b6a5f78bf653bfd779fa8a800204fe2280cc0"
+    },
+    {
+      "commit": "0e65fb3922769d08127a7576bcd511a0764b677b",
+      "tag": "archive/recovered-local-0e65fb3922769d08127a7576bcd511a0764b677b",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "ca6e2235e3d5ad0ee3fa85023ca4fb452e313875"
+    },
+    {
+      "commit": "150eb930a759d95275fb0c5b7b7a5eb1e239465b",
+      "tag": "archive/recovered-local-150eb930a759d95275fb0c5b7b7a5eb1e239465b",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "533447101d29af2c9d3389e10aa8cc798088fed8"
+    },
+    {
+      "commit": "17c94f4592f351b44411e190a4aa287c2008c864",
+      "tag": "archive/recovered-local-17c94f4592f351b44411e190a4aa287c2008c864",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "a577a973c8febb79127180d97abb86b6a6517396"
+    },
+    {
+      "commit": "19132629fdd1babde6c1a01f4cb5f8431b19bf7c",
+      "tag": "archive/recovered-local-19132629fdd1babde6c1a01f4cb5f8431b19bf7c",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "c78ee0b6a35244cb2bbf693fac3d558af45db7bd"
+    },
+    {
+      "commit": "191f0e00583c318420ea016bc7a1e3d962dd4262",
+      "tag": "archive/recovered-local-191f0e00583c318420ea016bc7a1e3d962dd4262",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "c406e132da43d1062a289624fb5d0dbb74036bbc"
+    },
+    {
+      "commit": "194eebe5391e1b1011ce2a923663b112f46d539e",
+      "tag": "archive/recovered-local-194eebe5391e1b1011ce2a923663b112f46d539e",
+      "repository": "/root/comma_linux_replay/v31_long",
+      "tag_object": "40e7b3430a913c3fe863ba9f60c542e0e85a83e4"
+    },
+    {
+      "commit": "1a81fb776e5b389ce0aa9be15361e490f753b006",
+      "tag": "archive/recovered-local-1a81fb776e5b389ce0aa9be15361e490f753b006",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "2291482a4b4ea66da5ce8d7455f969692d750791"
+    },
+    {
+      "commit": "1a849d5a311781a0d9527da7ffe72ed28d06580d",
+      "tag": "archive/recovered-local-1a849d5a311781a0d9527da7ffe72ed28d06580d",
+      "repository": "/root/comma_linux_replay/deploy_hardening",
+      "tag_object": "b39c5d422c3be1dc7f1278e7cb7cb10378252124"
+    },
+    {
+      "commit": "230f5098a31607c65f6aadcf62962347cea74a56",
+      "tag": "archive/recovered-local-230f5098a31607c65f6aadcf62962347cea74a56",
+      "repository": "/root/comma_linux_replay/v32_integration",
+      "tag_object": "9bdc5b808b36faeea16ce90e95e963b5c64ecf1f"
+    },
+    {
+      "commit": "271a454a446defea60256a01f3956c216ab7241a",
+      "tag": "archive/recovered-local-271a454a446defea60256a01f3956c216ab7241a",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "b69ab9a7c694f59a6dc9b51cc90db7bba0f526e5"
+    },
+    {
+      "commit": "2722f28a19ada072d44a23338e36964cfe4d8d97",
+      "tag": "archive/recovered-local-2722f28a19ada072d44a23338e36964cfe4d8d97",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "70ec25d76c351bd4e70393f571cdf5fad96dbe03"
+    },
+    {
+      "commit": "28691929acdfbb3deb0636a0208e3c3a8baaaee7",
+      "tag": "archive/recovered-local-28691929acdfbb3deb0636a0208e3c3a8baaaee7",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "f64a6a6a60fe4364f010d9710850d7b5f99025c6"
+    },
+    {
+      "commit": "2c880445f5f3661781e75953890d0a4659a2c9de",
+      "tag": "archive/recovered-local-2c880445f5f3661781e75953890d0a4659a2c9de",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "9fa510081fe240e248d92deca88898bb92300091"
+    },
+    {
+      "commit": "34f4d304ba52f5c4416722dda155874e56029dcb",
+      "tag": "archive/recovered-local-34f4d304ba52f5c4416722dda155874e56029dcb",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "168241f17936ee227cad74ed94b0f0aeb1935e0a"
+    },
+    {
+      "commit": "36e1b8dbcd651123293ca70ff8fe298ca62a779e",
+      "tag": "archive/recovered-local-36e1b8dbcd651123293ca70ff8fe298ca62a779e",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "c581b981b550e9d5148315e7671e01dd755c95b4"
+    },
+    {
+      "commit": "3c10e66e8da0517d181700fbe0741ebf11e85081",
+      "tag": "archive/recovered-local-3c10e66e8da0517d181700fbe0741ebf11e85081",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "f9b433170d92110f680340a8e3abb18a806e90b4"
+    },
+    {
+      "commit": "3c7972f7efec93c5dc07b48aba6eae5ebe5809a3",
+      "tag": "archive/recovered-local-3c7972f7efec93c5dc07b48aba6eae5ebe5809a3",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "ea2f5dd8b70e915eda3bc5e2c9b79a2f63ef3ac2"
+    },
+    {
+      "commit": "4146e9c47062101da89a31584a034b9474f8e20a",
+      "tag": "archive/recovered-local-4146e9c47062101da89a31584a034b9474f8e20a",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "7069fa72be25158749a555a87ccd770178ac76c5"
+    },
+    {
+      "commit": "419a3f60345e75359601e93245da33f7a4d6562e",
+      "tag": "archive/recovered-local-419a3f60345e75359601e93245da33f7a4d6562e",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "3fe0f944ca6e322f9a9e63b58c7ca68d60f1243b"
+    },
+    {
+      "commit": "439ace9211210dc27f33b03d0bbde6e079ac0885",
+      "tag": "archive/recovered-local-439ace9211210dc27f33b03d0bbde6e079ac0885",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "2ade4e90614291e20431f5fbf8008e4d91d6a2f6"
+    },
+    {
+      "commit": "45955b15669385e8c030ed05428072c12a0b9a08",
+      "tag": "archive/recovered-local-45955b15669385e8c030ed05428072c12a0b9a08",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "0d90931e64423d8aaefa5841bebac80fc7854303"
+    },
+    {
+      "commit": "47eef937f05157b79b9a18795bb9543ca0425a02",
+      "tag": "archive/recovered-local-47eef937f05157b79b9a18795bb9543ca0425a02",
+      "repository": "/root/comma_linux_replay/v31_overtake",
+      "tag_object": "a0da51d50aea37a02592f8d308c1a567c3c3985f"
+    },
+    {
+      "commit": "48669f3cca533a4685219150d8206858cede3643",
+      "tag": "archive/recovered-local-48669f3cca533a4685219150d8206858cede3643",
+      "repository": "/root/comma_linux_replay/set30",
+      "tag_object": "3939eacc21ebaf9bdc764a9d216e006e746ebbe5"
+    },
+    {
+      "commit": "4b7c7b4b43bf9b873dab0f47d00152eb9c381c7b",
+      "tag": "archive/recovered-local-4b7c7b4b43bf9b873dab0f47d00152eb9c381c7b",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "08899914a837e28cb046335ff2fabeea80264277"
+    },
+    {
+      "commit": "4d48217019f673be328dad45a515669d8fabafea",
+      "tag": "archive/recovered-local-4d48217019f673be328dad45a515669d8fabafea",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "2ab8aa06544fa83356d1ac7c3f7f2c4c2c5eeb19"
+    },
+    {
+      "commit": "52f99e046261f6af639c3b4a4710c7536790c7a6",
+      "tag": "archive/recovered-local-52f99e046261f6af639c3b4a4710c7536790c7a6",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "15fc925c701f74caa2105480b7b6421178fffd49"
+    },
+    {
+      "commit": "539fcad41075ee322ce9ac7c89620a40d92a1810",
+      "tag": "archive/recovered-local-539fcad41075ee322ce9ac7c89620a40d92a1810",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "d93368a56c2259cba77959c545e12075e0fff87b"
+    },
+    {
+      "commit": "5df199823b792092b3c77c1098c55430d758b1c8",
+      "tag": "archive/recovered-local-5df199823b792092b3c77c1098c55430d758b1c8",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "7b9aa56cdf7ad5942d96faee90ea3dddc366763b"
+    },
+    {
+      "commit": "6807b1f002058c90f6015602db44650f3e97c6cd",
+      "tag": "archive/recovered-local-6807b1f002058c90f6015602db44650f3e97c6cd",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "6d4228c06bfb9c49cda64df7b9c7c0c9b7737f64"
+    },
+    {
+      "commit": "68b915aba5610d7dcc49b9d411c02c032c29e000",
+      "tag": "archive/recovered-local-68b915aba5610d7dcc49b9d411c02c032c29e000",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "fbfc5b50b7c4484a1e47dc472636cf326a000c48"
+    },
+    {
+      "commit": "690a165e3d45f627869527a81160f06558789354",
+      "tag": "archive/recovered-local-690a165e3d45f627869527a81160f06558789354",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "433612f5a51c0d3845070b0a35470596cb2171de"
+    },
+    {
+      "commit": "70b665f83289c79caedb218d98307ede76941147",
+      "tag": "archive/recovered-local-70b665f83289c79caedb218d98307ede76941147",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "3864d720c8e2b15160ac2514487ac8214e680f15"
+    },
+    {
+      "commit": "7610044551cbc951aa67eb446b6928487f69d9f2",
+      "tag": "archive/recovered-local-7610044551cbc951aa67eb446b6928487f69d9f2",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "ef919244c10febe6f5562526879ab0709a791cb8"
+    },
+    {
+      "commit": "7c23b97f8ebce159a17875cc764c895b9273912b",
+      "tag": "archive/recovered-local-7c23b97f8ebce159a17875cc764c895b9273912b",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "528fa9d5beaceaa610dc87bb2ed400c3e9273ca5"
+    },
+    {
+      "commit": "8382efbf9ee3e5c07c633c3eb919c8d43f6db0d5",
+      "tag": "archive/recovered-local-8382efbf9ee3e5c07c633c3eb919c8d43f6db0d5",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "481321d57f2bbc42ccda87053e9dd03be9c5b0ca"
+    },
+    {
+      "commit": "85f910067e5b87dd7e1a024c5244026746b45f9a",
+      "tag": "archive/recovered-local-85f910067e5b87dd7e1a024c5244026746b45f9a",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "8b032faf73e79a0736772f65d51bcc255da8534e"
+    },
+    {
+      "commit": "8d67ecb00496a2557fe7a7fbcde4e6d2404c65ac",
+      "tag": "archive/recovered-local-8d67ecb00496a2557fe7a7fbcde4e6d2404c65ac",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "b80dc80c95f26edd7d48f5e171c936040efc511d"
+    },
+    {
+      "commit": "8ee5331068e0a12bdf76aa03f5d62b1e5d034e6d",
+      "tag": "archive/recovered-local-8ee5331068e0a12bdf76aa03f5d62b1e5d034e6d",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "acecc61814f4dfc4c97f1fa3821f0a1f901bc163"
+    },
+    {
+      "commit": "921c643d8cf5f21385279f9a2000baa0847d8f48",
+      "tag": "archive/recovered-local-921c643d8cf5f21385279f9a2000baa0847d8f48",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "e9c28cf86a873da039da3348ebef5fb6b4339d06"
+    },
+    {
+      "commit": "951e6b48a03fe9603380d8255feaded76e4b3f59",
+      "tag": "archive/recovered-local-951e6b48a03fe9603380d8255feaded76e4b3f59",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "490b41222c2b0474fd9c3b21f9dc095c8924817a"
+    },
+    {
+      "commit": "96010d8b581fec5946a41349099a6531c0b89512",
+      "tag": "archive/recovered-local-96010d8b581fec5946a41349099a6531c0b89512",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "7ab6593648aeede3c953db3498092ce09f353845"
+    },
+    {
+      "commit": "96c7a534fc033dc94775792a47fa8fa41aec5497",
+      "tag": "archive/recovered-local-96c7a534fc033dc94775792a47fa8fa41aec5497",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "6817415a7f1872e6ce47040e7d64c1bd695bb37c"
+    },
+    {
+      "commit": "a0ad5c01a97d58f5ead3c573b8bd101ef455467c",
+      "tag": "archive/recovered-local-a0ad5c01a97d58f5ead3c573b8bd101ef455467c",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "990dc26910373a4c6bd9dbde9440015d562cbdb7"
+    },
+    {
+      "commit": "a14b0a4f707a6d32588d13832d844f2351c6e56c",
+      "tag": "archive/recovered-local-a14b0a4f707a6d32588d13832d844f2351c6e56c",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "a98179513190c17ebdc94da2fefec2caeb31a4c1"
+    },
+    {
+      "commit": "a170bcd75214134c2214651294688833cdea5131",
+      "tag": "archive/recovered-local-a170bcd75214134c2214651294688833cdea5131",
+      "repository": "/root/comma_linux_replay/v31_long",
+      "tag_object": "789215ce74322f8d28ef6d02b5a1882aa928c6b0"
+    },
+    {
+      "commit": "ab86d5cb9200fe3519b593f65e0f18a068d28bf1",
+      "tag": "archive/recovered-local-ab86d5cb9200fe3519b593f65e0f18a068d28bf1",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "29efc489d08f67a0bb273f7ef32e57271fa9da6b"
+    },
+    {
+      "commit": "ac8dc8e05efcf72ad2a89822b046b7d1a3711755",
+      "tag": "archive/recovered-local-ac8dc8e05efcf72ad2a89822b046b7d1a3711755",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "6e35e1f11a4dc92ef370cc624a5a526ec5888cf6"
+    },
+    {
+      "commit": "ac9ebc3fc4f9a36fa8bdf33b1f3aae7f3ebc6d00",
+      "tag": "archive/recovered-local-ac9ebc3fc4f9a36fa8bdf33b1f3aae7f3ebc6d00",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "8a1f2b847f29e27f457c8cccbe9287b6634ab708"
+    },
+    {
+      "commit": "b30b6c80a9be94b218f040e85c89e1884f469083",
+      "tag": "archive/recovered-local-b30b6c80a9be94b218f040e85c89e1884f469083",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "b061e482ba8384d6618090f4f9ca07200670c6a9"
+    },
+    {
+      "commit": "b97e7e24f5318163e277936465fe8019ec53ceea",
+      "tag": "archive/recovered-local-b97e7e24f5318163e277936465fe8019ec53ceea",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "c4bc6e7ee6697fd4d95de70ef9e60fe7d94d3bff"
+    },
+    {
+      "commit": "bc50dce385989c38c62185bc900a88ea17818f2c",
+      "tag": "archive/recovered-local-bc50dce385989c38c62185bc900a88ea17818f2c",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "771870aeb7842ea92b1c8296504f2f7a9e36f922"
+    },
+    {
+      "commit": "bf7625788a7f918f901ae6eeec0d691a28b2d5bf",
+      "tag": "archive/recovered-local-bf7625788a7f918f901ae6eeec0d691a28b2d5bf",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "f7f28a7fc1afc3c4e16255b015e8536a32451166"
+    },
+    {
+      "commit": "c568e2782d00f96d79d38e4f91e942309b6e152e",
+      "tag": "archive/recovered-local-c568e2782d00f96d79d38e4f91e942309b6e152e",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "0f175b02024887a973b53579b4f524465d544399"
+    },
+    {
+      "commit": "c56e148b1a6b13778619823b6c21cf004a0113b5",
+      "tag": "archive/recovered-local-c56e148b1a6b13778619823b6c21cf004a0113b5",
+      "repository": "/root/comma_linux_replay/v32_integration",
+      "tag_object": "771533e507083771d45d5a383f733f07955ad43d"
+    },
+    {
+      "commit": "c5b72a14954945f1486530952d12621474e4d1c3",
+      "tag": "archive/recovered-local-c5b72a14954945f1486530952d12621474e4d1c3",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "20078e365a31b9304b92fa2bae62af7ebacd180d"
+    },
+    {
+      "commit": "c6763499b262f7860c481109c60a546b2690f54a",
+      "tag": "archive/recovered-local-c6763499b262f7860c481109c60a546b2690f54a",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "7aed1e1b78c498a5ae747fd15c72a57e0463e85e"
+    },
+    {
+      "commit": "c791595652c2b7e24bbdf7165f65d4b217b08c4e",
+      "tag": "archive/recovered-local-c791595652c2b7e24bbdf7165f65d4b217b08c4e",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "7a5e94da18174f5c2d3aae977cbe6269a396461d"
+    },
+    {
+      "commit": "c7c9231c9fd650fc7bdd48149188fac0a84466ae",
+      "tag": "archive/recovered-local-c7c9231c9fd650fc7bdd48149188fac0a84466ae",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "0206f4ae800641d7b32c51ad1a21a5d11c0e0e34"
+    },
+    {
+      "commit": "ca36a14e32ec4eb90a46712c5c87082faf2921d4",
+      "tag": "archive/recovered-local-ca36a14e32ec4eb90a46712c5c87082faf2921d4",
+      "repository": "/root/comma_linux_replay/deploy_hardening",
+      "tag_object": "7fcdcd70adbaca940f9c12d42ac416e21fcc97ee"
+    },
+    {
+      "commit": "d4a8cf2729a1cb883d453bfa1ab002dc7962a841",
+      "tag": "archive/recovered-local-d4a8cf2729a1cb883d453bfa1ab002dc7962a841",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "d1e3b2c992fa588d04be7b421319d58709f3ee5e"
+    },
+    {
+      "commit": "d5fc787f067a8f49452e7d9ee2421dab18635945",
+      "tag": "archive/recovered-local-d5fc787f067a8f49452e7d9ee2421dab18635945",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "8002fff45df32ef479c98ccd89ab234dc446f29c"
+    },
+    {
+      "commit": "d909cb21118265cc37f68edb2cd3a7fd9de9452a",
+      "tag": "archive/recovered-local-d909cb21118265cc37f68edb2cd3a7fd9de9452a",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "fd820d22fdaba95307edf43f37f70062a3e5b2db"
+    },
+    {
+      "commit": "e2e3d394155409eb711ddd1f82117bf0debd07dc",
+      "tag": "archive/recovered-local-e2e3d394155409eb711ddd1f82117bf0debd07dc",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "8d043f10626e34af8003923ed1b325371ddb4c3e"
+    },
+    {
+      "commit": "e488f0fbd8013df0f6bd053807381f1ba7f889a6",
+      "tag": "archive/recovered-local-e488f0fbd8013df0f6bd053807381f1ba7f889a6",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "48c6fb80d56744e133f7e5d1c90b603a5104fff7"
+    },
+    {
+      "commit": "e4eb518547b7786582ff6691d382c0ddd5258148",
+      "tag": "archive/recovered-local-e4eb518547b7786582ff6691d382c0ddd5258148",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "0fe139dca775c3539e7459d2c83e0f339b0cd5af"
+    },
+    {
+      "commit": "e7cf24cb6c9ae182a2691f22958d636738451621",
+      "tag": "archive/recovered-local-e7cf24cb6c9ae182a2691f22958d636738451621",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "b4466fa91bc1a8dd261d4288745e848bc97e88f5"
+    },
+    {
+      "commit": "e959e6b757a2ccb4f4fe2913551e2eeee1001143",
+      "tag": "archive/recovered-local-e959e6b757a2ccb4f4fe2913551e2eeee1001143",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "90206167c9eebc1968630e1ca2b9d93eb52b8f7b"
+    },
+    {
+      "commit": "e9c4ff9310a655419b27c00fa1ca56fc6df577b2",
+      "tag": "archive/recovered-local-e9c4ff9310a655419b27c00fa1ca56fc6df577b2",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "6cbd4caa0a8e568e49929f3dfe8d832afe9ed069"
+    },
+    {
+      "commit": "ea869e519bd76bc46b85221f8201b5c828ffe5c3",
+      "tag": "archive/recovered-local-ea869e519bd76bc46b85221f8201b5c828ffe5c3",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "17e5376f43011dcd92ff0b334829795fbace35cf"
+    },
+    {
+      "commit": "efaad26731712cd4dfd13746ffdf97fb9164a9cf",
+      "tag": "archive/recovered-local-efaad26731712cd4dfd13746ffdf97fb9164a9cf",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "242a3ac6acb1b82e8dfe47d93d0f227f1665354b"
+    },
+    {
+      "commit": "efbcbde0a6b53c972287a507f06e01fcee8412dc",
+      "tag": "archive/recovered-local-efbcbde0a6b53c972287a507f06e01fcee8412dc",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "5c47220470424b623f3b5b08135992e9c8591a8c"
+    },
+    {
+      "commit": "f1e3d214853a80027a41e35b046fb0773b7edb04",
+      "tag": "archive/recovered-local-f1e3d214853a80027a41e35b046fb0773b7edb04",
+      "repository": "/root/comma_linux_replay/zh_tw",
+      "tag_object": "4c40ee78813fe50d020d38f3d8c6b806ebeb7013"
+    },
+    {
+      "commit": "f261f768ff0b8bf9c1f2db06de079b67c0165968",
+      "tag": "archive/recovered-local-f261f768ff0b8bf9c1f2db06de079b67c0165968",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "620e2368887f16bf5a943d8cbbcdcbcc74fa36f2"
+    },
+    {
+      "commit": "f5cd171987ab5df8bd910fab87c8c9ae55be6d1a",
+      "tag": "archive/recovered-local-f5cd171987ab5df8bd910fab87c8c9ae55be6d1a",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "1cb1a85d7ad7a314742b62ee325f2c75367711a4"
+    },
+    {
+      "commit": "f63b5e7041316de000412088886bf39646bc5635",
+      "tag": "archive/recovered-local-f63b5e7041316de000412088886bf39646bc5635",
+      "repository": "/root/comma_linux_replay/alert_zh_tw",
+      "tag_object": "4395887d6e6997c0b07825e5d01e589b6ffe7aa5"
+    },
+    {
+      "commit": "fb8f2237552ca0482ef81f468b5da91a10a4fb2e",
+      "tag": "archive/recovered-local-fb8f2237552ca0482ef81f468b5da91a10a4fb2e",
+      "repository": "/root/comma_linux_replay/resume_v31",
+      "tag_object": "e27ede7a0e568f3697908555509d71f2e4a0159a"
+    },
+    {
+      "commit": "24c82f659ce04eeacf44bd18f9e0f7eb2617c7a7",
+      "tag": "archive/recovered-local-24c82f659ce04eeacf44bd18f9e0f7eb2617c7a7",
+      "repository": "C:\\Users\\TsangHung\\.codex\\.chatgpt-projects\\g-p-6abca824cc3c819199879c807cce35d3\\v32_results\\publish.git",
+      "tag_object": "1406909623e8961d6403d8751185e1d3f40b6635"
+    },
+    {
+      "commit": "4379a8bc36c377003c48007c848af00e8553fa94",
+      "tag": "archive/recovered-local-4379a8bc36c377003c48007c848af00e8553fa94",
+      "repository": "C:\\Users\\TsangHung\\.codex\\.chatgpt-projects\\g-p-6abca824cc3c819199879c807cce35d3\\v32_results\\publish.git",
+      "tag_object": "7666655e9734113bd8b1c93c0d3570e6f5390c08"
+    },
+    {
+      "commit": "553aab39ce0003ac1101e7cc120dcd40afc1f84e",
+      "tag": "archive/recovered-local-553aab39ce0003ac1101e7cc120dcd40afc1f84e",
+      "repository": "C:\\Users\\TsangHung\\.codex\\.chatgpt-projects\\g-p-6abca824cc3c819199879c807cce35d3\\v32_results\\publish.git",
+      "tag_object": "200e7891b82b0e3695210e16436dd0d6b5156d92"
+    },
+    {
+      "commit": "6135daba9b10220c6572c73b4ff35af524d4741b",
+      "tag": "archive/recovered-local-6135daba9b10220c6572c73b4ff35af524d4741b",
+      "repository": "C:\\Users\\TsangHung\\.codex\\.chatgpt-projects\\g-p-6abca824cc3c819199879c807cce35d3\\v32_results\\publish.git",
+      "tag_object": "727f101d0085ff944737ee132b013d40d25d488d"
+    },
+    {
+      "commit": "dd2224860b65cf08ab22b8f4ef0055fe16738f87",
+      "tag": "archive/recovered-local-dd2224860b65cf08ab22b8f4ef0055fe16738f87",
+      "repository": "C:\\Users\\TsangHung\\.codex\\.chatgpt-projects\\g-p-6abca824cc3c819199879c807cce35d3\\v32_results\\publish.git",
+      "tag_object": "1a975a94e589043123ccbf18240ef2cf9d4cd16b"
+    }
+  ],
+  "branches_deleted": 0
+}

@@ -1,0 +1,31 @@
+{
+  "feature": "ramp",
+  "commit": "9b64f1d0247a61ad946d52c9c2e6b31d5ebc160b",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_FEATURE_ONLY; FINAL_INTEGRATION_PENDING",
+  "default": "OFF",
+  "native_replay": {
+    "off": 42,
+    "on": 42
+  },
+  "max_additional_preference": 0.1,
+  "active_planner_frames": 80,
+  "gas_increases": 198,
+  "unexplained_gas_increases": 0,
+  "evidence": [
+    "current_off_audit.json",
+    "current_active_audit.json",
+    "causal_audit.json",
+    "causal_gas_frames.json",
+    "event025_temporal_audit.json"
+  ],
+  "remaining_physical": [
+    "pitch/grade calibration",
+    "actual uphill recovery",
+    "transient perception dropout and reacquire",
+    "overshoot"
+  ],
+  "abort": "Unexpected acceleration or hazard constraint weakening: take over, stop safely, disable ramp; do not assume missing lead means clear road",
+  "device_deployment": "NOT_RUN",
+  "road_use_approval": "NOT_CLAIMED"
+}

@@ -1,0 +1,21 @@
+{
+  "commit": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+  "root": "/root/comma_linux_replay/v33_latest",
+  "command": [
+    ".venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-n",
+    "0",
+    "-q",
+    "selfdrive/car/tests/test_cruise_speed.py",
+    "selfdrive/car/tests/test_set30_v32.py",
+    "selfdrive/car/tests/test_buttons10_v32.py",
+    "selfdrive/car/tests/test_resume_v31.py",
+    "selfdrive/controls/tests/test_diagnostics_v32.py"
+  ],
+  "exit_code": 0,
+  "started_utc": "2026-10-03T09:00:19.530147+00:00",
+  "duration_s": 12.176570653915405
+}

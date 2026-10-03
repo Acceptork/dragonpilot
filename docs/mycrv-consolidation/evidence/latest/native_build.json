@@ -1,0 +1,11 @@
+{
+  "commit": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+  "root": "/root/comma_linux_replay/v33_latest",
+  "command": [
+    ".venv/bin/scons",
+    "-j2"
+  ],
+  "exit_code": 0,
+  "started_utc": "2026-10-03T08:58:34.731396+00:00",
+  "duration_s": 104.25729179382324
+}

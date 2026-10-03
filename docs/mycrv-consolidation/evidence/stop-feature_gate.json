@@ -1,0 +1,30 @@
+{
+  "feature": "early_stop",
+  "commit": "992fe80bd619c31adbdc416bde27db5f740c7d41",
+  "status": "READY_FOR_CLOSED_COURSE_EXPERIMENT",
+  "scope": "INDIVIDUAL_FEATURE_ONLY; FINAL_INTEGRATION_PENDING",
+  "default": "OFF",
+  "native_replay": {
+    "off": 42,
+    "on": 42
+  },
+  "max_added_decel": 0.15,
+  "event041_bias_before_driver_brake_s": 1.664964177,
+  "evidence": [
+    "current_off_identity.json",
+    "current_active_trace_audit.json",
+    "current_direction_audit.json",
+    "current_scene_audit.json",
+    "current_active_command_audit.json",
+    "scene_video/manifest.json",
+    "scene_video/VISUAL_REVIEW.md"
+  ],
+  "remaining_physical": [
+    "stopping distance",
+    "false/unnecessary slowing in rolling traffic/ramp/signal release",
+    "comfort and bias release"
+  ],
+  "abort": "Unwanted slowing: driver takeover, safely stop, disable early-stop; never assume red-light stopping is guaranteed",
+  "device_deployment": "NOT_RUN",
+  "road_use_approval": "NOT_CLAIMED"
+}

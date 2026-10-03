@@ -1,0 +1,23 @@
+{
+  "commit": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+  "root": "/root/comma_linux_replay/v33_latest",
+  "command": [
+    "env",
+    "SCALE=1",
+    ".venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-n",
+    "0",
+    "-q",
+    "selfdrive/ui/tests/test_translations.py",
+    "selfdrive/ui/tests/test_alert_zh_tw.py",
+    "selfdrive/ui/tests/test_dynamic_alert_zh_tw.py",
+    "selfdrive/ui/tests/test_long_debug.py",
+    "selfdrive/ui/tests/test_feedbackd.py"
+  ],
+  "exit_code": 0,
+  "started_utc": "2026-10-03T09:02:57.477423+00:00",
+  "duration_s": 4.757333517074585
+}

@@ -1,0 +1,15 @@
+{
+  "commit": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+  "root": "/root/comma_linux_replay/v33_latest",
+  "command": [
+    ".venv/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "opendbc.safety.tests.test_honda"
+  ],
+  "exit_code": 0,
+  "started_utc": "2026-10-03T09:02:51.170941+00:00",
+  "duration_s": 6.092404365539551
+}

@@ -1,0 +1,82 @@
+{
+  "commit": "9469a5ce68ed4a5636c77151491d37e42235d296",
+  "software_gate": "PASS_INTEGRATED_SOFTWARE_GATES",
+  "publication": "PENDING_EXPLICIT_DESTINATION_AUTHORIZATION",
+  "profiles": [
+    {
+      "profile": "PROFILE_A_STOP",
+      "commit": "9469a5ce68ed4a5636c77151491d37e42235d296",
+      "flags": {
+        "dp_exp_early_stop": true,
+        "dp_exp_taper": true,
+        "dp_exp_restart": true,
+        "dp_exp_lca": false,
+        "dp_exp_overtake": false,
+        "dp_exp_ramp": false,
+        "dp_exp_lead_memory": false,
+        "dp_exp_personality": false
+      },
+      "installation_default": "ALL_OFF",
+      "deployment_status": "NOT_RUN",
+      "stage2": "NOT_APPLICABLE"
+    },
+    {
+      "profile": "PROFILE_B_LCA",
+      "commit": "9469a5ce68ed4a5636c77151491d37e42235d296",
+      "flags": {
+        "dp_exp_early_stop": false,
+        "dp_exp_taper": false,
+        "dp_exp_restart": false,
+        "dp_exp_lca": true,
+        "dp_exp_overtake": false,
+        "dp_exp_ramp": false,
+        "dp_exp_lead_memory": false,
+        "dp_exp_personality": false
+      },
+      "installation_default": "ALL_OFF",
+      "deployment_status": "NOT_RUN",
+      "stage2": "NOT_APPLICABLE"
+    },
+    {
+      "profile": "PROFILE_C_PERFORMANCE",
+      "commit": "9469a5ce68ed4a5636c77151491d37e42235d296",
+      "flags": {
+        "dp_exp_early_stop": false,
+        "dp_exp_taper": false,
+        "dp_exp_restart": false,
+        "dp_exp_lca": false,
+        "dp_exp_overtake": false,
+        "dp_exp_ramp": true,
+        "dp_exp_lead_memory": false,
+        "dp_exp_personality": true
+      },
+      "installation_default": "ALL_OFF",
+      "deployment_status": "NOT_RUN",
+      "stage2": "NOT_APPLICABLE"
+    },
+    {
+      "profile": "PROFILE_D_OVERTAKE",
+      "commit": "9469a5ce68ed4a5636c77151491d37e42235d296",
+      "flags": {
+        "dp_exp_early_stop": false,
+        "dp_exp_taper": false,
+        "dp_exp_restart": false,
+        "dp_exp_lca": true,
+        "dp_exp_overtake": true,
+        "dp_exp_ramp": false,
+        "dp_exp_lead_memory": false,
+        "dp_exp_personality": false
+      },
+      "installation_default": "ALL_OFF",
+      "deployment_status": "NOT_RUN",
+      "stage2": "BLOCKED_NO_VALIDATED_PROVIDER"
+    }
+  ],
+  "tool_sha256": {
+    "profiles.py": "f32a64a55a26401fb3132420a25357cc24e9200fae0b4f0d2275fd5d234f8798",
+    "manage.py": "13edaedc59e3c796a528c601214c3f49007a612fe18514f64c344ee156ddfbdc",
+    "README.md": "15a14475d614f242d4fc8ff7be419c47327b2af998f37906b3ab616c53d97f1b"
+  },
+  "rollback": "Saved pre-deployment backup manifest and independent manage.py; initial control flags ALL_OFF",
+  "device_deployment": "NOT_RUN"
+}

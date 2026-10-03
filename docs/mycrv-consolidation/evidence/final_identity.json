@@ -1,0 +1,24 @@
+{
+  "base_sha": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+  "candidate_sha": "9469a5ce68ed4a5636c77151491d37e42235d296",
+  "segments": 42,
+  "rows": {
+    "carState": 246949,
+    "carControl": 246819,
+    "controlsState": 246819,
+    "radarState": 49305,
+    "longitudinalPlan": 49305,
+    "sendcan": 123145
+  },
+  "alignment_mismatches": 0,
+  "changes": {},
+  "first_difference_s": null,
+  "last_difference_s": null,
+  "lost_brake_requests": 0,
+  "gas_increases": 0,
+  "lost_flags": {},
+  "longActive_changed": 0,
+  "engagement_changes": 0,
+  "decision": "PASS_IDENTITY",
+  "physical_outcomes": "NOT_EVALUABLE_FROM_FIXED_INPUT_REPLAY"
+}
