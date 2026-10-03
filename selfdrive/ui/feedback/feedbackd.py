@@ -9,10 +9,13 @@ FEEDBACK_MAX_DURATION = 10.0
 ButtonType = car.CarState.ButtonEvent.Type
 
 
+from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent
+
 def main():
   params = Params()
+  overshoot = OvershootEvent()
   pm = messaging.PubMaster(['userBookmark', 'audioFeedback'])
-  sm = messaging.SubMaster(['rawAudioData', 'bookmarkButton', 'carState'])
+  sm = messaging.SubMaster(['rawAudioData', 'bookmarkButton', 'carState', 'selfdriveState'])
   should_record_audio = False
   block_num = 0
   waiting_for_release = False
@@ -21,6 +24,12 @@ def main():
   while True:
     sm.update()
     should_send_bookmark = False
+    if sm.updated['carState']:
+      cs = sm['carState']
+      if overshoot.update(sm.logMonoTime['carState']/1e9, cs.vEgo*3.6, cs.vCruise,
+                          sm.valid['carState'] and sm.valid['selfdriveState'] and sm['selfdriveState'].active and not cs.gasPressed):
+        should_send_bookmark = True
+        cloudlog.info('OVERSHOOT_EVENT automatic bookmark')
 
     # TODO: https://github.com/commaai/openpilot/issues/36015
     if False and sm.updated['carState'] and sm['carState'].canValid:
