@@ -2114,7 +2114,7 @@ msgstr "請重新啟動裝置"
 
 #: selfdrive/ui/onroad/alert_text_translations.py
 msgid "Recording Audio Feedback"
-msgstr "正在錄製語音回饋"
+msgstr "正在錄製語音回報"
 
 #: selfdrive/ui/onroad/alert_text_translations.py
 msgid "Release Brake to Engage"
@@ -2320,3 +2320,79 @@ msgstr "偵測到裝置重新固定：正在重新校正"
 #: selfdrive/ui/onroad/alert_text_translations.py
 msgid "System Lagging"
 msgstr "系統運作延遲"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Drive above {speed} to engage"
+msgstr "請加速至 {speed} 以上再啟用"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Steer Assist Unavailable Below {speed}"
+msgstr "低於 {speed} 時無法使用轉向輔助"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Calibrating: {percent}%"
+msgstr "校正中：{percent}%"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Recalibrating: {percent}%"
+msgstr "重新校正中：{percent}%"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Drive Above {speed}"
+msgstr "請以高於 {speed} 的速度行駛"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "{percent}% full"
+msgstr "儲存空間已使用 {percent}%"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Speed Error: {error} m/s"
+msgstr "車速誤差：{error} m/s"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Remount Device (Pitch: {pitch}°, Yaw: {yaw}°)"
+msgstr "請重新固定裝置（俯仰角：{pitch}°，偏航角：{yaw}°）"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Angle offset too high (Offset: {offset}°)"
+msgstr "轉向偏角過大（偏角：{offset}°）"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Steering rack geometry may be off (Ratio: {ratio})"
+msgstr "轉向機構幾何可能異常（轉向比：{ratio}）"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Check tires, pressure, or alignment (Factor: {factor})"
+msgstr "請檢查輪胎、胎壓或定位（係數：{factor}）"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "{percent}% used"
+msgstr "已使用 {percent}%"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "{percent}% frames dropped"
+msgstr "影格遺失 {percent}%"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Gas: {gas}%, Steer: {steer}%"
+msgstr "油門：{gas}%，轉向：{steer}%"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "Driving Personality: {personality}"
+msgstr "駕駛風格：{personality}"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "{seconds} seconds remaining. Press again to save early."
+msgstr "還剩 {seconds} 秒。再次按下可提前儲存。"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "roadCamera"
+msgstr "道路攝影機"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "driverCamera"
+msgstr "駕駛攝影機"
+
+#: selfdrive/ui/onroad/dynamic_alert_text_translations.py
+msgid "wideRoadCamera"
+msgstr "廣角道路攝影機"
