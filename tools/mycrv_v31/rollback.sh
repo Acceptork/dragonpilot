@@ -47,7 +47,15 @@ if ! scons -j4 > "$BACKUP_DIR/rollback-build.log" 2>&1; then
     die 'RECOVERY_BLOCKED: neither v2 nor RC build completed; keep the device parked and repair manually'
   fi
 fi
-[[ -z $(git status --porcelain --untracked-files=normal) ]] || die 'v2 build left source changes; no reboot'
+if [[ -n $(git status --porcelain --untracked-files=normal) ]]; then
+  git status --porcelain --untracked-files=normal > "$BACKUP_DIR/rollback-dirty-status.log"
+  printf 'rollback_result=build_succeeded_tree_dirty\ncheckout_sha=%s\nprevious_sha=%s\n' \
+    "$(git rev-parse HEAD)" "$CURRENT_SHA" > "$BACKUP_DIR/rollback-result.env"
+  die "RECOVERY_BLOCKED: v2 build completed but its checkout is dirty; no reboot or destructive cleanup. Keep parked, inspect $BACKUP_DIR/rollback-dirty-status.log, then repair and rerun rollback"
+fi
 printf 'ROLLBACK_READY %s; rebooting\n' "$BASE_SHA"
 sync
-sudo reboot
+if ! sudo reboot; then
+  printf 'rollback_result=reboot_request_failed\ncheckout_sha=%s\n' "$BASE_SHA" > "$BACKUP_DIR/rollback-result.env"
+  die 'REBOOT_REQUEST_FAILED: v2 is built and checked out, but reboot was not confirmed; keep parked and verify manually'
+fi

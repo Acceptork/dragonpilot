@@ -39,10 +39,21 @@ esac
 
 # The tag must be published and the caller must pin its exact commit.
 git fetch --no-tags origin "refs/tags/$RELEASE_TAG" || die 'release tag could not be fetched'
-FETCHED_SHA=$(git rev-parse 'FETCH_HEAD^{commit}')
+FETCHED_TAG_OBJECT=$(git rev-parse FETCH_HEAD)
+[[ $(git cat-file -t "$FETCHED_TAG_OBJECT") == tag ]] || die 'release tag is not annotated'
+FETCHED_TAG_NAME=$(git cat-file -p "$FETCHED_TAG_OBJECT" | sed -n 's/^tag //p' | head -n 1)
+[[ $FETCHED_TAG_NAME == "$RELEASE_TAG" ]] || die 'fetched annotated tag has another name'
+FETCHED_SHA=$(git rev-parse "$FETCHED_TAG_OBJECT^{commit}")
 [[ $FETCHED_SHA == "$TARGET_SHA" ]] || die "release tag resolves to $FETCHED_SHA, not requested $TARGET_SHA"
 git cat-file -e "$TARGET_SHA^{commit}" || die 'target commit is unavailable'
 git cat-file -e "$TARGET_SHA:tools/mycrv_v31/verify_runtime.py" || die 'release lacks post-reboot verification code'
+# Validate both recovery scripts from the pinned commit before creating backup
+# state. A syntactically broken rollback must never be installed on a device.
+for recovery_script in rollback.sh verify.sh; do
+  recovery_blob="$TARGET_SHA:tools/mycrv_v31/$recovery_script"
+  [[ $(git cat-file -t "$recovery_blob") == blob ]] || die "release lacks $recovery_script"
+  git show "$recovery_blob" | bash -n || die "release has invalid $recovery_script syntax"
+done
 
 # This limited RC may add UI, deployment, and the individually reviewed
 # bookmark retention files to longitudinal v3. Never allow broad loggerd or
@@ -50,7 +61,7 @@ git cat-file -e "$TARGET_SHA:tools/mycrv_v31/verify_runtime.py" || die 'release 
 git merge-base --is-ancestor "$V3_SHA" "$TARGET_SHA" || die 'release is not based on the reviewed longitudinal v3 commit'
 git diff --no-renames --name-only -z "$V3_SHA" "$TARGET_SHA" | while IFS= read -r -d '' changed_file; do
   case "$changed_file" in
-    selfdrive/ui/*|system/ui/*|tools/mycrv_v31/*|docs/zh_tw_longitudinal_bookmark.md|system/loggerd/loggerd.cc|system/loggerd/loggerd.h|system/loggerd/deleter.py|system/loggerd/tests/test_bookmark_followup.py|system/loggerd/tests/test_loggerd.py) ;;
+    selfdrive/ui/*|system/ui/*|tools/mycrv_v31/*|docs/zh_tw_longitudinal_bookmark.md|system/loggerd/loggerd.cc|system/loggerd/loggerd.h|system/loggerd/deleter.py|system/loggerd/tests/test_bookmark_followup.py|system/loggerd/tests/test_loggerd.py|selfdrive/car/cruise.py|selfdrive/car/tests/test_resume_v31.py) ;;
     *) die "release changes an unreviewed path: $changed_file" ;;
   esac
 done
@@ -71,8 +82,8 @@ BACKUP_DIR=$BACKUP_ROOT/$STAMP
 mkdir -p "$BACKUP_DIR"
 BACKUP_BRANCH=mycrv-v31-backup-$STAMP
 git branch "$BACKUP_BRANCH" "$BASE_SHA"
-printf 'baseline_sha=%s\nbaseline_branch=%s\nbackup_branch=%s\ntarget_sha=%s\nrelease_tag=%s\ncreated_utc=%s\n' \
-  "$BASE_SHA" "$CURRENT_BRANCH" "$BACKUP_BRANCH" "$TARGET_SHA" "$RELEASE_TAG" "$STAMP" > "$BACKUP_DIR/state.env"
+printf 'baseline_sha=%s\nbaseline_branch=%s\nbackup_branch=%s\ntarget_sha=%s\nrelease_tag=%s\nrelease_tag_object=%s\ncreated_utc=%s\n' \
+  "$BASE_SHA" "$CURRENT_BRANCH" "$BACKUP_BRANCH" "$TARGET_SHA" "$RELEASE_TAG" "$FETCHED_TAG_OBJECT" "$STAMP" > "$BACKUP_DIR/state.env"
 git show "$TARGET_SHA:tools/mycrv_v31/rollback.sh" > "$BACKUP_DIR/rollback.sh"
 git show "$TARGET_SHA:tools/mycrv_v31/verify.sh" > "$BACKUP_DIR/verify.sh"
 bash -n "$BACKUP_DIR/rollback.sh" "$BACKUP_DIR/verify.sh"
@@ -118,4 +129,7 @@ sync
 # Once reboot is requested, SSH may close at any moment. Do not let the
 # pre-reboot recovery trap race shutdown and switch source underneath it.
 trap - EXIT
-sudo reboot || die 'REBOOT_REQUEST_FAILED: RC is built and checked out, but reboot was not confirmed; keep parked and verify or roll back manually'
+if ! sudo reboot; then
+  printf 'reboot_request=failed\n' > "$BACKUP_DIR/reboot-result.env"
+  die 'REBOOT_REQUEST_FAILED: RC is built and checked out, but reboot was not confirmed; keep parked and verify or roll back manually'
+fi
