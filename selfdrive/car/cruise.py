@@ -64,10 +64,13 @@ class VCruiseHelper:
         # RESUME press, before selfdrived checks whether RESUME is allowed.
         resume_released = any(not b.pressed and b.type in (ButtonType.accelCruise, ButtonType.resumeCruise)
                               for b in CS.buttonEvents)
-        if (self.v_cruise_kph == V_CRUISE_UNSET and resume_released and
-            V_CRUISE_MIN <= self.last_valid_set_speed_kph <= V_CRUISE_MAX):
+        restoring_resume = (self.v_cruise_kph == V_CRUISE_UNSET and resume_released and
+                            V_CRUISE_MIN <= self.last_valid_set_speed_kph <= V_CRUISE_MAX)
+        if restoring_resume:
           self.v_cruise_kph = self.last_valid_set_speed_kph
-        self._update_v_cruise_non_pcm(CS, enabled, is_metric)
+        else:
+          # A stale enabled frame after MAIN toggles must not add +1 to RESUME.
+          self._update_v_cruise_non_pcm(CS, enabled, is_metric)
         self.v_cruise_cluster_kph = self.v_cruise_kph
         self.update_button_timers(CS, enabled)
       else:
