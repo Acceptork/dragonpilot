@@ -55,6 +55,10 @@ class Controls:
     self.v33_taper_frame = 0
     self.v33_taper_previous = None
     self.v33_eps = EpsShadow()
+    self.v33_lca_context_active = False
+    self.v33_lca_context_enter = self.v33_lca_context_exit = None
+    self.v33_lca_context_previous = None
+    self.v33_lca_context_frame = 0
     self.LoC = LongControl(self.CP)
     self.VM = VehicleModel(self.CP)
     self.LaC: LatControl
@@ -193,6 +197,33 @@ class Controls:
       stop_intent=bool(long_plan.shouldStop), FCW=bool(long_plan.fcw),
       personality=str(self.sm['selfdriveState'].personality),
       pitch=float(self.calibrated_pose.orientation.xyz[1]) if self.calibrated_pose is not None else None))
+    # Read-only context; confirmation/road-edge decisions remain in DesireHelper.
+    lca_enabled = self.params.get_bool('dp_exp_lca')
+    lca_time = self.sm.logMonoTime['carState'] / 1e9
+    lca_state = model_v2.meta.laneChangeState
+    lca_active = bool(lca_enabled and CC.latActive and lca_state in
+      (LaneChangeState.laneChangeStarting, LaneChangeState.laneChangeFinishing))
+    if lca_active != self.v33_lca_context_active:
+      if lca_active:
+        self.v33_lca_context_enter = lca_time
+      else:
+        self.v33_lca_context_exit = lca_time
+    lca_transition = (lca_enabled, lca_active, str(lca_state))
+    self.v33_lca_context_frame += 1
+    if lca_transition != self.v33_lca_context_previous or (lca_enabled and self.v33_lca_context_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL_LCA_CONTEXT', feature='lca', t=lca_time,
+        enabled=lca_enabled, active=lca_active, reason=str(lca_state),
+        active_basis='model_lane_change_state_and_lateral_authority; see helper confirmation log',
+        enter_time=self.v33_lca_context_enter, exit_time=self.v33_lca_context_exit,
+        vEgo=float(CS.vEgo), vCruise=float(CS.vCruise),
+        aTarget_before=float(long_plan.aTarget), aTarget_after=float(long_plan.aTarget),
+        lead=[dict(prob=float(lead.prob), x=list(lead.x), y=list(lead.y)) for lead in model_v2.leadsV3],
+        lead_source='modelV2.leadsV3', stop_intent=bool(long_plan.shouldStop), FCW=bool(long_plan.fcw),
+        personality=str(self.sm['selfdriveState'].personality),
+        pitch=float(self.calibrated_pose.orientation.xyz[1]) if self.calibrated_pose is not None else None,
+        lateral_state=str(lca_state), latActive=bool(CC.latActive))
+    self.v33_lca_context_active = lca_active
+    self.v33_lca_context_previous = lca_transition
     # Ensure no NaNs/Infs
     for p in ACTUATOR_FIELDS:
       attr = getattr(actuators, p)
