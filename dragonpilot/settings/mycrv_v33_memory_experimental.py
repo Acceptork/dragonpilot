@@ -1,0 +1,1 @@
+ITEMS = [{'key': 'dp_exp_lead_memory', 'type': 'toggle_item', 'title': '前車短暫記憶', 'description': '預設關閉。短暫失去可靠前車時保守保持；逾時仍不明確時不主動補油，請接管或關閉。不能偵測模型從未看到的機車。', 'category': 'Longitudinal', 'flags': 'PERSISTENT', 'param_type': 'BOOL', 'default': '0'}]
