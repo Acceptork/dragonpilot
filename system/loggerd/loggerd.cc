@@ -1,5 +1,6 @@
 #include <sys/xattr.h>
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
@@ -20,7 +21,10 @@ struct LoggerdState {
   std::atomic<int> ready_to_rotate{0};  // count of encoders ready to rotate
   int max_waiting = 0;
   double last_rotate_tms = 0.;      // last rotate time in ms
+  double preserve_until_tms = 0.;   // include the segment following a bookmark
 };
+
+void handle_preserve_segment(LoggerdState *s, bool include_future, bool continuation);
 
 void logger_rotate(LoggerdState *s) {
   bool ret =s->logger.next();
@@ -28,6 +32,10 @@ void logger_rotate(LoggerdState *s) {
   s->ready_to_rotate = 0;
   s->last_rotate_tms = millis_since_boot();
   LOGW((s->logger.segment() == 0) ? "logging to %s" : "rotated to %s", s->logger.segmentPath().c_str());
+  // The next segment can contain the final ten seconds after a bookmark.
+  if (s->last_rotate_tms <= s->preserve_until_tms) {
+    handle_preserve_segment(s, false, true);
+  }
 }
 
 void rotate_if_needed(LoggerdState *s) {
@@ -195,25 +203,33 @@ int handle_encoder_msg(LoggerdState *s, Message *msg, std::string &name, struct 
   return bytes_count;
 }
 
-void handle_preserve_segment(LoggerdState *s) {
-  static int prev_segment = -1;
+void handle_preserve_segment(LoggerdState *s, bool include_future, bool continuation) {
+  if (include_future) {
+    s->preserve_until_tms = std::max(s->preserve_until_tms, millis_since_boot() + 10000.);
+  }
+  static int prev_primary_segment = -1;
+  static int prev_followup_segment = -1;
+  int &prev_segment = continuation ? prev_followup_segment : prev_primary_segment;
   if (s->logger.segment() == prev_segment) return;
+  const char *attr_name = continuation ? PRESERVE_FOLLOWUP_ATTR_NAME : PRESERVE_ATTR_NAME;
 
   LOGW("preserving %s", s->logger.segmentPath().c_str());
 
 #ifdef __APPLE__
-  int ret = setxattr(s->logger.segmentPath().c_str(), PRESERVE_ATTR_NAME, &PRESERVE_ATTR_VALUE, 1, 0, 0);
+  int ret = setxattr(s->logger.segmentPath().c_str(), attr_name, &PRESERVE_ATTR_VALUE, 1, 0, 0);
 #else
-  int ret = setxattr(s->logger.segmentPath().c_str(), PRESERVE_ATTR_NAME, &PRESERVE_ATTR_VALUE, 1, 0);
+  int ret = setxattr(s->logger.segmentPath().c_str(), attr_name, &PRESERVE_ATTR_VALUE, 1, 0);
 #endif
   if (ret) {
-    LOGE("setxattr %s failed for %s: %s", PRESERVE_ATTR_NAME, s->logger.segmentPath().c_str(), strerror(errno));
+    LOGE("setxattr %s failed for %s: %s", attr_name, s->logger.segmentPath().c_str(), strerror(errno));
   }
 
-  // mark route for uploading
-  Params params;
-  std::string routes = params.get("AthenadRecentlyViewedRoutes");
-  params.put("AthenadRecentlyViewedRoutes", routes + "," + s->logger.routeName());
+  // A continuation is part of an already marked route. Avoid a second uploader entry.
+  if (!continuation) {
+    Params params;
+    std::string routes = params.get("AthenadRecentlyViewedRoutes");
+    params.put("AthenadRecentlyViewedRoutes", routes + "," + s->logger.routeName());
+  }
 
   prev_segment = s->logger.segment();
 }
@@ -298,7 +314,7 @@ void loggerd_thread() {
 
       ServiceState &service = service_state[sock];
       if (service.preserve_segment) {
-        handle_preserve_segment(&s);
+        handle_preserve_segment(&s, service.name == "userBookmark", false);
       }
 
       // drain socket

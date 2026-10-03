@@ -14,6 +14,7 @@ MIN_PERCENT = 10
 DELETE_LAST = ['boot', 'crash']
 
 PRESERVE_ATTR_NAME = 'user.preserve'
+PRESERVE_FOLLOWUP_ATTR_NAME = 'user.preserve_followup'
 PRESERVE_ATTR_VALUE = b'1'
 PRESERVE_COUNT = 5
 
@@ -22,9 +23,14 @@ def has_preserve_xattr(d: str) -> bool:
   return getxattr(os.path.join(Paths.log_root(), d), PRESERVE_ATTR_NAME) == PRESERVE_ATTR_VALUE
 
 
+def has_followup_xattr(d: str) -> bool:
+  return getxattr(os.path.join(Paths.log_root(), d), PRESERVE_FOLLOWUP_ATTR_NAME) == PRESERVE_ATTR_VALUE
+
+
 def get_preserved_segments(dirs_by_creation: list[str]) -> set[str]:
   # skip deleting most recent N preserved segments (and their prior segment)
   preserved = set()
+  existing_dirs = set(dirs_by_creation)
   for n, d in enumerate(filter(has_preserve_xattr, reversed(dirs_by_creation))):
     if n == PRESERVE_COUNT:
       break
@@ -41,6 +47,11 @@ def get_preserved_segments(dirs_by_creation: list[str]) -> set[str]:
     # preserve segment and two prior
     for _seg_num in range(max(0, seg_num - 2), seg_num + 1):
       preserved.add(f"{date_str}--{_seg_num}")
+    # Continuation markers do not consume one of the five bookmark slots.
+    next_seg = seg_num + 1
+    while (next_dir := f"{date_str}--{next_seg}") in existing_dirs and has_followup_xattr(next_dir):
+      preserved.add(next_dir)
+      next_seg += 1
 
   return preserved
 

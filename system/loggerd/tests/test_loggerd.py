@@ -18,7 +18,7 @@ from openpilot.common.timeout import Timeout
 from openpilot.system.hardware.hw import Paths
 from openpilot.system.hardware import TICI
 from openpilot.system.loggerd.xattr_cache import getxattr
-from openpilot.system.loggerd.deleter import PRESERVE_ATTR_NAME, PRESERVE_ATTR_VALUE
+from openpilot.system.loggerd.deleter import PRESERVE_ATTR_NAME, PRESERVE_FOLLOWUP_ATTR_NAME, PRESERVE_ATTR_VALUE
 from openpilot.system.manager.process_config import managed_processes
 from openpilot.system.version import get_version
 from openpilot.tools.lib.helpers import RE
@@ -103,7 +103,7 @@ class TestLoggerd:
 
     return sent_msgs
 
-  def _publish_camera_and_audio_messages(self, num_segs=1, segment_length=5):
+  def _publish_camera_and_audio_messages(self, num_segs=1, segment_length=5, bookmark_at_frame=None):
     # Use small frame sizes for testing (width, height, size, stride, uv_offset)
     # NV12 format: size = stride * height * 1.5, uv_offset = stride * height
     w, h = 320, 240
@@ -115,7 +115,8 @@ class TestLoggerd:
     ]
 
     sm = messaging.SubMaster(["roadEncodeData"])
-    pm = messaging.PubMaster([s for _, _, s in streams] + ["rawAudioData"])
+    pm = messaging.PubMaster([s for _, _, s in streams] + ["rawAudioData"] +
+                             (["userBookmark"] if bookmark_at_frame is not None else []))
     vipc_server = VisionIpcServer("camerad")
     for stream_type, frame_spec, _ in streams:
       vipc_server.create_buffers_with_sizes(stream_type, 40, *(frame_spec))
@@ -126,9 +127,13 @@ class TestLoggerd:
     managed_processes["loggerd"].start()
     managed_processes["encoderd"].start()
     assert pm.wait_for_readers_to_update("roadCameraState", timeout=5)
+    if bookmark_at_frame is not None:
+      assert pm.wait_for_readers_to_update("userBookmark", timeout=5)
 
     fps = 20
     for n in range(1, int(num_segs * segment_length * fps) + 1):
+      if n == bookmark_at_frame:
+        pm.send("userBookmark", messaging.new_message("userBookmark", valid=True))
       # send video
       for stream_type, frame_spec, state in streams:
         dat = np.empty(frame_spec[2], dtype=np.uint8)
@@ -209,6 +214,14 @@ class TestLoggerd:
       logged = {f.name for f in p.iterdir() if f.is_file()}
       diff = logged ^ expected_files
       assert len(diff) == 0, f"didn't get all expected files. seg={n} {route_path=}, {diff=}\n{logged=} {expected_files=}"
+
+  @pytest.mark.xdist_group("camera_encoder_tests")
+  def test_bookmark_preserves_following_segment(self):
+    self._publish_camera_and_audio_messages(num_segs=3, segment_length=4, bookmark_at_frame=40)
+    route_path = str(self._get_latest_log_dir()).rsplit("--", 1)[0]
+    assert getxattr(f"{route_path}--0", PRESERVE_ATTR_NAME) == PRESERVE_ATTR_VALUE
+    assert getxattr(f"{route_path}--1", PRESERVE_FOLLOWUP_ATTR_NAME) == PRESERVE_ATTR_VALUE
+    assert getxattr(f"{route_path}--2", PRESERVE_FOLLOWUP_ATTR_NAME) == PRESERVE_ATTR_VALUE
 
   def test_bootlog(self):
     # generate bootlog with fake launch log
