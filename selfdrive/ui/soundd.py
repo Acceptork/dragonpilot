@@ -152,6 +152,13 @@ class Soundd:
       self.update_alert(AudibleAlert.none)
       self.selfdrive_timeout_alert = False
 
+  def get_departure_alert(self, sm):
+    departure = self.departure_runtime.update(sm, time.monotonic())
+    # Existing alerts, including timeout warnings, always have priority. No delayed cue queue.
+    if (departure is not None and self.current_alert == AudibleAlert.none
+        and sm['selfdriveState'].alertSound == AudibleAlert.none and not self.selfdrive_timeout_alert):
+      self.update_alert(AudibleAlert.prompt)
+
   def calculate_volume(self, weighted_db):
     volume = ((weighted_db - AMBIENT_DB) / DB_SCALE) * (MAX_VOLUME - MIN_VOLUME) + MIN_VOLUME
     return math.pow(VOLUME_BASE, (np.clip(volume, MIN_VOLUME, MAX_VOLUME) - 1))
@@ -182,11 +189,7 @@ class Soundd:
           self.current_volume = self.calculate_volume(float(self.spl_filter_weighted.x))
 
         self.get_audible_alert(sm)
-        departure = self.departure_runtime.update(sm, time.monotonic())
-        # Existing alerts, including timeout warnings, always have priority. No delayed cue queue.
-        if (departure is not None and self.current_alert == AudibleAlert.none
-            and sm['selfdriveState'].alertSound == AudibleAlert.none and not self.selfdrive_timeout_alert):
-          self.update_alert(AudibleAlert.prompt)
+        self.get_departure_alert(sm)
 
         # Ramp up immediate warning sound over 4s
         if self.current_alert == AudibleAlert.warningImmediate:
