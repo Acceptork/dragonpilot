@@ -42,3 +42,15 @@ def test_loss_reassociation_and_off():
   x['t'] = 3.05
   x['enabled'] = False
   assert not s.update(**x)['should_stop']
+
+
+def test_slowing_intent_blocks_restart_without_inventing_terminal_stop():
+  s = AutoRestart()
+  x = ctx(0.)
+  x.update(speed=8., slowing_intent=True)
+  assert not s.update(**x)['should_stop']
+  s = AutoRestart()
+  for i in range(60):
+    x = ctx(i * .05)
+    x['slowing_intent'] = True
+    assert s.update(**x)['state'] != 'RELEASE_ALLOWED'

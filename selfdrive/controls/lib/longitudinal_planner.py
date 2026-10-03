@@ -318,7 +318,7 @@ class LongitudinalPlanner:
       fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
       driver_brake=bool(sm['carState'].brakePressed or sm['carState'].gasPressed),
       new_closer=bool(second.status and (not lead.status or second.dRel < lead.dRel - .5)),
-      personality=personality_name)
+      personality=personality_name, slowing_intent=bool(enabled_stop and stop_row['active']))
     # Interlock may add HOLD. It never clears the existing stop request or forces throttle.
     before_restart = float(self.output_a_target)
     if enabled_restart:
@@ -346,7 +346,7 @@ class LongitudinalPlanner:
     ramp_row = self.v33_ramp.update(t=trace_time, enabled=enabled_ramp,
       base=float(self.output_a_target), e2e=float(output_a_target_e2e), mpc=float(output_a_target_mpc),
       mode=mode, valid=bool(valid_ramp), active=not reset_state, closing=closing_ramp,
-      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
+      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc or (enabled_stop and stop_row['active'])),
       fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
       path_valid=len(path_values) == ModelConstants.IDX_N * 2 and all(math.isfinite(x) for x in path_values),
       pitch=pitch, grade_age=grade_age, allow_throttle=bool(self.allow_throttle),
@@ -375,7 +375,7 @@ class LongitudinalPlanner:
       cruise_cap=float(get_max_accel(v_ego)), turn_cap=self.diagnostic_trace['turn_max'], physical_cap=float(ACCEL_MAX),
       valid=bool(valid_personality and grade_age is not None and 0 <= grade_age <= .2 and grade_allows_override(sm['carControl'].orientationNED)),
       active=not reset_state, mode=mode, lead=bool(lead_present),
-      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
+      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc or (enabled_stop and stop_row['active'])),
       fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
       model_accel=float(output_a_target_e2e), override=bool(sm['carState'].brakePressed or sm['carState'].gasPressed or force_slow_decel),
       allow_throttle=bool(self.allow_throttle and model_allows), gap=float(v_cruise - v_ego))
@@ -404,7 +404,7 @@ class LongitudinalPlanner:
       base=float(self.output_a_target), mpc=float(output_a_target_mpc), e2e=float(output_a_target_e2e),
       cap=float(accel_clip[1]), gap=float(v_cruise - v_ego),
       envelope_ok=bool(valid_overtake and path_clear and self.allow_throttle and lead_present),
-      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
+      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc or (enabled_stop and stop_row['active'])),
       fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
       override=bool(cs.brakePressed or cs.gasPressed or force_slow_decel))
     self.output_a_target = overtake_row['after']

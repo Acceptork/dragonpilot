@@ -13,7 +13,7 @@ class AutoRestart:
     self.enter_time = self.exit_time = None
 
   def update(self, *, t, enabled, active, speed, base_stop, lead, path_valid,
-             fcw, hard_brake, driver_brake, new_closer, personality='standard'):
+             fcw, hard_brake, driver_brake, new_closer, personality='standard', slowing_intent=False):
     old = self.state
     reliable = (lead is not None and lead.get('prob', 0.) >= .8
       and all(math.isfinite(lead.get(k, float('nan'))) for k in ('d', 'vr', 'y'))
@@ -38,7 +38,7 @@ class AutoRestart:
         self.state = 'IDLE'
         self.since = self.origin = None
       elif self.state != 'IDLE':
-        veto = (base_stop or fcw or hard_brake or not path_valid or not reliable or new_closer
+        veto = (base_stop or slowing_intent or fcw or hard_brake or not path_valid or not reliable or new_closer
                 or (self.state == 'RELEASE_ALLOWED' and lead['vr'] + speed <= .15))
         if veto or not continuous:
           self.state = 'HOLD'
