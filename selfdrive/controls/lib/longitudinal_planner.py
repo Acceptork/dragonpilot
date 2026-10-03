@@ -24,7 +24,7 @@ from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, LongitudinalPlanSource, COMFORT_BRAKE, STOP_DISTANCE, get_T_FOLLOW
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
-from openpilot.selfdrive.controls.lib.longitudinal_throttle import ThrottleGate, grade_allows_override, model_allows_override, path_clear_for_throttle
+from openpilot.selfdrive.controls.lib.longitudinal_throttle import ThrottleGate, grade_allows_override, model_allows_override, path_clear_for_throttle, lead_desired_distance, LEAD_DISTANCE_MARGIN
 from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, get_accel_from_plan
 from openpilot.selfdrive.car.cruise import V_CRUISE_MAX, V_CRUISE_UNSET
 from openpilot.common.swaglog import cloudlog
@@ -397,18 +397,27 @@ class LongitudinalPlanner:
     direction = ('left' if cs.leftBlinker else 'right') if cs.leftBlinker != cs.rightBlinker else 'none'
     torque = bool(cs.steeringPressed and ((direction == 'left' and cs.steeringTorque > 0) or (direction == 'right' and cs.steeringTorque < 0)))
     valid_overtake = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState', 'carControl')))
+    # Existing desired following/stopping distance is unchanged. A slow lead need
+    # not pull away: Stage 1 is still bounded by the full existing MPC solution.
+    overtake_envelope = bool(valid_overtake and lead_present)
+    for observed in (sm['radarState'].leadOne, sm['radarState'].leadTwo):
+      if observed.status:
+        required = lead_desired_distance(v_ego, observed.vLead, get_T_FOLLOW(personality), COMFORT_BRAKE, STOP_DISTANCE) + LEAD_DISTANCE_MARGIN
+        overtake_envelope = overtake_envelope and all(math.isfinite(value) for value in (observed.dRel, observed.vLead, observed.vRel)) and observed.dRel >= required
+    overtake_path = list(sm['modelV2'].position.y)
+    overtake_envelope = overtake_envelope and len(overtake_path) == ModelConstants.IDX_N and all(math.isfinite(value) for value in overtake_path)
     overtake_row = self.v33_overtake.update(t=trace_time, enabled=enabled_overtake,
       direction=direction, torque=torque, lat_active=bool(sm['carControl'].latActive),
       long_active=bool(sm['carControl'].longActive and not reset_state),
       starting=sm['modelV2'].meta.laneChangeState == log.LaneChangeState.laneChangeStarting,
       base=float(self.output_a_target), mpc=float(output_a_target_mpc), e2e=float(output_a_target_e2e),
       cap=float(accel_clip[1]), gap=float(v_cruise - v_ego),
-      envelope_ok=bool(valid_overtake and path_clear and self.allow_throttle and lead_present),
+      envelope_ok=bool(overtake_envelope and self.allow_throttle),
       stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc or (enabled_stop and stop_row['active'])),
       fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
       override=bool(cs.brakePressed or cs.gasPressed or force_slow_decel))
     self.output_a_target = overtake_row['after']
-    overtake_row.update(feature='overtake', t=trace_time, enabled=enabled_overtake,
+    overtake_row.update(envelope_ok=bool(overtake_envelope), feature='overtake', t=trace_time, enabled=enabled_overtake,
       vEgo=float(v_ego), vCruise=float(v_cruise_kph), aTarget_before=overtake_row['before'],
       aTarget_after=overtake_row['after'], lead=self.diagnostic_trace['lead1'],
       lead2=self.diagnostic_trace['lead2'], stop_intent=bool(self.output_should_stop), FCW=bool(self.fcw),
