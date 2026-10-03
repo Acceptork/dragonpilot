@@ -57,3 +57,10 @@ def test_existing_stop_authority_unchanged():
   assert r['state'] == 'HOLD'
   assert r['after'] == r['before']
   assert r['should_stop_unchanged']
+
+
+def test_short_slowdown_rejected_by_refined_persistence():
+  s = EarlyStop()
+  rows = [s.update(sample(i * .05), True) for i in range(14)]
+  assert not any(r['active'] for r in rows)
+  assert not s.update(sample(.7, endpoint=6.), True)['active']

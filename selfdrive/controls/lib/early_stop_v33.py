@@ -23,7 +23,7 @@ class Inputs:
 
 
 class EarlyStop:
-  def __init__(self, endpoint=3., ratio=.5, persistence=.5, bias_max=.15, bias_jerk=.15):
+  def __init__(self, endpoint=3., ratio=.4, persistence=.8, bias_max=.15, bias_jerk=.15):
     if not (0 < endpoint <= 4 and 0 < ratio <= .5 and .3 <= persistence <= 1.
             and 0 < bias_max <= .2 and 0 < bias_jerk <= .3):
       raise ValueError('research parameter outside bounded envelope')
