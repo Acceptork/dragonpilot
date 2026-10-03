@@ -249,7 +249,7 @@ class LongitudinalPlanner:
     restart_lead = dict(d=float(lead.dRel), vr=float(lead.vRel), y=float(lead.yRel), prob=float(lead.modelProb)) if lead.status else None
     valid_restart = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState')))
     path = list(sm['modelV2'].position.y)
-    personality_name = {0: 'aggressive', 1: 'standard', 2: 'relaxed'}.get(int(personality), 'relaxed')
+    personality_name = {0: 'aggressive', 1: 'standard', 2: 'relaxed'}.get(personality.raw if hasattr(personality, 'raw') else int(personality), 'relaxed')
     restart_row = self.v33_restart.update(t=trace_time, enabled=enabled_restart,
       active=not reset_state, speed=float(v_ego), base_stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
       lead=restart_lead, path_valid=bool(valid_restart and len(path) == ModelConstants.IDX_N and all(math.isfinite(x) for x in path)),
