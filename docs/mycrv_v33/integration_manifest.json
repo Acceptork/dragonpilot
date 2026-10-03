@@ -20,6 +20,11 @@
       "feature": "personality",
       "source_branch": "my-crv-personality-v33-experimental",
       "source_head": "bf9db122f6e05f5405475e2b840bf4fcfd5a368f"
+    },
+    {
+      "feature": "overtake",
+      "source_branch": "my-crv-overtake-preaccel-v33-experimental",
+      "source_head": "94b49573e51bbdf29759add12d36f0f6cd13e84c"
     }
   ]
 }
