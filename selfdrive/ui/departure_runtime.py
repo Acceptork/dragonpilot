@@ -41,8 +41,15 @@ class DepartureRuntime:
                                or observation.gas or observation.hazard or observation.closer_obstacle):
       self.params.put_nonblocking(CUE_KEY, '')
       self.cue_expires_at = 0.
+    previous_state = self.machine.state
     event = self.machine.update(observation, self.params.get_bool('dp_departure_lead_alert'),
                                 self.params.get_bool('dp_departure_signal_alert'))
+    if self.machine.state != previous_state:
+      cloudlog.event('MYCRV_DEPARTURE_STATE', previous=previous_state, state=self.machine.state,
+                     pending_kind=self.machine.pending_kind, confirmed_at=self.machine.pending_since,
+                     vEgo=observation.speed, gas=observation.gas, valid=observation.valid,
+                     hazard=observation.hazard, closer_obstacle=observation.closer_obstacle,
+                     gear=observation.gear, control_effect='NONE')
     if event:
       self.cue_expires_at = event['expires_at']
       self.params.put_nonblocking(CUE_KEY, json.dumps(event,ensure_ascii=False))

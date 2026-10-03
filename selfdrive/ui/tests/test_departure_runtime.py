@@ -33,7 +33,7 @@ def test_actual_native_messages_acc_off_and_no_mutation():
   params=Params()
   runtime=DepartureRuntime(params)
   events=[]
-  for i in range(120):
+  for i in range(240):
     t=i*.05
     sm=NativeSM(t)
     lead=sm['radarState'].leadOne
@@ -70,7 +70,7 @@ def test_old_future_invalid_disabled_and_offroad_cues_hidden():
 def test_stale_inputs_prevent_arm_and_offroad_clears_cue():
   params=Params()
   runtime=DepartureRuntime(params)
-  for i in range(120):
+  for i in range(240):
     t=i*.05
     sm=NativeSM(t)
     sm.recv_time['radarState']=t-1

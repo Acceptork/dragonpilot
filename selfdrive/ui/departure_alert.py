@@ -25,9 +25,20 @@ class DepartureAlerts:
     self.cooldown_until = -math.inf
     self.latched = False
     self.moving_since = None
+    self.pending_kind = None
+    self.pending_since = None
+    self.pending_speed = None
+    self.state = "IDLE"
     self.reset_tracking()
 
+  def cancel_pending(self):
+    if self.pending_kind is not None:
+      self.latched = True
+      self.state = 'CANCELLED'
+    self.pending_kind = self.pending_since = self.pending_speed = None
+
   def reset_tracking(self):
+    self.cancel_pending()
     self.lead_anchor = None
     self.lead_previous = None
     self.lead_still_since = None
@@ -49,10 +60,12 @@ class DepartureAlerts:
       self.moving_since = x.t if self.moving_since is None else self.moving_since
       if x.t - self.moving_since >= 2.:
         self.latched = False
+        self.state = "IDLE"
       self.reset_tracking()
       return None
     self.moving_since = None
-    if x.speed > .2 or x.gas or x.hazard or x.closer_obstacle:
+    rising = self.pending_speed is not None and x.speed-self.pending_speed >= .1
+    if x.speed > .2 or rising or x.gas or x.hazard or x.closer_obstacle or (self.pending_kind and x.model_stop):
       self.reset_tracking()
       return None
     if self.latched or x.t < self.cooldown_until:
@@ -89,6 +102,7 @@ class DepartureAlerts:
       # A dropped/unreliable lead must not become a no-lead permission cue.
       if lead is not None or had_lead or not signal_enabled:
         self.slow_since, self.slow_armed, self.proceed_since = None, False, None
+        self.cancel_pending()
         return None
       slow = x.endpoint < 1. and (x.desired_accel <= 0. or x.model_stop)
       proceed = x.endpoint > 3. and x.desired_accel > .15 and not x.model_stop
@@ -102,10 +116,22 @@ class DepartureAlerts:
           kind = 'possible_proceed'
       else:
         self.slow_since, self.slow_armed, self.proceed_since = None, False, None
+    if self.pending_kind is not None and kind != self.pending_kind:
+      self.cancel_pending()
+      return None
     if kind is None:
       return None
+    if self.pending_kind is None:
+      self.pending_kind, self.pending_since, self.pending_speed = kind, x.t, x.speed
+      self.state = 'WAITING_FOR_DRIVER_RESPONSE'
+      return None
+    if x.t-self.pending_since < 4.0:
+      return None
+    confirmed_at = self.pending_since
+    self.pending_kind = self.pending_since = self.pending_speed = None
+    self.state = 'ALERTED'
     self.latched = True
     self.cooldown_until = x.t + 20.
     self.reset_tracking()
     return dict(kind=kind, text='前車已起步' if kind == 'lead_departure' else '前方可能已可通行',
-                issued_at=x.t, expires_at=x.t+3., sound='prompt', control_effect='NONE')
+                confirmed_at=confirmed_at, driver_wait_seconds=x.t-confirmed_at, issued_at=x.t, expires_at=x.t+3., sound='prompt', control_effect='NONE')
