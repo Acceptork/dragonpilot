@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import math
 from openpilot.selfdrive.controls.lib.taper_v33 import StopTaper
+from openpilot.selfdrive.controls.lib.eps_shadow_v33 import EpsShadow
 from numbers import Number
 
 from cereal import car, log
@@ -53,6 +54,7 @@ class Controls:
     self.v33_taper = StopTaper()
     self.v33_taper_frame = 0
     self.v33_taper_previous = None
+    self.v33_eps = EpsShadow()
     self.LoC = LongControl(self.CP)
     self.VM = VehicleModel(self.CP)
     self.LaC: LatControl
@@ -174,6 +176,23 @@ class Controls:
                                                        curvature_limited, lat_delay)
     actuators.torque = float(steer)
     actuators.steeringAngleDeg = float(steeringAngleDeg)
+    # Read-only dataset; absent signals remain absent rather than inferred safe.
+    self.v33_eps.update(dict(t=self.sm.logMonoTime['carState'] / 1e9,
+      requested_torque=float(actuators.torque),
+      applied_torque=float(self.sm['carOutput'].actuatorsOutput.torque),
+      applied_valid=bool(self.sm.valid['carOutput']),
+      steeringTorqueEps=float(CS.steeringTorqueEps),
+      steer_limited_by_safety=bool(self.steer_limited_by_safety),
+      desired_curvature=float(self.desired_curvature), actual_curvature=float(self.curvature),
+      lateral_error=None, lateral_error_source='not_available_in_current_controlsd_contract',
+      rate_limiting=bool(curvature_limited),
+      driver_countersteer=bool(CS.steeringPressed and CS.steeringTorque * self.desired_curvature < 0),
+      laneChangeFinishing=bool(model_v2.meta.laneChangeState == LaneChangeState.laneChangeFinishing),
+      latActive=bool(CC.latActive), vEgo=float(CS.vEgo), vCruise=float(CS.vCruise),
+      aTarget_before=float(long_plan.aTarget), aTarget_after=float(long_plan.aTarget),
+      stop_intent=bool(long_plan.shouldStop), FCW=bool(long_plan.fcw),
+      personality=str(self.sm['selfdriveState'].personality),
+      pitch=float(self.calibrated_pose.orientation.xyz[1]) if self.calibrated_pose is not None else None))
     # Ensure no NaNs/Infs
     for p in ACTUATOR_FIELDS:
       attr = getattr(actuators, p)

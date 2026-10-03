@@ -35,6 +35,11 @@
       "feature": "taper",
       "source_branch": "my-crv-stop-taper-v33-experimental",
       "source_head": "92a797a0f4d31d490583f9c7af8520a07d93eda4"
+    },
+    {
+      "feature": "eps",
+      "source_branch": "my-crv-eps-cap-v33-shadow",
+      "source_head": "435565ee144931eed43804b932beb3ade4a22ef9"
     }
   ]
 }
