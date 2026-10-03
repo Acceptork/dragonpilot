@@ -35,6 +35,7 @@ class DragonpilotLayout(Widget):
     super().__init__()
 
     self._scroller: Scroller | None = None
+    self._experiments_open = False
     self._brand = ""
 
     self._toggles = {}
@@ -62,7 +63,31 @@ class DragonpilotLayout(Widget):
       callback=self._reset_dp_conf)
     self._toggles['btn_reset_dp_conf'] = self._reset_dp_conf_btn
 
-    self._scroller = Scroller(list(self._toggles.values()), line_separator=True, spacing=0)
+    self._build_scrollers()
+
+  def _build_scrollers(self):
+    experiment_keys = {
+      item["key"] for section in SETTINGS if section["title"] == "實驗功能"
+      for item in section.get("settings", [])
+    }
+    experiment_headers = {f"title_{i}" for i, section in enumerate(SETTINGS) if section["title"] == "實驗功能"}
+    self._experiments_button = button_item(
+      lambda: tr("實驗功能"), lambda: tr("開啟"), lambda: tr("8 個控制實驗（預設關閉）與 2 個起步提醒。"), callback=lambda: self._set_experiments_open(True))
+    self._experiments_back = button_item(lambda: tr("實驗功能"), lambda: tr("返回 dp"), callback=lambda: self._set_experiments_open(False))
+    self._main_scroller = Scroller(
+      [self._experiments_button] + [widget for key, widget in self._toggles.items()
+                                   if key not in experiment_keys | experiment_headers], line_separator=True, spacing=0)
+    self._experiment_scroller = Scroller(
+      [self._experiments_back] + [self._toggles[key] for key in self._toggles if key in experiment_keys],
+      line_separator=True, spacing=0)
+    self._scroller = self._experiment_scroller if self._experiments_open else self._main_scroller
+
+  def _set_experiments_open(self, opened):
+    self._scroller.hide_event()
+    self._experiments_open = opened
+    self._scroller = self._experiment_scroller if opened else self._main_scroller
+    self._update_toggles()
+    self._scroller.show_event()
 
   def _load_settings(self):
     settings_data = SETTINGS
@@ -256,7 +281,7 @@ class DragonpilotLayout(Widget):
     self._reverse_deps = {}
     self._load_settings()
     self._toggles['btn_reset_dp_conf'] = self._reset_dp_conf_btn
-    self._scroller = Scroller(list(self._toggles.values()), line_separator=True, spacing=0)
+    self._build_scrollers()
 
   def show_event(self):
     self._refresh_visibility()

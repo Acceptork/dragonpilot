@@ -675,3 +675,99 @@ msgstr "掃描以存取"
 #: dragonpilot/settings/min-feat.lat.lca.py
 msgid "sec"
 msgstr "秒"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "8 個控制實驗（預設關閉）與 2 個起步提醒。"
+msgstr "8 個控制實驗（預設關閉）與 2 個起步提醒。"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "低速變換車道"
+msgstr "低速變換車道"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "前車短暫記憶"
+msgstr "前車短暫記憶"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "前車起步提醒"
+msgstr "前車起步提醒"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "匝道追速實驗"
+msgstr "匝道追速實驗"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "實驗功能"
+msgstr "實驗功能"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "巡航回復性格實驗"
+msgstr "巡航回復性格實驗"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "平順停車實驗"
+msgstr "平順停車實驗"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "提前減速實驗"
+msgstr "提前減速實驗"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "本車停妥且前車持續起步確認後，駕駛連續 4 秒未起步才提供畫面與提示音。ACC 未啟用仍可使用；不會解除煞車或自動加速。\nParam: dp_departure_lead_alert"
+msgstr "本車停妥且前車持續起步確認後，駕駛連續 4 秒未起步才提供畫面與提示音。ACC 未啟用仍可使用；不會解除煞車或自動加速。\nParam: dp_departure_lead_alert"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "模型前進軌跡持續成立且駕駛連續 4 秒未起步才提示「前方可能已可通行」。此功能並非紅綠燈辨識，請自行確認號誌及路況；不會控制車輛。\nParam: dp_departure_signal_alert"
+msgstr "模型前進軌跡持續成立且駕駛連續 4 秒未起步才提示「前方可能已可通行」。此功能並非紅綠燈辨識，請自行確認號誌及路況；不會控制車輛。\nParam: dp_departure_signal_alert"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "自動跟車起步"
+msgstr "自動跟車起步"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "號誌通行提醒"
+msgstr "號誌通行提醒"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "超車預加速"
+msgstr "超車預加速"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "返回 dp"
+msgstr "返回 dp"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "開啟"
+msgstr "開啟"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉。僅供可控場地。接近停止時維持制動並建立穩定 hold；距離或坡度不可靠時禁止收煞。發現滑動立即踩煞車接管。\nParam: dp_exp_taper"
+msgstr "預設關閉。僅供可控場地。接近停止時維持制動並建立穩定 hold；距離或坡度不可靠時禁止收煞。發現滑動立即踩煞車接管。\nParam: dp_exp_taper"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉。僅供可控場地逐項驗證；可能因非停車減速而提早煞車。駕駛隨時接管。\nParam: dp_exp_early_stop"
+msgstr "預設關閉。僅供可控場地逐項驗證；可能因非停車減速而提早煞車。駕駛隨時接管。\nParam: dp_exp_early_stop"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉。只在無前車與停止約束的巡航中改變正加速度回復速度；不改追距、MPC 權重或危險煞車。\nParam: dp_exp_personality"
+msgstr "預設關閉。只在無前車與停止約束的巡航中改變正加速度回復速度；不改追距、MPC 權重或危險煞車。\nParam: dp_exp_personality"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉。可靠同一前車持續移動且通過共同安全條件後，才允許原控制器起步；不以十公分微動起步。\nParam: dp_exp_restart"
+msgstr "預設關閉。可靠同一前車持續移動且通過共同安全條件後，才允許原控制器起步；不以十公分微動起步。\nParam: dp_exp_restart"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉。短暫失去可靠前車時保守保持；逾時仍不明確時不主動補油，請接管或關閉。不能偵測模型從未看到的機車。\nParam: dp_exp_lead_memory"
+msgstr "預設關閉。短暫失去可靠前車時保守保持；逾時仍不明確時不主動補油，請接管或關閉。不能偵測模型從未看到的機車。\nParam: dp_exp_lead_memory"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉，僅供可控場地。上坡且模型正加速度偏小時有限追速；前車接近、停止或危險訊號立即禁止。\nParam: dp_exp_ramp"
+msgstr "預設關閉，僅供可控場地。上坡且模型正加速度偏小時有限追速；前車接近、停止或危險訊號立即禁止。\nParam: dp_exp_ramp"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉，僅供可控場地。方向燈後需新同方向施力與變道開始；僅在原前車安全約束內小幅預加速。Stage 2 尚未啟用。\nParam: dp_exp_overtake"
+msgstr "預設關閉，僅供可控場地。方向燈後需新同方向施力與變道開始；僅在原前車安全約束內小幅預加速。Stage 2 尚未啟用。\nParam: dp_exp_overtake"
+
+#. my-crv experimental settings; include complete text in the device font atlas.
+msgid "預設關閉，僅供可控場地。方向燈後需新的同方向施力確認。此車型無可靠盲點資料，變換車道前請自行確認後方安全。\nParam: dp_exp_lca"
+msgstr "預設關閉，僅供可控場地。方向燈後需新的同方向施力確認。此車型無可靠盲點資料，變換車道前請自行確認後方安全。\nParam: dp_exp_lca"
