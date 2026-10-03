@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import math
+from openpilot.common.params import Params
+from openpilot.selfdrive.controls.lib.lead_memory_v33 import LeadMemory
 import numpy as np
 
 import cereal.messaging as messaging
@@ -61,6 +63,11 @@ from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent, emi
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
+    self.v33_memory = LeadMemory()
+    self.v33_memory_mpc = None
+    self.v33_params = Params()
+    self.v33_frame = 0
+    self.v33_previous = None
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
     self.overshoot_event = OvershootEvent()
@@ -237,6 +244,73 @@ class LongitudinalPlanner:
     if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
       self.diagnostic_trace['event_type']='OVERSHOOT_EVENT'
       cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
+    enabled_memory = self.v33_params.get_bool('dp_exp_lead_memory')
+    model_path_x = list(sm['modelV2'].position.x)
+    model_path_y = list(sm['modelV2'].position.y)
+    valid_memory = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState')))
+    path_valid_memory = (valid_memory and len(model_path_x) == ModelConstants.IDX_N
+      and len(model_path_y) == ModelConstants.IDX_N and all(math.isfinite(x) for x in model_path_x + model_path_y)
+      and all(b >= a for a, b in zip(model_path_x, model_path_x[1:])))
+    measured_memory = []
+    for idx, lead in enumerate((sm['radarState'].leadOne, sm['radarState'].leadTwo)):
+      if lead.status:
+        deviations = [float(l.xStd[0]) for l in sm['modelV2'].leadsV3 if len(l.xStd) and len(l.x) and abs(l.x[0] - lead.dRel) < 3.]
+        geometry = path_valid_memory and abs(-lead.yRel - float(np.interp(lead.dRel, model_path_x, model_path_y))) < 1.
+        measured_memory.append(dict(d=float(lead.dRel), vr=float(lead.vRel), y=float(lead.yRel),
+          std=min(deviations) if deviations else float('inf'), prob=float(lead.modelProb),
+          measured=True, path_ok=bool(geometry), index=idx, raw=lead.to_dict()))
+    if reset_state or not valid_memory:
+      self.v33_memory = LeadMemory()
+      self.v33_memory_mpc = None
+    memory_geometry = bool(path_valid_memory)
+    if self.v33_memory.last is not None and path_valid_memory:
+      prior = self.v33_memory.last
+      memory_geometry = abs(-prior['y'] - float(np.interp(prior['d'], model_path_x, model_path_y))) < 1.
+    memory_row = self.v33_memory.update(trace_time, measured_memory, float(v_ego), memory_geometry)
+    before_memory = float(self.output_a_target)
+    if enabled_memory and not reset_state and valid_memory:
+      if memory_row['active']:
+        if self.v33_memory_mpc is None:
+          self.v33_memory_mpc = LongitudinalMpc(dt=self.dt)
+        m = memory_row['memory']
+        # Private copy only: never publish a synthetic radarState or mutate recorded input.
+        memory_radar = sm['radarState'].as_builder()
+        memory_radar.leadOne = m['raw']
+        memory_radar.leadOne.dRel = m['d']
+        memory_radar.leadOne.vRel = m['vr']
+        memory_radar.leadOne.vLead = max(0., m['v_abs'])
+        memory_radar.leadOne.vLeadK = max(0., m['v_abs'])
+        memory_radar.leadOne.aLeadK = min(0., memory_radar.leadOne.aLeadK)
+        self.v33_memory_mpc.set_weights(prev_accel_constraint, personality=personality)
+        self.v33_memory_mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
+        self.v33_memory_mpc.update(memory_radar, v_cruise, personality=personality)
+        mv = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC, self.v33_memory_mpc.v_solution)
+        ma = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC, self.v33_memory_mpc.a_solution)
+        memory_target, memory_stop = get_accel_from_plan(mv, ma, CONTROL_N_T_IDX, action_t=action_t, vEgoStopping=self.CP.vEgoStopping)
+        if self.v33_memory_mpc.solution_status == 0 and math.isfinite(memory_target):
+          self.output_a_target = max(float(accel_clip[0]), min(self.output_a_target, memory_target))
+          self.output_should_stop = self.output_should_stop or memory_stop
+          self.fcw = self.fcw or (self.v33_memory_mpc.crash_cnt > 2 and not sm['carState'].standstill)
+      if memory_row['unknown']:
+        self.output_a_target = min(0., self.output_a_target)
+    else:
+      self.v33_memory_mpc = None
+    memory_row.pop('memory', None)
+    memory_row.update(feature='lead_memory', t=trace_time, enabled=enabled_memory,
+      shadow=not enabled_memory, vEgo=float(v_ego), vCruise=float(v_cruise_kph),
+      aTarget_before=before_memory, aTarget_after=float(self.output_a_target), lead=self.diagnostic_trace['lead1'],
+      stop_intent=bool(self.output_should_stop), FCW=bool(self.fcw), personality=str(personality),
+      pitch=pitch, lateral_state=self.diagnostic_trace['lane_change_state'],
+      unknown_recovery='await_reliable_reacquire_or_driver_disable')
+    self.diagnostic_trace['experimental'] = memory_row
+    self.diagnostic_trace['post_clip'] = float(self.output_a_target)
+    self.diagnostic_trace['shouldStop'] = bool(self.output_should_stop)
+    self.diagnostic_trace['fcw'] = bool(self.fcw)
+    self.v33_frame += 1
+    transition = (enabled_memory, memory_row['active'], memory_row['reason'])
+    if transition != self.v33_previous or (enabled_memory and self.v33_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', **memory_row)
+    self.v33_previous = transition
     emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):
