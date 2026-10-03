@@ -79,3 +79,22 @@ def test_stale_inputs_prevent_arm_and_offroad_clears_cue():
   sm['deviceState'].started=False
   assert runtime.update(sm,7.) is None
   assert params.writes[-1]==(CUE_KEY,'')
+
+
+def test_visible_cue_is_cleared_when_driver_moves_or_data_stales():
+  for condition in ['moving','gas','stale','hazard']:
+    params=Params()
+    runtime=DepartureRuntime(params)
+    runtime.cue_expires_at=13.
+    params.values[CUE_KEY]=json.dumps(dict(kind='lead_departure',issued_at=10.,expires_at=13.))
+    sm=NativeSM(11.)
+    if condition=='moving':
+      sm['carState'].vEgo=1.
+    elif condition=='gas':
+      sm['carState'].gasPressed=True
+    elif condition=='stale':
+      sm.recv_time['modelV2']=10.
+    else:
+      sm['modelV2'].meta.hardBrakePredicted=True
+    assert runtime.update(sm,11.) is None
+    assert current_cue(params,11.,True) is None

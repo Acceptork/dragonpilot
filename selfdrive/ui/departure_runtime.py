@@ -11,6 +11,7 @@ class DepartureRuntime:
     self.params = params
     self.machine = DepartureAlerts()
     self.was_onroad = False
+    self.cue_expires_at = 0.
 
   def update(self, sm, now):
     onroad = bool(sm.valid['deviceState'] and sm['deviceState'].started
@@ -20,6 +21,7 @@ class DepartureRuntime:
         self.machine = DepartureAlerts()
         self.params.put_nonblocking(CUE_KEY, '')
       self.was_onroad = False
+      self.cue_expires_at = 0.
       return None
     self.was_onroad = True
     if not sm.updated['modelV2']:
@@ -35,9 +37,14 @@ class DepartureRuntime:
       desired_accel=float(md.action.desiredAcceleration),model_stop=bool(md.action.shouldStop),
       hazard=bool(md.meta.hardBrakePredicted or radar.leadOne.fcw or radar.leadTwo.fcw),
       closer_obstacle=bool(radar.leadTwo.status and (lead is None or radar.leadTwo.dRel<lead['d']-.5)))
+    if self.cue_expires_at and (now>=self.cue_expires_at or not valid or observation.speed>.2
+                               or observation.gas or observation.hazard or observation.closer_obstacle):
+      self.params.put_nonblocking(CUE_KEY, '')
+      self.cue_expires_at = 0.
     event = self.machine.update(observation, self.params.get_bool('dp_departure_lead_alert'),
                                 self.params.get_bool('dp_departure_signal_alert'))
     if event:
+      self.cue_expires_at = event['expires_at']
       self.params.put_nonblocking(CUE_KEY, json.dumps(event,ensure_ascii=False))
       cloudlog.event('MYCRV_DEPARTURE_ALERT', **event, vEgo=observation.speed, lead=lead,
                      gear=observation.gear, independent_of_engagement=True)
