@@ -192,6 +192,7 @@ class LongitudinalPlanner:
     output_a_target_e2e = sm['modelV2'].action.desiredAcceleration
     output_should_stop_e2e = sm['modelV2'].action.shouldStop
 
+    raw_mpc_source = str(self.mpc.source)
     mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
     if dp_flags & DPFlags.AEM:
       self.aem.update_states(model_msg=sm['modelV2'], radar_msg=sm['radarState'], v_ego=sm['carState'].vEgo)
@@ -218,9 +219,9 @@ class LongitudinalPlanner:
     throttle_reason = ('model_allows' if model_allows else 'recovery_override' if self.throttle_gate.override_active
                        else 'coast_gate')
     self.diagnostic_trace = dict(t=trace_time, e2e=output_a_target_e2e, mpc=output_a_target_mpc,
-      selected_source=str(self.mpc.source), pre_clip=float(output_a_target), post_clip=float(self.output_a_target),
+      raw_mpc_source=raw_mpc_source, selected_source=str(self.mpc.source), pre_clip=float(output_a_target), post_clip=float(self.output_a_target),
       prev_accel_clip=previous_clip, accel_limits=list(accel_clip), cruise_max=float(get_max_accel(v_ego)),
-      turn_max=float(limit_accel_in_turns(v_ego,steer_angle_without_offset,[ACCEL_MIN,get_max_accel(v_ego)],self.CP)[1]),
+      turn_max=float(limit_accel_in_turns(v_ego,steer_angle_without_offset,[ACCEL_MIN,ACCEL_MAX],self.CP)[1]),
       throttle_reason=throttle_reason, allowThrottle=self.allow_throttle, gasPressProb=float(throttle_prob),
       model_allows=model_allows, override_active=self.throttle_gate.override_active,
       model_safe_to_override=model_safe_to_override, grade_allows=grade_allows_override(sm['carControl'].orientationNED),
@@ -228,6 +229,10 @@ class LongitudinalPlanner:
       cruise_gap=float(v_cruise-v_ego), vCruise=float(v_cruise_kph), vEgo=float(v_ego), aEgo=float(sm['carState'].aEgo),
       lead1=sm['radarState'].leadOne.to_dict(), lead2=sm['radarState'].leadTwo.to_dict(),
       mode=mode, personality=str(personality), shouldStop=self.output_should_stop, fcw=self.fcw,
+      desired_curvature=float(sm['controlsState'].desiredCurvature), actual_curvature=float(sm['controlsState'].curvature),
+      requested_torque=float(sm['carControl'].actuators.torque), steering_torque_eps=float(sm['carState'].steeringTorqueEps),
+      latActive=bool(sm['carControl'].latActive), lane_change_state=str(sm['modelV2'].meta.laneChangeState),
+      model_path_x=list(sm['modelV2'].position.x), model_path_y=list(sm['modelV2'].position.y),
       reset=reset_state, a_desired=float(self.a_desired), solver_status=int(self.mpc.solution_status))
     if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
       self.diagnostic_trace['event_type']='OVERSHOOT_EVENT'
