@@ -42,3 +42,18 @@ def test_ramp_negative_or_closing_never_overridden():
   assert ramp_research(-.2,1.,False,False,True,False,False,True)==-.2
   assert ramp_research(.1,1.,True,False,True,False,False,True)==.1
   assert ramp_research(.1,1.,False,False,True,False,False,True)==.2
+
+def test_restart_stopped_lead_cannot_release_after_large_move():
+  s=RestartResearch()
+  for i in range(60):
+    t=i*.05
+    assert s.update(t,'a',min(.6,t),.1,False,False,True,False,False)!='RELEASE_ALLOWED'
+
+def test_overtake_unknown_path_exit_never_stage2_and_margin_caps():
+  for clear in [None,False,True]:
+    s=OvertakeResearch();results=[]
+    for i in range(20):
+      results.append(s.update(i*.05,'left',i>0,True,True,True,12.,True,.15,clear,cap=.3))
+    assert max(r['preaccel_request'] for r in results)<=.15
+    if clear is not True:
+      assert all(r['stage2']=='BLOCKED' and r['preaccel_request']<=.1 for r in results)

@@ -62,11 +62,17 @@ class RestartResearch:
   since: float | None=None
   origin: float | None=None
   identity: object=None
+  previous_position: float | None=None
+  previous_t: float | None=None
 
   def update(self,t,identity,position,noise,stop,hard_brake,path_clear,driver_brake,new_obstacle,personality='standard'):
+    dt=t-self.previous_t if self.previous_t is not None else None
+    moving=(dt is not None and 0<dt<=.1 and self.previous_position is not None
+            and position-self.previous_position>max(.005,noise*.05))
+    self.previous_t=t;self.previous_position=position
     if stop or hard_brake or not path_clear or driver_brake or new_obstacle or identity is None or identity!=self.identity:
       self.identity=identity;self.origin=position;self.since=None;self.state='HOLD';return self.state
-    if position-self.origin<=max(.3,3*noise):
+    if not moving or position-self.origin<=max(.3,3*noise):
       self.since=None;self.state='HOLD';return self.state
     if self.since is None:self.since=t
     extra={'aggressive':0.,'standard':.2,'relaxed':.4}[personality]
@@ -117,7 +123,8 @@ class OvertakeResearch:
     if gap<10/3.6 or not lead_valid or margin is None or margin<=0 or not starting:
       self.request=0.;return self.result('margin_or_progress_unknown')
     self.state='STAGE2' if clear_verified is True else 'STAGE1'
-    self.request=min(max(0.,cap),.1,self.request+.2*dt)
+    ceiling=min(max(0.,cap),max(0.,margin))
+    self.request=min(ceiling, self.request+.2*dt) if clear_verified is True else min(ceiling,.1,self.request+.2*dt)
     return self.result('bounded_preference_only')
   def result(self,reason):
     return {'state':self.state,'preaccel_request':self.request,'stage2':'ALLOWED' if self.state=='STAGE2' else 'BLOCKED',
