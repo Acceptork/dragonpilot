@@ -10,6 +10,7 @@ class StopTaper:
     self.hold_min = hold_min
     self.state = 'BRAKING'
     self.command = None
+    self.extra_active = False
     self.stopped_time = 0.
     self.enter_time = self.exit_time = None
     self.clock = 0.
@@ -20,11 +21,27 @@ class StopTaper:
     old = self.state
     finite = all(math.isfinite(x) for x in (speed, base, dt, lower))
     valid_grade = pitch is not None and math.isfinite(pitch) and abs(pitch) <= .12 and grade_fresh
-    if not enabled or not active or not stop or driver_override or not finite or not valid_grade or not 0 < dt <= .05:
+    if not enabled or not active or driver_override or not finite or not 0 < dt <= .05:
       self.state = 'BRAKING'
       self.command = base
+      self.extra_active = False
       self.stopped_time = 0.
-      return self.result(base, base, 'disabled_or_missing_grade_or_stop')
+      return self.result(base, base, 'disabled_or_authority_or_driver_veto')
+    if not stop or not valid_grade:
+      self.stopped_time = 0.
+      # Retire only an already-applied experimental brake contribution. Never smooth an
+      # ordinary baseline transition when this feature has added no braking.
+      if self.extra_active and self.command is not None:
+        self.command = max(lower, min(base, self.command + self.jerk * dt))
+        self.extra_active = self.command < base
+        self.state = 'RELEASE_PENDING' if self.extra_active else 'BRAKING'
+        if old != self.state:
+          self.exit_time = self.enter_time = self.clock
+        return self.result(base, self.command, 'release_extra_brake_stop_or_grade_veto')
+      self.state = 'BRAKING'
+      self.command = base
+      self.extra_active = False
+      return self.result(base, base, 'missing_grade_or_stop_no_extra_brake')
     # Lower actuator gain is a research envelope, not a measured Honda guarantee.
     grade_brake = 9.81 * abs(math.sin(pitch)) / self.gain_lower
     hold = -max(self.hold_min, grade_brake + .3)
@@ -56,6 +73,7 @@ class StopTaper:
     self.command += max(-self.jerk * dt, min(self.jerk * dt, target - self.command))
     # Safety braking can bypass comfort slew; experimental shaping never weakens it.
     self.command = max(lower, min(base, self.command))
+    self.extra_active = self.command < base
     if old != self.state:
       self.exit_time = self.enter_time = self.clock
     return self.result(base, self.command, reason)
