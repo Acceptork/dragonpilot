@@ -230,7 +230,7 @@ class LongitudinalPlanner:
       mode=mode, personality=str(personality), shouldStop=self.output_should_stop, fcw=self.fcw,
       reset=reset_state, a_desired=float(self.a_desired), solver_status=int(self.mpc.solution_status))
     if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
-      self.diagnostic_trace['event']='OVERSHOOT_EVENT'
+      self.diagnostic_trace['event_type']='OVERSHOOT_EVENT'
       cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
     emit_trace(self.diagnostic_trace)
 

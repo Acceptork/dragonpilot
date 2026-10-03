@@ -15,7 +15,7 @@ def main():
   params = Params()
   overshoot = OvershootEvent()
   pm = messaging.PubMaster(['userBookmark', 'audioFeedback'])
-  sm = messaging.SubMaster(['rawAudioData', 'bookmarkButton', 'carState'])
+  sm = messaging.SubMaster(['rawAudioData', 'bookmarkButton', 'carState', 'selfdriveState'])
   should_record_audio = False
   block_num = 0
   waiting_for_release = False
@@ -27,7 +27,7 @@ def main():
     if sm.updated['carState']:
       cs = sm['carState']
       if overshoot.update(sm.logMonoTime['carState']/1e9, cs.vEgo*3.6, cs.vCruise,
-                          sm.valid['carState'] and cs.cruiseState.available and not cs.gasPressed):
+                          sm.valid['carState'] and sm.valid['selfdriveState'] and sm['selfdriveState'].active and not cs.gasPressed):
         should_send_bookmark = True
         cloudlog.info('OVERSHOOT_EVENT automatic bookmark')
 
