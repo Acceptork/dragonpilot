@@ -20,7 +20,10 @@ From a local clone that contains this file:
 bash tools/mycrv_v31/deploy_remote.sh <COMMA_IP> <EXACT_RC_COMMIT_SHA>
 ```
 
-This streams `deploy.sh` over SSH, checks that the device's kernel boot ID
+The host refuses a local script that differs from the pinned commit and streams
+that commit's exact `deploy.sh` Git blob. The pinned commit must exist in the
+local clone. The device checks the published annotated tag before creating a
+backup. The host checks that the device's kernel boot ID
 actually changes, and runs `verify.sh` after reconnecting. A `DEPLOY_READY`
 marker alone is not proof of a successful reboot. The host transcript is
 preserved under `${XDG_STATE_HOME:-$HOME/.local/state}/mycrv_v31/` by default;
@@ -30,7 +33,7 @@ Alternatively, after SSH into comma, run the published GitHub **source script**
 with the exact SHA (this is not an installer URL):
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/Acceptork/dragonpilot/my-crv-v3.1-rc1/tools/mycrv_v31/deploy.sh) <EXACT_RC_COMMIT_SHA>
+RC_SHA=<EXACT_RC_COMMIT_SHA>; bash <(curl -fsSL "https://raw.githubusercontent.com/Acceptork/dragonpilot/${RC_SHA}/tools/mycrv_v31/deploy.sh") "$RC_SHA"
 ```
 
 Then, after reconnecting from a separate terminal, run:
@@ -47,6 +50,9 @@ On a pre-reboot error after checkout, it attempts to return to and rebuild
 the original v2 branch. An unsuccessful recovery is explicitly reported as
 blocked. It never uses `git clean`, never overwrites a dirty working tree, and
 does not delete routes, SSH keys, Params, or `/persist`.
+
+The release's rollback and verify scripts are syntax checked before any backup
+is created. A failed reboot request is reported separately from a build error.
 
 After a reboot request, an SSH disconnect is not treated as a build failure:
 the script no longer switches branches during shutdown. If the host does not
@@ -77,3 +83,8 @@ reboots. If a v2 build fails, it attempts to restore and rebuild the prior RC;
 it does not reboot or report a successful rollback. If recovery also fails,
 the device must remain parked for manual repair. The rollback metadata and
 backup branch remain available for audit.
+
+If v2 builds but leaves a dirty checkout, rollback saves the exact Git status
+in `rollback-dirty-status.log`, leaves the built v2 checkout in place, and
+requires manual inspection before retrying. It does not clean files or switch
+back to RC over unknown build output.

@@ -8,6 +8,20 @@ TARGET_SHA=$2
 case "$DEVICE_IP" in *[!0-9A-Za-z.:_-]*|'') echo 'invalid device address' >&2; exit 2 ;; esac
 SSH_TARGET=comma@$DEVICE_IP
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel) || { echo 'host script is not in a Git checkout' >&2; exit 1; }
+[[ $SCRIPT_DIR == "$REPO_ROOT/tools/mycrv_v31" ]] || { echo 'host script path is unexpected' >&2; exit 1; }
+if ! git -C "$REPO_ROOT" cat-file -e "$TARGET_SHA^{commit}" 2>/dev/null; then
+  echo 'pinned RC commit is missing locally; fetch and review it before deployment' >&2
+  exit 1
+fi
+for source_script in deploy_remote.sh deploy.sh; do
+  if ! git -C "$REPO_ROOT" show "$TARGET_SHA:tools/mycrv_v31/$source_script" | cmp -s - "$SCRIPT_DIR/$source_script"; then
+    echo "local $source_script differs from pinned RC commit; refusing to send it to the device" >&2
+    exit 1
+  fi
+done
+# Send the immutable Git blob, not a mutable working-tree file. The device
+# independently fetches the annotated release tag before any backup/switch.
 umask 077
 LOG_DIR=${MYCRV_DEPLOY_LOG_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/mycrv_v31}
 mkdir -p "$LOG_DIR"
@@ -19,12 +33,24 @@ PRE_BOOT_ID=$(ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_TARGET" 'cat /proc
 [[ $PRE_BOOT_ID =~ ^[0-9a-f-]{36}$ ]] || { echo 'could not read a valid pre-deploy boot ID' >&2; exit 1; }
 printf 'pre_boot_id=%s\n' "$PRE_BOOT_ID" >> "$LOG"
 set +e
-ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_TARGET" "bash -s -- $TARGET_SHA" < "$SCRIPT_DIR/deploy.sh" 2>&1 | tee -a "$LOG"
-DEPLOY_STATUS=${PIPESTATUS[0]}
+git -C "$REPO_ROOT" show "$TARGET_SHA:tools/mycrv_v31/deploy.sh" |
+  ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_TARGET" "bash -s -- $TARGET_SHA" 2>&1 | tee -a "$LOG"
+PIPE_STATUSES=("${PIPESTATUS[@]}")
+SOURCE_STATUS=${PIPE_STATUSES[0]}
+DEPLOY_STATUS=${PIPE_STATUSES[1]}
 set -e
-if ! grep -Fq "DEPLOY_READY $TARGET_SHA" "$LOG"; then
-  echo "deploy did not reach its reboot point (SSH status $DEPLOY_STATUS)" >&2
+if grep -Fq 'REBOOT_REQUEST_FAILED:' "$LOG"; then
+  echo 'device rejected reboot request; release is checked out, keep parked and inspect the transcript' >&2
   exit 1
+fi
+if ! grep -Fq "DEPLOY_READY $TARGET_SHA" "$LOG"; then
+  echo "deploy did not reach its reboot point (Git status $SOURCE_STATUS, SSH status $DEPLOY_STATUS)" >&2
+  exit 1
+fi
+# SSH can close while the reboot starts. If bash reached DEPLOY_READY, a
+# source-pipe SIGPIPE is resolved by the changed boot ID and postboot check.
+if [[ $SOURCE_STATUS -ne 0 ]]; then
+  echo "source stream closed with Git status $SOURCE_STATUS after DEPLOY_READY; verifying boot ID" | tee -a "$LOG"
 fi
 
 # A reboot may close SSH with 255. The marker is printed before sudo reboot,
