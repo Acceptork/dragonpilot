@@ -18,12 +18,13 @@ class RestartRelease:
     if self.was_stopping and not stopping and self.previous is not None and self.previous < 0:
       self.releasing = True
     after = base
-    if stopping:
-      self.releasing = False
-    elif self.releasing:
+    # A renewed stop must not discard a stricter in-flight release command.
+    # min() still gives any stronger baseline braking immediate priority.
+    if self.releasing:
       after = min(base, self.previous + self.jerk * dt)
       self.releasing = after < base
     self.previous = after
     self.was_stopping = stopping
     return dict(after=after, active=after != base,
                 reason='bounded_stop_release' if after != base else 'baseline')
+

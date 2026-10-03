@@ -40,3 +40,13 @@ def test_no_previous_stop_no_effect():
   s = RestartRelease()
   assert call(s, -.4, stopping=False)['after'] == -.4
   assert call(s, 1., stopping=False)['after'] == 1.
+
+def test_restop_during_release_preserves_stricter_command():
+  s = RestartRelease()
+  call(s, -.8438952946662903)
+  previous = call(s, 1.1142265796661377, stopping=False)['after']
+  previous = call(s, 1.1142265796661377, stopping=False)['after']
+  result = call(s, -.008, stopping=True)
+  assert result['after'] <= previous + .020000000001
+  assert result['after'] <= -.008
+  assert call(s, -3., stopping=True)['after'] == -3.
