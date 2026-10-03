@@ -13,6 +13,7 @@ class OvertakePreaccel:
     self.confirmation = None
     self.consumed = False
     self.last_t = None
+    self.was_starting = False
     self.preference = 0.
     self.enter_time = self.exit_time = None
 
@@ -26,7 +27,9 @@ class OvertakePreaccel:
     if active_edge:
       self.epoch += 1
     valid = all(math.isfinite(x) for x in (t, base, mpc, e2e, cap, gap)) and 0 < dt <= .075
-    invalidate = not enabled or changed or active_edge or direction == 'none' or not lat_active or not long_active or override
+    maneuver_ended = self.was_starting and not starting
+    self.was_starting = starting
+    invalidate = maneuver_ended or not enabled or changed or active_edge or direction == 'none' or not lat_active or not long_active or override
     if invalidate:
       self.confirmation = None
       self.consumed = False

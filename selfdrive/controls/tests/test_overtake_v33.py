@@ -41,3 +41,15 @@ def test_one_shot_timeout():
     r = s.update(**ctx(i * .05, torque=i % 2 == 1))
     if i > 42:
       assert not r['active']
+
+
+def test_maneuver_completion_consumes_old_confirmation():
+  s = OvertakePreaccel()
+  s.update(**ctx(0.))
+  s.update(**ctx(.05, torque=True))
+  assert s.confirmation is not None
+  s.update(**ctx(.1, torque=True, starting=False))
+  assert s.confirmation is None
+  assert not s.update(**ctx(.15, torque=True))['active']
+  s.update(**ctx(.2, torque=False))
+  assert s.update(**ctx(.25, torque=True))['active']
