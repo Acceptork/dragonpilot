@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import math
+from openpilot.common.params import Params
+from openpilot.selfdrive.controls.lib.ramp_v33 import RampRecovery
 import numpy as np
 
 import cereal.messaging as messaging
@@ -61,6 +63,10 @@ from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent, emi
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
+    self.v33_ramp = RampRecovery()
+    self.v33_params = Params()
+    self.v33_frame = 0
+    self.v33_previous = None
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
     self.overshoot_event = OvershootEvent()
@@ -237,6 +243,33 @@ class LongitudinalPlanner:
     if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
       self.diagnostic_trace['event_type']='OVERSHOOT_EVENT'
       cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
+    enabled_ramp = self.v33_params.get_bool('dp_exp_ramp')
+    leads = (sm['radarState'].leadOne, sm['radarState'].leadTwo)
+    closing_ramp = any(l.status and (l.vRel < -0.1 or l.dRel < max(10., v_ego * get_T_FOLLOW(personality))) for l in leads)
+    path_values = list(sm['modelV2'].position.x) + list(sm['modelV2'].position.y)
+    valid_ramp = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState', 'carControl')))
+    ramp_row = self.v33_ramp.update(t=trace_time, enabled=enabled_ramp,
+      base=float(self.output_a_target), e2e=float(output_a_target_e2e), mpc=float(output_a_target_mpc),
+      mode=mode, valid=bool(valid_ramp), active=not reset_state, closing=closing_ramp,
+      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
+      fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
+      path_valid=len(path_values) == ModelConstants.IDX_N * 2 and all(math.isfinite(x) for x in path_values),
+      pitch=pitch, grade_age=grade_age, allow_throttle=bool(self.allow_throttle),
+      driver_override=bool(sm['carState'].brakePressed or sm['carState'].gasPressed or force_slow_decel),
+      cruise_gap=float(v_cruise - v_ego), accel_max=float(accel_clip[1]))
+    self.output_a_target = ramp_row['after']
+    ramp_row.update(feature='ramp', t=trace_time, enabled=enabled_ramp, vEgo=float(v_ego),
+      vCruise=float(v_cruise_kph), aTarget_before=ramp_row['before'], aTarget_after=ramp_row['after'],
+      lead=[l.to_dict() for l in leads], stop_intent=bool(self.output_should_stop), FCW=bool(self.fcw),
+      personality=str(personality), pitch=pitch, lateral_state=self.diagnostic_trace['lane_change_state'],
+      closing=closing_ramp, e2e=float(output_a_target_e2e), mpc=float(output_a_target_mpc))
+    self.diagnostic_trace['experimental'] = ramp_row
+    self.diagnostic_trace['post_clip'] = float(self.output_a_target)
+    self.v33_frame += 1
+    transition = (enabled_ramp, ramp_row['active'], ramp_row['reason'])
+    if transition != self.v33_previous or (enabled_ramp and self.v33_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', **ramp_row)
+    self.v33_previous = transition
     emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):
