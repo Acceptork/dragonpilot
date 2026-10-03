@@ -2,6 +2,7 @@
 import math
 from openpilot.selfdrive.controls.lib.taper_v33 import StopTaper
 from openpilot.selfdrive.controls.lib.eps_shadow_v33 import EpsShadow
+from openpilot.selfdrive.controls.lib.restart_release_v33 import RestartRelease
 from numbers import Number
 
 from cereal import car, log
@@ -59,6 +60,9 @@ class Controls:
     self.v33_lca_context_enter = self.v33_lca_context_exit = None
     self.v33_lca_context_previous = None
     self.v33_lca_context_frame = 0
+    self.restart_release = RestartRelease()
+    self.restart_release_frame = 0
+    self.restart_release_previous = None
     self.LoC = LongControl(self.CP)
     self.VM = VehicleModel(self.CP)
     self.LaC: LatControl
@@ -163,6 +167,27 @@ class Controls:
     if transition != self.v33_taper_previous or (enabled_taper and self.v33_taper_frame % 10 == 0):
       cloudlog.event('MYCRV_EXPERIMENTAL', **taper_row)
     self.v33_taper_previous = transition
+    # This opt-in stop-release limiter never raises the baseline command or delays takeover.
+    restart_enabled = self.params.get_bool('dp_exp_restart')
+    restart_before = float(actuators.accel)
+    release_row = self.restart_release.update(base=restart_before,
+      stopping=bool(long_plan.shouldStop), enabled=restart_enabled, active=bool(CC.longActive),
+      driver_override=bool(CS.gasPressed or CS.brakePressed), dt=DT_CTRL)
+    actuators.accel = float(release_row['after'])
+    self.restart_release_frame += 1
+    release_transition = (restart_enabled, release_row['active'], release_row['reason'])
+    if release_transition != self.restart_release_previous or (restart_enabled and self.restart_release_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', feature='restart_release',
+        t=self.sm.logMonoTime['carState'] / 1e9, enabled=restart_enabled,
+        vEgo=float(CS.vEgo), vCruise=float(CS.vCruise),
+        aTarget_before=float(long_plan.aTarget), aTarget_after=float(long_plan.aTarget),
+        actuator_before=restart_before, actuator_after=float(actuators.accel),
+        stop_intent=bool(long_plan.shouldStop), FCW=bool(long_plan.fcw),
+        personality=str(self.sm['selfdriveState'].personality),
+        pitch=float(self.calibrated_pose.orientation.xyz[1]) if self.calibrated_pose is not None else None,
+        lateral_state=str(model_v2.meta.laneChangeState),
+        **release_row)
+    self.restart_release_previous = release_transition
 
 
     # Steering PID loop and lateral MPC
