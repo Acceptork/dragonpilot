@@ -17,3 +17,13 @@
 每次套用先清除上一組全部控制實驗，再啟用選定組合。儲存或 offroad 狀態檢查失敗會嘗試全部 OFF 並回報錯誤。
 提醒開關與控制實驗完全分離，profile 不更改起步提醒設定。前車記憶未包含四組預設，可在 UI 單獨測試。
 軟體測試不等於實車效果驗證；各功能 CLOSED_COURSE_REQUIRED。完整版本回退使用正式交付的 pinned backup 工具；此 profile 命令不是版本回退。
+
+## 完整版本切換／回退（本輪只建立工具，未在車端執行）
+
+`python3 tools/mycrv_experimental/manage.py deploy my-crv-experimental <完整SHA>` 只顯示計畫。
+另加 `--apply` 才會在本機 comma 上要求停車、乾淨工作樹、固定 origin、遠端 exact SHA、AGNOS 相符與受保護檔案不變，保存原 SHA 的本地 branch 及 backup manifest，將所有控制實驗 OFF，再切換與建置。不自行 reboot，也不啟用 profile。
+
+回退使用備份中的獨立工具：`python3 /data/mycrv_branch_backups/<backup>/manage.py rollback /data/mycrv_branch_backups/<backup> --apply`。
+回退同樣維持全部控制實驗 OFF；建置失敗會保存失敗資訊。目標建置失敗會嘗試恢復原 SHA 並重建，若恢復也失敗則必須保持停車，不視為回退成功。
+
+測試使用 fake device 與暫存目錄，涵蓋遠端 SHA 不符、非停車、失敗恢復、雙重建置失敗、備份路徑拒絕、所有開關 OFF 及 preview 無裝置存取。這些不是實際裝置部署驗證。切換後需由使用者另行確認執行版本與啟動狀態；本工具完成建置不等於執行中版本已更新。
