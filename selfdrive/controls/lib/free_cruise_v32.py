@@ -18,7 +18,10 @@ class FreeCruiseRecovery:
       self.reason='clear_persistence'
       return base
     if not self.active: self.ramp=max(0.,base); self.active=True
-    name=str(personality)
+    name={'0':'aggressive','1':'standard','2':'relaxed'}.get(str(personality),str(personality))
+    if name not in ('relaxed','standard','aggressive'):
+      self.clear_time=0.;self.ramp=0.;self.active=False;self.reason='unknown_personality'
+      return base
     rate={'relaxed':0.15,'standard':0.3,'aggressive':0.6}[name]
     self.ramp=min(max(0.,cap),self.ramp+rate*dt)
     self.reason='free_cruise_'+name

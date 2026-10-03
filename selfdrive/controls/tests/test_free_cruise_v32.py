@@ -28,3 +28,13 @@ def test_no_negative_weakening_and_bounded():
     value=g.update(.2,.25,5.,'aggressive',True)
     assert .2<=value<=.25
   assert g.update(-2.,1.,5.,'aggressive',True)==-2.
+
+@pytest.mark.parametrize('numeric,name',[(0,'aggressive'),(1,'standard'),(2,'relaxed')])
+def test_native_integer_enum_equivalence(numeric,name):
+  a,b=FreeCruiseRecovery(),FreeCruiseRecovery()
+  for i in range(40):
+    assert a.update(.2,1.2,5.,numeric,True)==b.update(.2,1.2,5.,name,True)
+
+def test_unknown_personality_identity():
+  g=FreeCruiseRecovery()
+  for _ in range(40):assert g.update(.2,1.,5.,99,True)==.2
