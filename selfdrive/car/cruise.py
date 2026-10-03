@@ -11,8 +11,8 @@ from openpilot.common.constants import CV
 V_CRUISE_MIN = 8
 V_CRUISE_MAX = 145
 V_CRUISE_UNSET = 255
-V_CRUISE_INITIAL = 40
-V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 50
+V_CRUISE_INITIAL = 30
+V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 30
 IMPERIAL_INCREMENT = round(CV.MPH_TO_KPH, 1)  # round here to avoid rounding errors incrementing set speed
 
 ButtonEvent = car.CarState.ButtonEvent
@@ -167,12 +167,12 @@ class VCruiseHelper:
                      (current_CS is None or (speed_state.canValid and math.isfinite(raw_kph) and raw_kph >= MIN_MOVING_SET_SPEED_KPH)))
       if not speed_valid and (self.last_moving_speed_kph is not None and
                               self.speed_frame - self.last_moving_speed_frame <= MAX_RECENT_SPEED_FRAMES and
-                              not speed_state.standstill):
+                              not (speed_state.canValid and speed_state.standstill)):
         speed_kph = self.last_moving_speed_kph
         speed_valid = True
       if speed_valid:
-        self.v_cruise_kph = int(round(np.clip(speed_kph, V_CRUISE_MIN, V_CRUISE_MAX)))
-      elif (speed_state.standstill or (current_CS is None and speed_kph < MIN_MOVING_SET_SPEED_KPH) or
+        self.v_cruise_kph = int(round(np.clip(speed_kph, 30, V_CRUISE_MAX)))
+      elif ((speed_state.canValid and speed_state.standstill) or (current_CS is None and speed_kph < MIN_MOVING_SET_SPEED_KPH) or
             (math.isfinite(speed_kph) and 0 < speed_kph < MIN_MOVING_SET_SPEED_KPH and
              speed_state.canValid and math.isfinite(raw_kph) and raw_kph > 0)):
         self.v_cruise_kph = initial
