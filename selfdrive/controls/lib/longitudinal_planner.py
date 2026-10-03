@@ -13,6 +13,7 @@ from openpilot.common.params import Params
 from openpilot.selfdrive.controls.lib.overtake_v33 import OvertakePreaccel
 from openpilot.common.params import Params
 from openpilot.selfdrive.controls.lib.lead_memory_v33 import LeadMemory
+from openpilot.selfdrive.controls.lib.memory_release_v33 import MemoryRelease
 import numpy as np
 
 import cereal.messaging as messaging
@@ -95,6 +96,7 @@ class LongitudinalPlanner:
     self.v33_overtake_frame = 0
     self.v33_overtake_previous = None
     self.v33_memory = LeadMemory()
+    self.v33_memory_release = MemoryRelease()
     self.v33_memory_mpc = None
     self.v33_params = Params()
     self.v33_memory_frame = 0
@@ -482,6 +484,14 @@ class LongitudinalPlanner:
         self.output_a_target = min(0., self.output_a_target)
     else:
       self.v33_memory_mpc = None
+    # A recovered lead must not instantly release the previous conservative target.
+    # Stronger baseline/memory braking remains immediate; OFF and takeover clear history.
+    memory_release = self.v33_memory_release.update(t=trace_time,
+      baseline=before_memory, constrained=float(self.output_a_target),
+      enabled=enabled_memory, authority=bool(not reset_state and valid_memory),
+      driver_override=bool(sm['carState'].gasPressed or sm['carState'].brakePressed))
+    self.output_a_target = memory_release['after']
+    memory_row.update(memory_release)
     # Preserve prediction diagnostics before removing the private MPC payload.
     memory_payload = memory_row.pop('memory', None)
     memory_prior = self.v33_memory.last
@@ -489,7 +499,7 @@ class LongitudinalPlanner:
       (trace_time - memory_prior['t'])) if memory_prior is not None else self.v33_memory.unknown_bound)
     memory_row['conservative_dRel'] = float(memory_payload['d']) if memory_payload is not None else None
     memory_control_active = bool(enabled_memory and not reset_state and valid_memory and
-      (memory_row['active'] or memory_row['unknown']))
+      (memory_row['active'] or memory_row['unknown'] or memory_row['release_active']))
     if memory_control_active != self.v33_memory_control_active:
       if memory_control_active:
         self.v33_memory_enter_time = trace_time
@@ -509,7 +519,7 @@ class LongitudinalPlanner:
     self.diagnostic_trace['shouldStop'] = bool(self.output_should_stop)
     self.diagnostic_trace['fcw'] = bool(self.fcw)
     self.v33_memory_frame += 1
-    transition = (enabled_memory, memory_row['active'], memory_row['reason'])
+    transition = (enabled_memory, memory_row['active'], memory_row['reason'], memory_row['release_active'])
     if transition != self.v33_memory_previous or (enabled_memory and self.v33_memory_frame % 10 == 0):
       cloudlog.event('MYCRV_EXPERIMENTAL', **memory_row)
     self.v33_memory_previous = transition
