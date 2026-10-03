@@ -1,135 +1,93 @@
+"""Driver-confirmed LCA: no helper speed/BSM gates; vehicle latActive remains authoritative."""
+from dataclasses import dataclass
 from cereal import log
-from openpilot.common.constants import CV
 from openpilot.common.realtime import DT_MDL
-import time
 
-LaneChangeState = log.LaneChangeState
-LaneChangeDirection = log.LaneChangeDirection
+LaneChangeState=log.LaneChangeState
+LaneChangeDirection=log.LaneChangeDirection
+LANE_CHANGE_TIME_MAX=10.
 
-LANE_CHANGE_SPEED_MIN = 20 * CV.MPH_TO_MS
-LANE_CHANGE_TIME_MAX = 10.
-
-DESIRES = {
-  LaneChangeDirection.none: {
-    LaneChangeState.off: log.Desire.none,
-    LaneChangeState.preLaneChange: log.Desire.none,
-    LaneChangeState.laneChangeStarting: log.Desire.none,
-    LaneChangeState.laneChangeFinishing: log.Desire.none,
-  },
-  LaneChangeDirection.left: {
-    LaneChangeState.off: log.Desire.none,
-    LaneChangeState.preLaneChange: log.Desire.none,
-    LaneChangeState.laneChangeStarting: log.Desire.laneChangeLeft,
-    LaneChangeState.laneChangeFinishing: log.Desire.laneChangeLeft,
-  },
-  LaneChangeDirection.right: {
-    LaneChangeState.off: log.Desire.none,
-    LaneChangeState.preLaneChange: log.Desire.none,
-    LaneChangeState.laneChangeStarting: log.Desire.laneChangeRight,
-    LaneChangeState.laneChangeFinishing: log.Desire.laneChangeRight,
-  },
-}
-
+@dataclass
+class Confirmation:
+  direction: str
+  epoch: int
+  timestamp: float
+  consumed: bool=False
 
 class DesireHelper:
-  def __init__(self, dp_lat_lca_speed=LANE_CHANGE_SPEED_MIN, dp_lat_lca_auto_sec=0.):
-    self.lane_change_state = LaneChangeState.off
-    self.lane_change_direction = LaneChangeDirection.none
-    self.lane_change_timer = 0.0
-    self.lane_change_ll_prob = 1.0
-    self.keep_pulse_timer = 0.0
-    self.prev_one_blinker = False
-    self.desire = log.Desire.none
-    self.dp_lat_lca_speed = float(dp_lat_lca_speed * CV.MPH_TO_MS)
-    self.dp_lat_lca_auto_sec = dp_lat_lca_auto_sec
-    self.dp_lat_lca_auto_sec_start = 0.
+  def __init__(self,dp_lat_lca_speed=20,dp_lat_lca_auto_sec=0.):
+    self.lca_enabled=dp_lat_lca_speed>0
+    self.lane_change_state=LaneChangeState.off
+    self.lane_change_direction=LaneChangeDirection.none
+    self.lane_change_timer=0.
+    self.lane_change_ll_prob=1.
+    self.desire=log.Desire.none
+    self.keep_pulse_timer=0.
+    self.token=None
+    self.epoch=0
+    self.time=0.
+    self.last_active=False
+    self.last_direction=LaneChangeDirection.none
+    self.last_torque=False
+    self.aborting=False
 
-  @staticmethod
-  def get_lane_change_direction(CS):
-    return LaneChangeDirection.left if CS.leftBlinker else LaneChangeDirection.right
+  def invalidate(self):
+    self.token=None
 
-  def update(self, carstate, lateral_active, lane_change_prob, left_edge_detected, right_edge_detected):
-    v_ego = carstate.vEgo
-    one_blinker = carstate.leftBlinker != carstate.rightBlinker
-    below_lane_change_speed = True if self.dp_lat_lca_speed == 0. else v_ego < self.dp_lat_lca_speed
-
-    if not lateral_active or self.lane_change_timer > LANE_CHANGE_TIME_MAX:
-      self.lane_change_state = LaneChangeState.off
-      self.lane_change_direction = LaneChangeDirection.none
-    else:
-      # LaneChangeState.off
-      c_time = time.monotonic()
-      if self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
-        self.lane_change_state = LaneChangeState.preLaneChange
-        self.lane_change_ll_prob = 1.0
-        if self.dp_lat_lca_auto_sec > 0.:
-          self.dp_lat_lca_auto_sec_start = c_time
-
-        # Initialize lane change direction to prevent UI alert flicker
-        self.lane_change_direction = self.get_lane_change_direction(carstate)
-
-      # LaneChangeState.preLaneChange
-      elif self.lane_change_state == LaneChangeState.preLaneChange:
-        # Update lane change direction
-        self.lane_change_direction = self.get_lane_change_direction(carstate)
-
-        torque_applied = carstate.steeringPressed and \
-                         ((carstate.steeringTorque > 0 and self.lane_change_direction == LaneChangeDirection.left) or
-                          (carstate.steeringTorque < 0 and self.lane_change_direction == LaneChangeDirection.right))
-
-        blindspot_detected = (((carstate.leftBlindspot or left_edge_detected) and self.lane_change_direction == LaneChangeDirection.left) or
-                              ((carstate.rightBlindspot or right_edge_detected) and self.lane_change_direction == LaneChangeDirection.right))
-
-        # reset timer
-        if self.dp_lat_lca_auto_sec > 0.:
-          if blindspot_detected:
-            self.dp_lat_lca_auto_sec_start = c_time
-          else:
-            if (c_time - self.dp_lat_lca_auto_sec_start) >= self.dp_lat_lca_auto_sec:
-              torque_applied = True
-
-        if not one_blinker or below_lane_change_speed:
-          self.lane_change_state = LaneChangeState.off
-          self.lane_change_direction = LaneChangeDirection.none
-        elif torque_applied and not blindspot_detected:
-          self.lane_change_state = LaneChangeState.laneChangeStarting
-
-      # LaneChangeState.laneChangeStarting
-      elif self.lane_change_state == LaneChangeState.laneChangeStarting:
-        # fade out over .5s
-        self.lane_change_ll_prob = max(self.lane_change_ll_prob - 2 * DT_MDL, 0.0)
-
-        # 98% certainty
-        if lane_change_prob < 0.02 and self.lane_change_ll_prob < 0.01:
-          self.lane_change_state = LaneChangeState.laneChangeFinishing
-
-      # LaneChangeState.laneChangeFinishing
-      elif self.lane_change_state == LaneChangeState.laneChangeFinishing:
-        # fade in laneline over 1s
-        self.lane_change_ll_prob = min(self.lane_change_ll_prob + DT_MDL, 1.0)
-
-        if self.lane_change_ll_prob > 0.99:
-          self.lane_change_direction = LaneChangeDirection.none
-          if one_blinker:
-            self.lane_change_state = LaneChangeState.preLaneChange
-          else:
-            self.lane_change_state = LaneChangeState.off
-
-    if self.lane_change_state in (LaneChangeState.off, LaneChangeState.preLaneChange):
-      self.lane_change_timer = 0.0
-    else:
-      self.lane_change_timer += DT_MDL
-
-    self.prev_one_blinker = one_blinker
-
-    self.desire = DESIRES[self.lane_change_direction][self.lane_change_state]
-
-    # Send keep pulse once per second during LaneChangeStart.preLaneChange
-    if self.lane_change_state in (LaneChangeState.off, LaneChangeState.laneChangeStarting):
-      self.keep_pulse_timer = 0.0
-    elif self.lane_change_state == LaneChangeState.preLaneChange:
-      self.keep_pulse_timer += DT_MDL
-      if self.keep_pulse_timer > 1.0:
-        self.keep_pulse_timer = 0.0
-      elif self.desire in (log.Desire.keepLeft, log.Desire.keepRight):
-        self.desire = log.Desire.none
+  def update(self,carstate,lateral_active,lane_change_prob,left_edge_detected,right_edge_detected,cancel=False):
+    self.time+=DT_MDL
+    one=carstate.leftBlinker != carstate.rightBlinker
+    direction=(LaneChangeDirection.left if carstate.leftBlinker else LaneChangeDirection.right) if one else LaneChangeDirection.none
+    torque=one and carstate.steeringPressed and ((carstate.steeringTorque>0 and direction==LaneChangeDirection.left) or
+                                                (carstate.steeringTorque<0 and direction==LaneChangeDirection.right))
+    fresh=torque and not self.last_torque
+    changed=direction!=self.last_direction
+    active_edge=lateral_active!=self.last_active
+    if active_edge:
+      self.epoch+=1; self.invalidate()
+    if changed or cancel or not one:self.invalidate()
+    timeout=self.lane_change_timer>LANE_CHANGE_TIME_MAX
+    edge=(left_edge_detected if direction==LaneChangeDirection.left else right_edge_detected)
+    in_maneuver=self.lane_change_state in (LaneChangeState.laneChangeStarting,LaneChangeState.laneChangeFinishing)
+    if not lateral_active or not self.lca_enabled:
+      self.lane_change_state=LaneChangeState.preLaneChange if one and self.lca_enabled else LaneChangeState.off
+      self.lane_change_direction=direction
+      self.lane_change_ll_prob=1.;self.aborting=False;self.invalidate()
+    elif cancel or timeout or (in_maneuver and (changed or not one or edge)):
+      self.invalidate()
+      self.aborting=True
+      self.lane_change_state=LaneChangeState.laneChangeFinishing
+      self.lane_change_ll_prob=min(1.,self.lane_change_ll_prob+DT_MDL)
+      if self.lane_change_ll_prob>=1.:
+        self.lane_change_state=LaneChangeState.off;self.lane_change_direction=LaneChangeDirection.none
+    elif self.aborting:
+      self.lane_change_ll_prob=min(1.,self.lane_change_ll_prob+DT_MDL)
+      if self.lane_change_ll_prob>=1.:
+        self.aborting=False;self.lane_change_state=LaneChangeState.preLaneChange if one else LaneChangeState.off
+        self.lane_change_direction=direction
+    elif self.lane_change_state==LaneChangeState.off:
+      if one:
+        self.lane_change_state=LaneChangeState.preLaneChange
+        self.lane_change_direction=direction
+    elif self.lane_change_state==LaneChangeState.preLaneChange:
+      self.lane_change_direction=direction
+      if not one:
+        self.lane_change_state=LaneChangeState.off
+      elif fresh and not changed and not active_edge and not edge:
+        self.token=Confirmation(str(direction),self.epoch,self.time,True)
+        self.lane_change_state=LaneChangeState.laneChangeStarting
+    elif self.lane_change_state==LaneChangeState.laneChangeStarting:
+      self.lane_change_ll_prob=max(0.,self.lane_change_ll_prob-2*DT_MDL)
+      if lane_change_prob<.02 and self.lane_change_ll_prob<.01:
+        self.lane_change_state=LaneChangeState.laneChangeFinishing
+    elif self.lane_change_state==LaneChangeState.laneChangeFinishing:
+      self.lane_change_ll_prob=min(1.,self.lane_change_ll_prob+DT_MDL)
+      if self.lane_change_ll_prob>.99:
+        self.invalidate()
+        self.lane_change_state=LaneChangeState.preLaneChange if one else LaneChangeState.off
+        self.lane_change_direction=direction
+    self.lane_change_timer=self.lane_change_timer+DT_MDL if self.lane_change_state in (LaneChangeState.laneChangeStarting,LaneChangeState.laneChangeFinishing) else 0.
+    self.desire=log.Desire.none
+    if not self.aborting and lateral_active and self.lane_change_state in (LaneChangeState.laneChangeStarting,LaneChangeState.laneChangeFinishing):
+      self.desire=log.Desire.laneChangeLeft if self.lane_change_direction==LaneChangeDirection.left else log.Desire.laneChangeRight
+    self.last_active=lateral_active;self.last_direction=direction;self.last_torque=torque

@@ -223,8 +223,7 @@ def main(demo=False):
   prev_action = log.ModelDataV2.Action()
 
   dp_lat_lca_speed = int(params.get("dp_lat_lca_speed"))
-  dp_lat_lca_auto_sec = float(params.get("dp_lat_lca_auto_sec"))
-  DH = DesireHelper(dp_lat_lca_speed=dp_lat_lca_speed, dp_lat_lca_auto_sec=dp_lat_lca_auto_sec)
+  DH = DesireHelper(dp_lat_lca_speed=dp_lat_lca_speed)
 
   dp_dev_is_rhd = params.get_bool("dp_dev_is_rhd")
   RED = RoadEdgeDetector(params.get_bool("dp_lat_road_edge_detection"))

@@ -290,8 +290,8 @@ class SelfdriveD:
     # Handle lane change
     if self.sm['modelV2'].meta.laneChangeState == LaneChangeState.preLaneChange:
       direction = self.sm['modelV2'].meta.laneChangeDirection
-      if ((CS.leftBlindspot or self.sm['modelExt'].leftEdgeDetected) and direction == LaneChangeDirection.left) or \
-         ((CS.rightBlindspot or self.sm['modelExt'].rightEdgeDetected) and direction == LaneChangeDirection.right):
+      if (self.sm['modelExt'].leftEdgeDetected and direction == LaneChangeDirection.left) or \
+         (self.sm['modelExt'].rightEdgeDetected and direction == LaneChangeDirection.right):
         self.dp_lat_road_edge_detection_cooldown = time.monotonic() + 0.5
         if time.monotonic() <= self.dp_lat_road_edge_detection_cooldown:
           self.events.add(EventName.laneChangeBlocked)
