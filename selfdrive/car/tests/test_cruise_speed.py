@@ -200,3 +200,59 @@ def test_set_rejects_stale_or_missing_speed():
   fresh_cs = car.CarState(vEgo=84 * CV.KPH_TO_MS, vEgoRaw=84 * CV.KPH_TO_MS, canValid=True)
   assert helper.initialize_v_cruise(button_cs, experimental_mode=True, current_CS=fresh_cs)
   assert helper.v_cruise_kph == 84
+
+
+def _hold_cruise_button(helper, button_type, frames, is_metric=True):
+  press = car.CarState(cruiseState={"available": True},
+                       buttonEvents=[ButtonEvent(type=button_type, pressed=True)])
+  held = car.CarState(cruiseState={"available": True})
+  helper.update_v_cruise(press, enabled=True, is_metric=is_metric)
+  for _ in range(frames):
+    helper.update_v_cruise(held, enabled=True, is_metric=is_metric)
+
+
+@pytest.mark.parametrize("start,button_type,expected", [
+  (83, ButtonType.accelCruise, 90),
+  (90, ButtonType.accelCruise, 100),
+  (97, ButtonType.decelCruise, 90),
+])
+def test_metric_long_press_aligns_to_tens(start, button_type, expected):
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  helper.v_cruise_kph = start
+  _hold_cruise_button(helper, button_type, 49)
+  assert helper.v_cruise_kph == start  # no change before the first hold threshold
+  held = car.CarState(cruiseState={"available": True})
+  helper.update_v_cruise(held, enabled=True, is_metric=True)
+  assert helper.v_cruise_kph == expected
+  release = car.CarState(cruiseState={"available": True},
+                         buttonEvents=[ButtonEvent(type=button_type, pressed=False)])
+  helper.update_v_cruise(release, enabled=True, is_metric=True)
+  assert helper.v_cruise_kph == expected  # release must not add a short press
+
+
+def test_metric_hold_repeats_each_existing_interval():
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  helper.v_cruise_kph = 83
+  _hold_cruise_button(helper, ButtonType.accelCruise, 100)
+  assert helper.v_cruise_kph == 100  # 83 -> 90 at frame 50; 90 -> 100 at frame 100
+
+
+@pytest.mark.parametrize("start,button_type,expected", [
+  (83, ButtonType.accelCruise, 84),
+  (97, ButtonType.decelCruise, 96),
+])
+def test_metric_short_press_remains_one_kph(start, button_type, expected):
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  helper.v_cruise_kph = start
+  _hold_cruise_button(helper, button_type, 1)
+  release = car.CarState(cruiseState={"available": True},
+                         buttonEvents=[ButtonEvent(type=button_type, pressed=False)])
+  helper.update_v_cruise(release, enabled=True, is_metric=True)
+  assert helper.v_cruise_kph == expected
+
+
+def test_imperial_long_press_keeps_five_mph_step():
+  helper = VCruiseHelper(car.CarParams(pcmCruise=False))
+  helper.v_cruise_kph = 80
+  _hold_cruise_button(helper, ButtonType.accelCruise, 50, is_metric=False)
+  assert helper.v_cruise_kph == 88
