@@ -4,9 +4,10 @@ from typing import NamedTuple
 import pyray as rl
 import random
 import string
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from cereal import messaging, log, car
 from openpilot.selfdrive.ui.ui_state import ui_state
+from openpilot.selfdrive.ui.onroad.alert_text_translations import translate_alert_text
 from openpilot.common.filter_simple import BounceFilter, FirstOrderFilter
 from openpilot.system.hardware import TICI
 from openpilot.system.ui.lib.application import gui_app, FontWeight
@@ -86,6 +87,11 @@ ALERT_CRITICAL_REBOOT = Alert(
 )
 
 
+def localize_predefined_alert(alert: Alert) -> Alert:
+  # Resolve the active language when displayed; the UI can switch languages after module import.
+  return replace(alert, text1=translate_alert_text(alert.text1), text2=translate_alert_text(alert.text2))
+
+
 class AlertRenderer(Widget):
   def __init__(self):
     super().__init__()
@@ -128,22 +134,22 @@ class AlertRenderer(Widget):
       # 1. Never received selfdriveState since going onroad
       waiting_for_startup = recv_frame < ui_state.started_frame
       if waiting_for_startup and time_since_onroad > 5:
-        return ALERT_STARTUP_PENDING
+        return localize_predefined_alert(ALERT_STARTUP_PENDING)
 
       # 2. Lost communication with selfdriveState after receiving it
       if TICI and not waiting_for_startup:
         ss_missing = time.monotonic() - sm.recv_time['selfdriveState']
         if ss_missing > SELFDRIVE_STATE_TIMEOUT:
           if ss.enabled and (ss_missing - SELFDRIVE_STATE_TIMEOUT) < SELFDRIVE_UNRESPONSIVE_TIMEOUT:
-            return ALERT_CRITICAL_TIMEOUT
-          return ALERT_CRITICAL_REBOOT
+            return localize_predefined_alert(ALERT_CRITICAL_TIMEOUT)
+          return localize_predefined_alert(ALERT_CRITICAL_REBOOT)
 
     # No alert if size is none
     if ss.alertSize == 0:
       return None
 
     # Return current alert
-    ret = Alert(text1=ss.alertText1, text2=ss.alertText2, size=ss.alertSize.raw, status=ss.alertStatus.raw,
+    ret = Alert(text1=translate_alert_text(ss.alertText1), text2=translate_alert_text(ss.alertText2), size=ss.alertSize.raw, status=ss.alertStatus.raw,
                 visual_alert=ss.alertHudVisual, alert_type=ss.alertType)
     self._prev_alert = ret
     return ret
