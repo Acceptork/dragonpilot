@@ -18,6 +18,7 @@ IMPERIAL_INCREMENT = round(CV.MPH_TO_KPH, 1)  # round here to avoid rounding err
 ButtonEvent = car.CarState.ButtonEvent
 ButtonType = car.CarState.ButtonEvent.Type
 CRUISE_LONG_PRESS = 50
+METRIC_LONG_PRESS_INCREMENT = 10.0
 MIN_MOVING_SET_SPEED_KPH = 5.0
 MAX_RECENT_SPEED_FRAMES = 20  # card runs at 100 Hz; at most 0.2 s old
 CRUISE_NEAREST_FUNC = {
@@ -94,7 +95,9 @@ class VCruiseHelper:
         break
     else:
       for k, timer in self.button_timers.items():
-        if timer and timer % CRUISE_LONG_PRESS == 0:
+        # A metric hold changes the set speed once. Retain the existing repeat
+        # interval for imperial cruise buttons.
+        if timer and (timer == CRUISE_LONG_PRESS if is_metric else timer % CRUISE_LONG_PRESS == 0):
           button_type = k
           long_press = True
           break
@@ -111,7 +114,8 @@ class VCruiseHelper:
     if not self.button_change_states[button_type]["enabled"]:
       return
 
-    v_cruise_delta = v_cruise_delta * (5 if long_press else 1)
+    if long_press:
+      v_cruise_delta = METRIC_LONG_PRESS_INCREMENT if is_metric else 5 * IMPERIAL_INCREMENT
     if long_press and self.v_cruise_kph % v_cruise_delta != 0:  # partial interval
       self.v_cruise_kph = CRUISE_NEAREST_FUNC[button_type](self.v_cruise_kph / v_cruise_delta) * v_cruise_delta
     else:
