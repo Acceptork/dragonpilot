@@ -1,0 +1,10 @@
+{
+  "base": "80e190108b86ed3d2fa7634546dc2b1fa88ae69c",
+  "features": [
+    {
+      "feature": "stop",
+      "source_branch": "my-crv-stop-intent-v33-experimental",
+      "source_head": "992fe80bd619c31adbdc416bde27db5f740c7d41"
+    }
+  ]
+}

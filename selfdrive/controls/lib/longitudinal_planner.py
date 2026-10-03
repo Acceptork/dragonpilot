@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import math
+from openpilot.common.params import Params
+from openpilot.selfdrive.controls.lib.early_stop_v33 import EarlyStop, Inputs as EarlyStopInputs
 import numpy as np
 
 import cereal.messaging as messaging
@@ -61,6 +63,10 @@ from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent, emi
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
+    self.v33_stop = EarlyStop()
+    self.v33_params = Params()
+    self.v33_log_frame = 0
+    self.v33_last_reason = None
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
     self.overshoot_event = OvershootEvent()
@@ -237,6 +243,36 @@ class LongitudinalPlanner:
     if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
       self.diagnostic_trace['event_type']='OVERSHOOT_EVENT'
       cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
+    # Experimental intervention occurs after the baseline target and trace inputs.
+    # A disabled switch is exact identity; no shouldStop, FCW or solver state writes.
+    velocities = sm['modelV2'].velocity.x
+    enabled_stop = self.v33_params.get_bool('dp_exp_early_stop')
+    valid_stop = (hasattr(sm, 'valid') and sm.valid['modelV2'] and sm.valid['carState']
+                  and len(velocities) == ModelConstants.IDX_N)
+    stop_row = self.v33_stop.update(EarlyStopInputs(
+      t=trace_time, v0=float(velocities[0]) if len(velocities) else 0.,
+      endpoint=float(velocities[-1]) if len(velocities) else 0.,
+      desired=float(output_a_target_e2e), base=float(self.output_a_target),
+      experimental=mode == 'blended', valid=bool(valid_stop), engaged=not reset_state,
+      should_stop=bool(self.output_should_stop), mpc_stop=bool(output_should_stop_mpc),
+      standstill=bool(sm['carState'].standstill),
+      driver_override=bool(sm['carState'].brakePressed or sm['carState'].gasPressed),
+      fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
+      lead_present=bool(lead_present)), enabled_stop)
+    self.output_a_target = max(float(accel_clip[0]), stop_row['after'])
+    stop_row.update(feature='early_stop', enabled=enabled_stop, t=trace_time,
+      vEgo=float(v_ego), vCruise=float(v_cruise_kph),
+      aTarget_before=stop_row['before'], aTarget_after=float(self.output_a_target),
+      lead=self.diagnostic_trace['lead1'], stop_intent=bool(self.output_should_stop),
+      FCW=bool(self.fcw), personality=str(personality), pitch=pitch,
+      lateral_state=self.diagnostic_trace['lane_change_state'])
+    self.diagnostic_trace.setdefault('experiments', {})['stop'] = stop_row
+    self.diagnostic_trace['post_clip'] = float(self.output_a_target)
+    self.v33_log_frame += 1
+    transition = (enabled_stop, stop_row['state'], stop_row['reason'])
+    if transition != self.v33_last_reason or (enabled_stop and self.v33_log_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', **stop_row)
+    self.v33_last_reason = transition
     emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):
