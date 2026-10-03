@@ -40,6 +40,11 @@
       "feature": "eps",
       "source_branch": "my-crv-eps-cap-v33-shadow",
       "source_head": "435565ee144931eed43804b932beb3ade4a22ef9"
+    },
+    {
+      "feature": "lca",
+      "source_branch": "my-crv-lca-v33-experimental",
+      "source_head": "bddb3dac462c481873ec7ecd14bb115f45a47c0c"
     }
   ]
 }
