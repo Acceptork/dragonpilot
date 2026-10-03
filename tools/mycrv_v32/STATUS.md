@@ -1,3 +1,5 @@
-# SET30 v3.2 candidate
+# RESEARCH / NOT_FOR_DEPLOYMENT
 
-NOT_FOR_DEPLOYMENT. Independent candidate; gates pending. Based on c791595.
+READY_FOR_INTEGRATION_REVIEW: target-aware native gate passed.
+
+See [README](README.md) for tested commit and scope.
