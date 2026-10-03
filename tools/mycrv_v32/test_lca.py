@@ -34,7 +34,7 @@ def test_invalidation(case):
   if case=='timeout':h.lane_change_timer=11
   h.update(c,case!='inactive',1.,False,False,cancel=case=='cancel')
   assert h.token is None
-  assert str(h.desire)=='none'
+  assert h.desire == 0
 
 def test_completion_requires_release_then_new_torque():
   h=DesireHelper();h.update(cs(),True,1.,False,False);h.update(cs(torque=1),True,1.,False,False)

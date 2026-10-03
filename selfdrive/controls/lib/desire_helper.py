@@ -53,7 +53,7 @@ class DesireHelper:
       self.lane_change_state=LaneChangeState.preLaneChange if one and self.lca_enabled else LaneChangeState.off
       self.lane_change_direction=direction
       self.lane_change_ll_prob=1.;self.aborting=False;self.invalidate()
-    elif cancel or timeout or (in_maneuver and (changed or not one or edge)):
+    elif cancel or timeout or (in_maneuver and (changed or not one or edge or (carstate.steeringPressed and not torque))):
       self.invalidate()
       self.aborting=True
       self.lane_change_state=LaneChangeState.laneChangeFinishing
@@ -74,7 +74,7 @@ class DesireHelper:
       if not one:
         self.lane_change_state=LaneChangeState.off
       elif fresh and not changed and not active_edge and not edge:
-        self.token=Confirmation(str(direction),self.epoch,self.time,True)
+        self.token=Confirmation("left" if direction==LaneChangeDirection.left else "right",self.epoch,self.time,True)
         self.lane_change_state=LaneChangeState.laneChangeStarting
     elif self.lane_change_state==LaneChangeState.laneChangeStarting:
       self.lane_change_ll_prob=max(0.,self.lane_change_ll_prob-2*DT_MDL)
