@@ -81,7 +81,7 @@ def test_critical_and_requested_alerts_translate_at_runtime(traditional_chinese,
 
 
 def test_dynamic_alert_is_not_guessed_or_rewritten(traditional_chinese):
-  text = "Speed Error: 1.2 m/s"
+  text = "Speed Error: 1.23 m/s"
   assert translate_alert_text(text) == text
 
 
