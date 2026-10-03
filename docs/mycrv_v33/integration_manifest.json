@@ -15,6 +15,11 @@
       "feature": "ramp",
       "source_branch": "my-crv-ramp-recovery-v33-experimental",
       "source_head": "9b64f1d0247a61ad946d52c9c2e6b31d5ebc160b"
+    },
+    {
+      "feature": "personality",
+      "source_branch": "my-crv-personality-v33-experimental",
+      "source_head": "bf9db122f6e05f5405475e2b840bf4fcfd5a368f"
     }
   ]
 }

@@ -6,6 +6,8 @@ from openpilot.common.params import Params
 from openpilot.selfdrive.controls.lib.restart_v33 import AutoRestart
 from openpilot.common.params import Params
 from openpilot.selfdrive.controls.lib.ramp_v33 import RampRecovery
+from openpilot.common.params import Params
+from openpilot.selfdrive.controls.lib.personality_v33 import CruiseRecovery
 import numpy as np
 
 import cereal.messaging as messaging
@@ -79,6 +81,10 @@ class LongitudinalPlanner:
     self.v33_params = Params()
     self.v33_ramp_frame = 0
     self.v33_ramp_previous = None
+    self.v33_personality = CruiseRecovery()
+    self.v33_params = Params()
+    self.v33_personality_frame = 0
+    self.v33_personality_previous = None
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
     self.overshoot_event = OvershootEvent()
@@ -345,6 +351,33 @@ class LongitudinalPlanner:
     if transition != self.v33_ramp_previous or (enabled_ramp and self.v33_ramp_frame % 10 == 0):
       cloudlog.event('MYCRV_EXPERIMENTAL', **ramp_row)
     self.v33_ramp_previous = transition
+    enabled_personality = self.v33_params.get_bool('dp_exp_personality')
+    valid_personality = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState', 'carControl')))
+    personality_path = list(sm['modelV2'].position.x) + list(sm['modelV2'].position.y)
+    valid_personality = valid_personality and len(personality_path) == ModelConstants.IDX_N * 2 and all(math.isfinite(x) for x in personality_path)
+    personality_name = {0: 'aggressive', 1: 'standard', 2: 'relaxed'}.get(personality.raw if hasattr(personality, 'raw') else int(personality), 'standard')
+    personality_row = self.v33_personality.update(t=trace_time, enabled=enabled_personality,
+      personality=personality_name, base=float(self.output_a_target), raw_mpc=float(output_a_target_mpc),
+      cruise_cap=float(get_max_accel(v_ego)), turn_cap=self.diagnostic_trace['turn_max'], physical_cap=float(ACCEL_MAX),
+      valid=bool(valid_personality and grade_age is not None and 0 <= grade_age <= .2 and grade_allows_override(sm['carControl'].orientationNED)),
+      active=not reset_state, mode=mode, lead=bool(lead_present),
+      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
+      fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
+      model_accel=float(output_a_target_e2e), override=bool(sm['carState'].brakePressed or sm['carState'].gasPressed or force_slow_decel),
+      allow_throttle=bool(self.allow_throttle and model_allows), gap=float(v_cruise - v_ego))
+    self.output_a_target = personality_row['after']
+    personality_row.update(feature='personality', t=trace_time, enabled=enabled_personality,
+      vEgo=float(v_ego), vCruise=float(v_cruise_kph), aTarget_before=personality_row['before'],
+      aTarget_after=personality_row['after'], lead=self.diagnostic_trace['lead1'],
+      stop_intent=bool(self.output_should_stop), FCW=bool(self.fcw), pitch=pitch,
+      lateral_state=self.diagnostic_trace['lane_change_state'])
+    self.diagnostic_trace.setdefault('experiments', {})['personality'] = personality_row
+    self.diagnostic_trace['post_clip'] = float(self.output_a_target)
+    self.v33_personality_frame += 1
+    transition = (enabled_personality, personality_row['active'], personality_row['reason'])
+    if transition != self.v33_personality_previous or (enabled_personality and self.v33_personality_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', **personality_row)
+    self.v33_personality_previous = transition
     emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):
