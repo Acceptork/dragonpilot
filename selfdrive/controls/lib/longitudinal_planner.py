@@ -56,11 +56,15 @@ def limit_accel_in_turns(v_ego, angle_steers, a_target, CP):
   return [a_target[0], min(a_target[1], a_x_allowed)]
 
 
+from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent, emit_trace
+
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
+    self.overshoot_event = OvershootEvent()
+    self.diagnostic_trace = {}
     self.dt = dt
     self.allow_throttle = True
     self.throttle_gate = ThrottleGate()
@@ -202,10 +206,33 @@ class LongitudinalPlanner:
       output_a_target = output_a_target_mpc
       self.output_should_stop = output_should_stop_mpc
 
+    previous_clip = list(self.prev_accel_clip)
     for idx in range(2):
       accel_clip[idx] = np.clip(accel_clip[idx], self.prev_accel_clip[idx] - 0.05, self.prev_accel_clip[idx] + 0.05)
     self.output_a_target = np.clip(output_a_target, accel_clip[0], accel_clip[1])
     self.prev_accel_clip = accel_clip
+    trace_time = sm.logMonoTime['modelV2'] / 1e9 if hasattr(sm, 'logMonoTime') else 0.
+    pitch = sm['carControl'].orientationNED[1] if len(sm['carControl'].orientationNED)==3 else None
+    grade_age = ((sm.logMonoTime['modelV2']-sm.logMonoTime['carControl'])/1e9
+                 if hasattr(sm, 'logMonoTime') else None)
+    throttle_reason = ('model_allows' if model_allows else 'recovery_override' if self.throttle_gate.override_active
+                       else 'coast_gate')
+    self.diagnostic_trace = dict(t=trace_time, e2e=output_a_target_e2e, mpc=output_a_target_mpc,
+      selected_source=str(self.mpc.source), pre_clip=float(output_a_target), post_clip=float(self.output_a_target),
+      prev_accel_clip=previous_clip, accel_limits=list(accel_clip), cruise_max=float(get_max_accel(v_ego)),
+      turn_max=float(limit_accel_in_turns(v_ego,steer_angle_without_offset,[ACCEL_MIN,get_max_accel(v_ego)],self.CP)[1]),
+      throttle_reason=throttle_reason, allowThrottle=self.allow_throttle, gasPressProb=float(throttle_prob),
+      model_allows=model_allows, override_active=self.throttle_gate.override_active,
+      model_safe_to_override=model_safe_to_override, grade_allows=grade_allows_override(sm['carControl'].orientationNED),
+      pitch=pitch, grade_age_s=grade_age, grade_fresh=grade_age is not None and 0<=grade_age<=0.2,
+      cruise_gap=float(v_cruise-v_ego), vCruise=float(v_cruise_kph), vEgo=float(v_ego), aEgo=float(sm['carState'].aEgo),
+      lead1=sm['radarState'].leadOne.to_dict(), lead2=sm['radarState'].leadTwo.to_dict(),
+      mode=mode, personality=str(personality), shouldStop=self.output_should_stop, fcw=self.fcw,
+      reset=reset_state, a_desired=float(self.a_desired), solver_status=int(self.mpc.solution_status))
+    if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
+      self.diagnostic_trace['event']='OVERSHOOT_EVENT'
+      cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
+    emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):
     plan_send = messaging.new_message('longitudinalPlan')
