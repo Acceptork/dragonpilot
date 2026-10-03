@@ -5,6 +5,7 @@ literals below; tr() is called only when either onroad UI displays text.
 """
 
 from openpilot.system.ui.lib.multilang import tr, tr_noop
+from openpilot.selfdrive.ui.onroad.dynamic_alert_text_translations import translate_dynamic_alert_text
 
 
 ALERT_TEXT_MSGIDS = frozenset((
@@ -150,4 +151,5 @@ ALERT_TEXT_MSGIDS = frozenset((
 
 
 def translate_alert_text(text: str) -> str:
-  return tr(text)
+  translated = tr(text)
+  return translated if translated != text else translate_dynamic_alert_text(text)
