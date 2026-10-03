@@ -56,11 +56,14 @@ def limit_accel_in_turns(v_ego, angle_steers, a_target, CP):
   return [a_target[0], min(a_target[1], a_x_allowed)]
 
 
+from openpilot.selfdrive.controls.lib.free_cruise_v32 import FreeCruiseRecovery
+
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
+    self.free_cruise_recovery = FreeCruiseRecovery()
     self.dt = dt
     self.allow_throttle = True
     self.throttle_gate = ThrottleGate()
@@ -201,6 +204,17 @@ class LongitudinalPlanner:
     else:
       output_a_target = output_a_target_mpc
       self.output_should_stop = output_should_stop_mpc
+
+    recovery_valid = (sm.all_checks(['carState', 'modelV2', 'radarState', 'selfdriveState'])
+                      if hasattr(sm, 'all_checks') else True)
+    recovery_eligible = (recovery_valid and mode == 'acc' and not reset_state and not force_slow_decel
+                         and not lead_present and not self.output_should_stop and not output_should_stop_e2e
+                         and not self.fcw and not sm['modelV2'].meta.hardBrakePredicted
+                         and not sm['carState'].brakePressed and not sm['carState'].gasPressed
+                         and output_a_target_e2e >= 0 and self.allow_throttle
+                         and grade_allows_override(sm['carControl'].orientationNED))
+    output_a_target = self.free_cruise_recovery.update(output_a_target, accel_clip[1],
+                                                      v_cruise-v_ego, personality, recovery_eligible, self.dt)
 
     for idx in range(2):
       accel_clip[idx] = np.clip(accel_clip[idx], self.prev_accel_clip[idx] - 0.05, self.prev_accel_clip[idx] + 0.05)
