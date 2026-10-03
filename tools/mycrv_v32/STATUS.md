@@ -1,3 +1,5 @@
-# Buttons10 v3.2 candidate
+# RESEARCH / NOT_FOR_DEPLOYMENT
 
-NOT_FOR_DEPLOYMENT. Metric one-shot next 10 km/h grid; native and replay gates pending.
+READY_FOR_INTEGRATION_REVIEW: one-shot metric grid and history ablation passed.
+
+See [README](README.md) for tested commit and scope.
