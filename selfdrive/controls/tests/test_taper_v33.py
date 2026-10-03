@@ -45,3 +45,41 @@ def test_danger_braking_never_weakened():
     x = ctx()
     x.update(speed=speed, danger=True, base=-3.)
     assert s.update(**x)['after'] <= -3.
+
+
+@pytest.mark.parametrize('veto', ['stop','grade_fresh'])
+def test_existing_extra_brake_releases_with_bounded_slew(veto):
+  s=StopTaper();x=ctx()
+  for _ in range(40):s.update(**x)
+  before=s.command
+  x[veto]=False;x['base']=.1
+  for _ in range(20):
+    r=s.update(**x)
+    assert r['after']<=x['base']
+    assert r['after']-before<=s.jerk*x['dt']+1e-12
+    before=r['after']
+  assert r['after']==x['base'] and not s.extra_active
+
+
+def test_no_extra_brake_does_not_smooth_baseline_recovery():
+  s=StopTaper();x=ctx();x['stop']=False
+  assert s.update(**x)['after']==-.5
+  x['base']=.2
+  assert s.update(**x)['after']==.2
+
+
+@pytest.mark.parametrize('field', ['enabled','active','driver_override'])
+def test_release_never_delays_driver_or_authority_handoff(field):
+  s=StopTaper();x=ctx()
+  for _ in range(40):s.update(**x)
+  x[field]=True if field=='driver_override' else False
+  x['base']=.1
+  assert s.update(**x)['after']==.1
+  assert not s.extra_active
+
+
+def test_release_immediately_accepts_stronger_baseline_braking():
+  s=StopTaper();x=ctx()
+  for _ in range(40):s.update(**x)
+  x.update(stop=False,base=-3.)
+  assert s.update(**x)['after']==-3.
