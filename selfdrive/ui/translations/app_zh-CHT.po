@@ -2396,3 +2396,21 @@ msgstr "駕駛攝影機"
 #: selfdrive/ui/onroad/dynamic_alert_text_translations.py
 msgid "wideRoadCamera"
 msgstr "廣角道路攝影機"
+
+msgid "Unable to verify remote branch. Current version and target were preserved."
+msgstr "無法驗證遠端分支。已保留目前版本與原目標分支。"
+
+msgid "Checking remote branches..."
+msgstr "正在取得遠端分支清單…"
+
+msgid "Verified {} ({}). Pending normal updater download and installation."
+msgstr "已驗證 {}（{}）。等待更新程式正常下載與安裝。"
+
+msgid "{} (current)"
+msgstr "{}（目前分支）"
+
+msgid "Current branch: {}"
+msgstr "目前分支：{}"
+
+msgid "Validating and fetching the selected branch..."
+msgstr "正在驗證並擷取所選分支…"

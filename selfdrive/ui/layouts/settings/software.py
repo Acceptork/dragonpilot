@@ -1,4 +1,7 @@
 import os
+from concurrent.futures import ThreadPoolExecutor
+from openpilot.common.basedir import BASEDIR
+from openpilot.system.updated.remote_branches import RemoteBranches, selection_labels
 import time
 import datetime
 from openpilot.common.time_helpers import system_time_valid
@@ -69,6 +72,11 @@ class SoftwareLayout(Widget):
     self._branch_btn.set_visible(not ui_state.params.get_bool("IsTestedBranch"))
     self._branch_btn.action_item.set_value(ui_state.params.get("UpdaterTargetBranch") or "")
     self._branch_dialog: MultiOptionDialog | None = None
+    self._branch_remote = RemoteBranches(BASEDIR)
+    self._branch_executor = ThreadPoolExecutor(max_workers=1)
+    self._branch_future = None
+    self._branch_operation = None
+    self._branch_labels = {}
 
     self._scroller = Scroller([
       self._onroad_label,
@@ -87,6 +95,7 @@ class SoftwareLayout(Widget):
     self._scroller.render(rect)
 
   def _update_state(self):
+    self._finish_branch_job()
     # Show/hide onroad warning
     self._onroad_label.set_visible(ui_state.is_onroad())
 
@@ -138,6 +147,8 @@ class SoftwareLayout(Widget):
     current_branch = ui_state.params.get("UpdaterTargetBranch") or ""
     self._branch_btn.action_item.set_value(current_branch)
 
+    self._branch_btn.action_item.set_enabled(ui_state.is_offroad() and self._branch_future is None and updater_state == "idle")
+
     # Update install button
     self._install_btn.set_visible(ui_state.is_offroad() and update_available)
     if update_available:
@@ -178,27 +189,52 @@ class SoftwareLayout(Widget):
     self._install_btn.action_item.set_enabled(False)
     ui_state.params.put_bool("DoReboot", True, block=True)
 
+  def _branch_error(self):
+    self._branch_btn.set_description(tr("Unable to verify remote branch. Current version and target were preserved."))
+
   def _on_select_branch(self):
-    # Get available branches and order
-    current_git_branch = ui_state.params.get("GitBranch") or ""
-    branches_str = ui_state.params.get("UpdaterAvailableBranches") or ""
-    branches = [b for b in branches_str.split(",") if b]
+    if not ui_state.is_offroad() or self._branch_future is not None:
+      return
+    self._branch_btn.set_description(tr("Checking remote branches..."))
+    self._branch_operation = "list"
+    self._branch_future = self._branch_executor.submit(self._branch_remote.list)
 
-    for b in [current_git_branch, "devel-staging", "devel", "nightly", "nightly-dev", "master"]:
-      if b in branches:
-        branches.remove(b)
-        branches.insert(0, b)
-
-    current_target = ui_state.params.get("UpdaterTargetBranch") or ""
-
-    def handle_selection(result: DialogResult):
-      # Confirmed selection
-      if result == DialogResult.CONFIRM and self._branch_dialog is not None and self._branch_dialog.selection:
-        selection = self._branch_dialog.selection
-        ui_state.params.put("UpdaterTargetBranch", selection, block=True)
-        self._branch_btn.action_item.set_value(selection)
+  def _finish_branch_job(self):
+    if self._branch_future is None or not self._branch_future.done():
+      return
+    future, operation = self._branch_future, self._branch_operation
+    self._branch_future = None
+    try:
+      result = future.result()
+      if not ui_state.is_offroad() or (ui_state.params.get("UpdaterState") or "idle") != "idle":
+        self._branch_error()
+        return
+      if operation == "select":
+        branch, sha = result
+        ui_state.params.put("UpdaterTargetBranch", branch, block=True)
+        self._branch_btn.set_description(tr("Verified {} ({}). Pending normal updater download and installation.").format(branch, sha[:12]))
         os.system("pkill -SIGUSR1 -f system.updated.updated")
-      self._branch_dialog = None
+        return
+      current = ui_state.params.get("GitBranch") or ""
+      self._branch_labels = selection_labels(result, current, lambda b: tr("{} (current)").format(b))
+      target = ui_state.params.get("UpdaterTargetBranch") or current
+      target_label = next((label for label, branch in self._branch_labels.items() if branch == target), "")
+      self._branch_btn.set_description(tr("Current branch: {}").format(current))
+      self._branch_dialog = MultiOptionDialog(tr("Select a branch"), list(self._branch_labels), target_label,
+                                             callback=self._handle_branch_selection)
+      gui_app.push_widget(self._branch_dialog)
+    except Exception:
+      self._branch_error()
 
-    self._branch_dialog = MultiOptionDialog(tr("Select a branch"), branches, current_target, callback=handle_selection)
-    gui_app.push_widget(self._branch_dialog)
+  def _handle_branch_selection(self, result: DialogResult):
+    dialog = self._branch_dialog
+    self._branch_dialog = None
+    if result != DialogResult.CONFIRM or dialog is None or not ui_state.is_offroad() or self._branch_future is not None:
+      return
+    branch = self._branch_labels.get(dialog.selection)
+    if branch is None:
+      self._branch_error()
+      return
+    self._branch_btn.set_description(tr("Validating and fetching the selected branch..."))
+    self._branch_operation = "select"
+    self._branch_future = self._branch_executor.submit(self._branch_remote.verify_fetch, branch)

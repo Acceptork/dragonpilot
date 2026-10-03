@@ -13,6 +13,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from openpilot.common.basedir import BASEDIR
+from openpilot.system.updated.remote_branches import parse_remote_heads
 from openpilot.common.params import Params
 from openpilot.common.time_helpers import system_time_valid
 from openpilot.common.markdown import parse_markdown
@@ -358,17 +359,8 @@ class Updater:
 
     self.branches = defaultdict(lambda: None)
     target_branch = self.target_branch
-    for line in output.splitlines():
-      ls_remotes_re = r'(?P<commit_sha>\b[0-9a-f]{5,40}\b)(\s+)(refs\/heads\/)(?P<branch_name>.*$)'
-      x = re.fullmatch(ls_remotes_re, line.strip())
-      if x is None:
-        continue
-
-      name = x.group('branch_name')
-      # Keep the selected custom branch if it exists on origin, alongside supported release branches.
-      m = re.match(r'^(\d+)\.(\d+)\.(\d+)', name)
-      if name == target_branch or name in ('testing', 'pre-build', 'my-crv') or (m and tuple(map(int, m.groups())) >= (0, 9, 8)):
-        self.branches[name] = x.group('commit_sha')
+    # All actual remote heads are selectable; archive/failed tags never enter this list.
+    self.branches.update(parse_remote_heads(output))
 
     cur_branch = self.get_branch(OVERLAY_MERGED)
     cur_commit = self.get_commit_hash(OVERLAY_MERGED)
