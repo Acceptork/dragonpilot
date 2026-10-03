@@ -10,6 +10,11 @@
       "feature": "restart",
       "source_branch": "my-crv-auto-restart-v33-experimental",
       "source_head": "42bc09f4b7b9d551100f13652fefbb716943e401"
+    },
+    {
+      "feature": "ramp",
+      "source_branch": "my-crv-ramp-recovery-v33-experimental",
+      "source_head": "9b64f1d0247a61ad946d52c9c2e6b31d5ebc160b"
     }
   ]
 }

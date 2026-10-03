@@ -1,0 +1,1 @@
+ITEMS = [{'key': 'dp_exp_ramp', 'type': 'toggle_item', 'title': '匝道追速實驗', 'description': '預設關閉，僅供可控場地。上坡且模型正加速度偏小時有限追速；前車接近、停止或危險訊號立即禁止。', 'category': 'Longitudinal', 'flags': 'PERSISTENT', 'param_type': 'BOOL', 'default': '0'}]
