@@ -36,6 +36,7 @@ class VCruiseHelper:
     self.v_cruise_kph = V_CRUISE_UNSET
     self.v_cruise_cluster_kph = V_CRUISE_UNSET
     self.v_cruise_kph_last = 0
+    self.last_valid_set_speed_kph = 0
     self.button_timers = {ButtonType.decelCruise: 0, ButtonType.accelCruise: 0}
     self.button_change_states = {btn: {"standstill": False, "enabled": False} for btn in self.button_timers}
     self.speed_frame = 0
@@ -59,6 +60,13 @@ class VCruiseHelper:
     if CS.cruiseState.available:
       if not self.CP.pcmCruise:
         # if stock cruise is completely disabled, then we can use our own set speed logic
+        # MAIN can temporarily hide the set speed. Restore it only on an explicit
+        # RESUME press, before selfdrived checks whether RESUME is allowed.
+        resume_released = any(not b.pressed and b.type in (ButtonType.accelCruise, ButtonType.resumeCruise)
+                              for b in CS.buttonEvents)
+        if (self.v_cruise_kph == V_CRUISE_UNSET and resume_released and
+            V_CRUISE_MIN <= self.last_valid_set_speed_kph <= V_CRUISE_MAX):
+          self.v_cruise_kph = self.last_valid_set_speed_kph
         self._update_v_cruise_non_pcm(CS, enabled, is_metric)
         self.v_cruise_cluster_kph = self.v_cruise_kph
         self.update_button_timers(CS, enabled)
@@ -74,6 +82,8 @@ class VCruiseHelper:
     else:
       self.v_cruise_kph = V_CRUISE_UNSET
       self.v_cruise_cluster_kph = V_CRUISE_UNSET
+    if not self.CP.pcmCruise and V_CRUISE_MIN <= self.v_cruise_kph <= V_CRUISE_MAX:
+      self.last_valid_set_speed_kph = self.v_cruise_kph
 
   def _update_v_cruise_non_pcm(self, CS, enabled, is_metric):
     # handle button presses. TODO: this should be in state_control, but a decelCruise press
@@ -142,9 +152,10 @@ class VCruiseHelper:
 
     initial = V_CRUISE_INITIAL_EXPERIMENTAL_MODE if experimental_mode else V_CRUISE_INITIAL
 
+    resume_speed = self.last_valid_set_speed_kph if V_CRUISE_MIN <= self.last_valid_set_speed_kph <= V_CRUISE_MAX else self.v_cruise_kph_last
     if (any(b.type in (ButtonType.accelCruise, ButtonType.resumeCruise) for b in CS.buttonEvents) and
-        V_CRUISE_MIN <= self.v_cruise_kph_last <= V_CRUISE_MAX):
-      self.v_cruise_kph = self.v_cruise_kph_last
+        V_CRUISE_MIN <= resume_speed <= V_CRUISE_MAX):
+      self.v_cruise_kph = resume_speed
     else:
       speed_state = current_CS if current_CS is not None else CS
       speed_kph = speed_state.vEgo * CV.MS_TO_KPH
@@ -166,4 +177,5 @@ class VCruiseHelper:
         return False  # wait for a valid speed rather than guessing the initial set speed
 
     self.v_cruise_cluster_kph = self.v_cruise_kph
+    self.last_valid_set_speed_kph = self.v_cruise_kph
     return True
