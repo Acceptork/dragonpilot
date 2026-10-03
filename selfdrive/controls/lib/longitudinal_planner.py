@@ -98,6 +98,8 @@ class LongitudinalPlanner:
     self.v33_memory_mpc = None
     self.v33_params = Params()
     self.v33_memory_frame = 0
+    self.v33_memory_control_active = False
+    self.v33_memory_enter_time = self.v33_memory_exit_time = None
     self.v33_memory_previous = None
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
@@ -486,6 +488,16 @@ class LongitudinalPlanner:
     memory_row['predicted_dRel'] = (float(memory_prior['d'] + (memory_prior['v_abs'] - v_ego) *
       (trace_time - memory_prior['t'])) if memory_prior is not None else self.v33_memory.unknown_bound)
     memory_row['conservative_dRel'] = float(memory_payload['d']) if memory_payload is not None else None
+    memory_control_active = bool(enabled_memory and not reset_state and valid_memory and
+      (memory_row['active'] or memory_row['unknown']))
+    if memory_control_active != self.v33_memory_control_active:
+      if memory_control_active:
+        self.v33_memory_enter_time = trace_time
+      else:
+        self.v33_memory_exit_time = trace_time
+    self.v33_memory_control_active = memory_control_active
+    memory_row.update(control_active=memory_control_active,
+      enter_time=self.v33_memory_enter_time, exit_time=self.v33_memory_exit_time)
     memory_row.update(feature='lead_memory', t=trace_time, enabled=enabled_memory,
       shadow=not enabled_memory, vEgo=float(v_ego), vCruise=float(v_cruise_kph),
       aTarget_before=before_memory, aTarget_after=float(self.output_a_target), lead=self.diagnostic_trace['lead1'],
