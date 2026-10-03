@@ -2,6 +2,7 @@
 import math
 from openpilot.common.params import Params
 from openpilot.selfdrive.controls.lib.lead_memory_v33 import LeadMemory
+from openpilot.selfdrive.controls.lib.memory_release_v33 import MemoryRelease
 import numpy as np
 
 import cereal.messaging as messaging
@@ -64,6 +65,7 @@ class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
     self.v33_memory = LeadMemory()
+    self.v33_memory_release = MemoryRelease()
     self.v33_memory_mpc = None
     self.v33_params = Params()
     self.v33_frame = 0
@@ -295,6 +297,14 @@ class LongitudinalPlanner:
         self.output_a_target = min(0., self.output_a_target)
     else:
       self.v33_memory_mpc = None
+    # A recovered lead must not instantly release the previous conservative target.
+    # Stronger baseline/memory braking remains immediate; OFF and takeover clear history.
+    memory_release = self.v33_memory_release.update(t=trace_time,
+      baseline=before_memory, constrained=float(self.output_a_target),
+      enabled=enabled_memory, authority=bool(not reset_state and valid_memory),
+      driver_override=bool(sm['carState'].gasPressed or sm['carState'].brakePressed))
+    self.output_a_target = memory_release['after']
+    memory_row.update(memory_release)
     memory_row.pop('memory', None)
     memory_row.update(feature='lead_memory', t=trace_time, enabled=enabled_memory,
       shadow=not enabled_memory, vEgo=float(v_ego), vCruise=float(v_cruise_kph),
