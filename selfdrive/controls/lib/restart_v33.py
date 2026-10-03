@@ -1,9 +1,11 @@
 """Opt-in restart interlock. Releases only existing controller authority."""
 import math
+from openpilot.selfdrive.controls.lib.restart_motion_window_v33 import RestartMotionWindow
 
 
 class AutoRestart:
   def __init__(self, persistence=.8, displacement=.3):
+    self.motion_window = RestartMotionWindow()
     self.persistence = persistence
     self.displacement = displacement
     self.state = 'IDLE'
@@ -23,11 +25,11 @@ class AutoRestart:
       and abs(lead['d'] - (self.previous['d'] + self.previous['vr'] * dt)) < .5
       and abs(lead['vr'] - self.previous['vr']) < 1.
       and abs(lead['y'] - self.previous['y']) < .3)
-    motion = (continuous and lead['vr'] > .15 and lead['vr'] < 4.
-              and lead['d'] > self.previous['d'] + .003)
+    motion = self.motion_window.update(t, lead, continuous)
     self.previous = {**lead, 't': t} if reliable else None
     reason = 'disabled_or_not_holding'
     if not enabled or not active or driver_brake:
+      self.motion_window.clear()
       self.state = 'IDLE'
       self.since = self.origin = None
     else:
@@ -41,6 +43,7 @@ class AutoRestart:
         veto = (base_stop or fcw or hard_brake or not path_valid or not reliable or new_closer
                 or (self.state == 'RELEASE_ALLOWED' and lead['vr'] + speed <= .15))
         if veto or not continuous:
+          self.motion_window.clear()
           self.state = 'HOLD'
           self.since = None
           self.origin = lead['d'] if reliable else None
@@ -71,3 +74,4 @@ class AutoRestart:
     return dict(state=self.state, active=bool(hold), should_stop=bool(base_stop or hold),
       reason=reason, enter_time=self.enter_time, exit_time=self.exit_time,
       association='geometry_velocity_continuity_not_raw_lead_index')
+
