@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import math
+from cereal import log
+from openpilot.common.params import Params
+from openpilot.selfdrive.controls.lib.overtake_v33 import OvertakePreaccel
 import numpy as np
 
 import cereal.messaging as messaging
@@ -61,6 +64,10 @@ from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent, emi
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
+    self.v33_overtake = OvertakePreaccel()
+    self.v33_params = Params()
+    self.v33_frame = 0
+    self.v33_previous = None
     self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
     self.overshoot_event = OvershootEvent()
@@ -237,6 +244,34 @@ class LongitudinalPlanner:
     if self.overshoot_event.update(trace_time,v_ego*3.6,v_cruise_kph,not reset_state):
       self.diagnostic_trace['event_type']='OVERSHOOT_EVENT'
       cloudlog.event('OVERSHOOT_EVENT', **self.diagnostic_trace)
+    enabled_overtake = self.v33_params.get_bool('dp_exp_overtake')
+    cs = sm['carState']
+    direction = ('left' if cs.leftBlinker else 'right') if cs.leftBlinker != cs.rightBlinker else 'none'
+    torque = bool(cs.steeringPressed and ((direction == 'left' and cs.steeringTorque > 0) or (direction == 'right' and cs.steeringTorque < 0)))
+    valid_overtake = (hasattr(sm, 'valid') and all(sm.valid[k] for k in ('modelV2', 'radarState', 'carState', 'carControl')))
+    overtake_row = self.v33_overtake.update(t=trace_time, enabled=enabled_overtake,
+      direction=direction, torque=torque, lat_active=bool(sm['carControl'].latActive),
+      long_active=bool(sm['carControl'].longActive and not reset_state),
+      starting=sm['modelV2'].meta.laneChangeState == log.LaneChangeState.laneChangeStarting,
+      base=float(self.output_a_target), mpc=float(output_a_target_mpc), e2e=float(output_a_target_e2e),
+      cap=float(accel_clip[1]), gap=float(v_cruise - v_ego),
+      envelope_ok=bool(valid_overtake and path_clear and self.allow_throttle and lead_present),
+      stop=bool(self.output_should_stop or output_should_stop_e2e or output_should_stop_mpc),
+      fcw=bool(self.fcw), hard_brake=bool(sm['modelV2'].meta.hardBrakePredicted),
+      override=bool(cs.brakePressed or cs.gasPressed or force_slow_decel))
+    self.output_a_target = overtake_row['after']
+    overtake_row.update(feature='overtake', t=trace_time, enabled=enabled_overtake,
+      vEgo=float(v_ego), vCruise=float(v_cruise_kph), aTarget_before=overtake_row['before'],
+      aTarget_after=overtake_row['after'], lead=self.diagnostic_trace['lead1'],
+      lead2=self.diagnostic_trace['lead2'], stop_intent=bool(self.output_should_stop), FCW=bool(self.fcw),
+      personality=str(personality), pitch=pitch, lateral_state=self.diagnostic_trace['lane_change_state'])
+    self.diagnostic_trace['experimental'] = overtake_row
+    self.diagnostic_trace['post_clip'] = float(self.output_a_target)
+    self.v33_frame += 1
+    transition = (enabled_overtake, overtake_row['stage'], overtake_row['reason'])
+    if transition != self.v33_previous or (enabled_overtake and self.v33_frame % 10 == 0):
+      cloudlog.event('MYCRV_EXPERIMENTAL', **overtake_row)
+    self.v33_previous = transition
     emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):
