@@ -41,6 +41,9 @@ def test_actual_native_messages_acc_off_and_no_mutation():
     lead.dRel=10.+max(0.,t-2)
     lead.vRel=1. if t>2 else 0.
     lead.modelProb=.95
+    # SubMaster supplies readers. Reading absent pointers on a builder initializes them.
+    for key in list(sm):
+      sm[key]=sm[key].as_reader()
     before={key:value.to_dict() for key,value in sm.items()}
     event=runtime.update(sm,t)
     assert before=={key:value.to_dict() for key,value in sm.items()}
