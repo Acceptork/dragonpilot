@@ -1,5 +1,5 @@
-# overtake v3.2 RESEARCH / NOT_FOR_DEPLOYMENT
+# RESEARCH / NOT_FOR_DEPLOYMENT
 
-Offline sidecar only. No production imports, aTarget, shouldStop, radarState or CAN changes. Synthetic path-clear / margin inputs are not sensor facts.
+RESEARCH_ONLY: real path-exit and both-lead safety-margin provider unavailable; no actuation.
 
-Includes separate stop taper, restart and ramp plant research primitives, never production actuation.
+See [README](README.md) for tested commit and scope.
