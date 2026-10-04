@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import math
+from openpilot.selfdrive.controls.lib.recovery_v331 import Recovery, planner_inputs
 from openpilot.common.params import Params
 from openpilot.selfdrive.controls.lib.early_stop_v33 import EarlyStop, Inputs as EarlyStopInputs
 from openpilot.common.params import Params
@@ -75,6 +76,7 @@ from openpilot.selfdrive.controls.lib.diagnostics_v32 import OvershootEvent, emi
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
+    self.recovery = Recovery()
     self.v33_stop = EarlyStop()
     self.v33_params = Params()
     self.v33_log_frame = 0
@@ -248,6 +250,19 @@ class LongitudinalPlanner:
     else:
       output_a_target = output_a_target_mpc
       self.output_should_stop = output_should_stop_mpc
+
+    # V3.3.1 research: bounded selector blend, before every existing safety stage.
+    # Neither the MPC trajectory nor recorded model intent is mutated.
+    recovery_time = sm.logMonoTime['modelV2']/1e9 if hasattr(sm, 'logMonoTime') else float('nan')
+    recovery_row = self.recovery.update(planner_inputs(sm, self.CP,
+      t=recovery_time, base=float(output_a_target), e2e=float(output_a_target_e2e),
+      mpc=float(output_a_target_mpc), cap=float(min(accel_clip[1], self.prev_accel_clip[1]+.05)),
+      cruise_cap=float(get_max_accel(v_ego)),
+      turn_cap=float(limit_accel_in_turns(v_ego, steer_angle_without_offset, [ACCEL_MIN, ACCEL_MAX], self.CP)[1]),
+      mode=mode, stop=bool(self.output_should_stop), fcw=bool(self.fcw),
+      allow=bool(self.allow_throttle), solver_ok=self.mpc.solution_status==0,
+      memory=bool(self.v33_memory_control_active or getattr(self.v33_restart, 'state', '') in ('HOLD','PENDING'))))
+    output_a_target = recovery_row['after']
 
     previous_clip = list(self.prev_accel_clip)
     for idx in range(2):
@@ -523,6 +538,16 @@ class LongitudinalPlanner:
     if transition != self.v33_memory_previous or (enabled_memory and self.v33_memory_frame % 10 == 0):
       cloudlog.event('MYCRV_EXPERIMENTAL', **memory_row)
     self.v33_memory_previous = transition
+    # Only limit positive recovery here; downstream braking and UNKNOWN remain
+    # immediate. The ceiling also prevents older additive experiments stacking
+    # beyond the recovery envelope / upward ramp.
+    if recovery_row['active']:
+      self.output_a_target = min(float(self.output_a_target), recovery_row['ceiling'])
+    self.recovery.observe_final(float(self.output_a_target))
+    recovery_row['final'] = float(self.output_a_target)
+    recovery_row['downstream_veto'] = recovery_row['active'] and self.output_a_target < recovery_row['after']-1e-6
+    self.diagnostic_trace['recovery'] = recovery_row
+    self.diagnostic_trace['post_clip'] = float(self.output_a_target)
     emit_trace(self.diagnostic_trace)
 
   def publish(self, sm, pm):
