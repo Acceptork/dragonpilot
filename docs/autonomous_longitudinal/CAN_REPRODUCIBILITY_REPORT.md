@@ -38,3 +38,7 @@ Honda `CarInterface.init()` 在離線回放中仍執行 ECU 初始化查詢。`d
 ## Gate 範圍
 
 `INITIALIZED_SCOPED_AA = PASS`。已驗證的五組不是完整路線覆蓋，不能宣稱 `RELEASE_GRADE_FULL_ROUTE_CAN = PASS`。真實初始化／全程序並行 feedback、完整路線與最終候選 A/B 仍須另驗。先前 candidate FAIL 不變。
+
+## 補充全量 planner 重現性
+
+獨立H1／H2執行中的baseline共237618 frame，model時間、vEgoCluster、設定速度、e2e、MPC、final target、shouldStop、FCW、solver、cap、source等核心欄位逐項完全一致。這是全量planner投影證據，不是全量CAN程序證據。
