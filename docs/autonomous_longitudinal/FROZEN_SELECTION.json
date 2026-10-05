@@ -1,0 +1,18 @@
+{
+  "status": "FROZEN_RESEARCH_ONLY",
+  "selected_partial_policy": "H1-R20",
+  "ratio": 0.2,
+  "reason": "TRAIN 保留 BAD04/BAD05 效果、event_041 正向 recovery 歸零；VALIDATION 保留先前新增 target 積分約 80.8%，优於 R10 約12.8%、R15 約43.8%。這不是安全真值或實車改善證明。",
+  "rejected": {
+    "H1-R10": "BAD05 平均增量只剩約0.056，且 VALIDATION 作用大量消失",
+    "H1-R15": "已知事件有效，但独立 VALIDATION 作用保留低於 R20；保留失敗／比較歷史",
+    "H2-VM-CAP": "BAD03 平均只增加約0.052；VALIDATION 有控制權區段沒有實質差異，TRAIN 增加主要仍在彎道內，未證明 EXIT_CLEAR 恢復"
+  },
+  "no_combination": "未建立 A+B；H2 未通過独立效果與場景條件",
+  "holdout_rule": "此檔建立後才讀新候選 HOLDOUT 結果。所有政策與門檻凍結，不因 holdout 調參。",
+  "production_wiring": false,
+  "deploy": false,
+  "overall_effectiveness": "FAIL: curve exit unresolved",
+  "policy_commit_h1": "8fa074a",
+  "policy_commit_h2": "edbf49b"
+}
