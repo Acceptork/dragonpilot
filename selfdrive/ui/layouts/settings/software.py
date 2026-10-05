@@ -15,6 +15,8 @@ from openpilot.system.ui.widgets.option_dialog import MultiOptionDialog
 from openpilot.system.ui.widgets.scroller_tici import Scroller
 
 # TODO: remove this. updater fails to respond on startup if time is not correct
+R20_DISPLAY_VERSION = "V3.3.2 R20 實驗版"
+
 UPDATED_TIMEOUT = 10  # seconds to wait for updated to respond
 
 # Mapping updater internal states to translated display strings
@@ -56,7 +58,7 @@ class SoftwareLayout(Widget):
     super().__init__()
 
     self._onroad_label = ListItem(lambda: tr("Updates are only downloaded while the car is off."))
-    self._version_item = text_item(lambda: tr("Current Version"), ui_state.params.get("UpdaterCurrentDescription") or "")
+    self._version_item = text_item(lambda: tr("Current Version"), R20_DISPLAY_VERSION)
     self._download_btn = button_item(lambda: tr("Download"), lambda: tr("CHECK"), callback=self._on_download_update)
 
     # Install button is initially hidden
@@ -102,7 +104,7 @@ class SoftwareLayout(Widget):
     # Update current version and release notes
     current_desc = ui_state.params.get("UpdaterCurrentDescription") or ""
     current_release_notes = (ui_state.params.get("UpdaterCurrentReleaseNotes") or b"").decode("utf-8", "replace")
-    self._version_item.action_item.set_text(current_desc)
+    self._version_item.action_item.set_text(R20_DISPLAY_VERSION)
     self._version_item.set_description(current_release_notes)
 
     # Update download button visibility and state
